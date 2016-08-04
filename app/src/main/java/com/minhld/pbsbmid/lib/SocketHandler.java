@@ -2,8 +2,6 @@ package com.minhld.pbsbmid.lib;
 
 import android.os.Handler;
 
-import com.minhld.multihop.supports.Utils;
-
 /**
  * Created by minhld on 11/1/2015.
  */

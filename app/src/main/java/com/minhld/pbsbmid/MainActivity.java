@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.minhld.pbsbmid.lib.Utils;
@@ -29,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.sendDataBtn)
     Button sendDataBtn;
+
+    @BindView(R.id.deviceList)
+    ListView deviceList;
 
     @BindView(R.id.infoText)
     TextView infoText;
@@ -88,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mIntentFilter = wifiBroader.getSingleIntentFilter();
+
+        // device list
+        deviceListAdapter = new WifiPeerListAdapter(this, R.layout.row_devices, wifiBroader);
+        deviceList.setAdapter(deviceListAdapter);
 
 
         createGroupBtn.setOnClickListener(new View.OnClickListener() {
