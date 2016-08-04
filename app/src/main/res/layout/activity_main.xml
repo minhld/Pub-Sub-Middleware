@@ -8,15 +8,6 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <Button
-        android:text="Connect WiFi"
-        android:textSize="12sp"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:id="@+id/connectWiFiBtn"
-        android:layout_below="@+id/discoverBtn"
-        android:layout_alignParentEnd="true" />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="180dp"
@@ -26,47 +17,20 @@
         android:gravity="bottom" />
 
     <Button
-        android:text="Create Group"
-        android:textSize="12sp"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:id="@+id/createGroupBtn"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/discoverBtn" />
-
-    <Button
-        android:text="Discover"
-        android:textSize="12sp"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:id="@+id/discoverBtn"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/connectGroupBtn" />
-
-    <Button
         android:text="Send Data"
         android:textSize="12sp"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
-        android:id="@+id/connectGroupBtn"
+        android:id="@+id/sendDataBtn"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
-
-    <Button
-        android:text="Search WiFi"
-        android:textSize="12sp"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:id="@+id/searchWiFiBtn"
-        android:layout_below="@+id/createGroupBtn"
-        android:layout_toStartOf="@+id/connectWiFiBtn" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/linearLayout"
-        android:layout_toStartOf="@+id/connectWiFiBtn"
-        android:layout_below="@+id/searchWiFiBtn"
+        android:layout_toStartOf="@+id/createGroupBtn"
+        android:layout_below="@+id/createGroupBtn"
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/infoText">
 
@@ -88,5 +52,23 @@
             android:layout_toEndOf="@+id/createGroupBtn"
             android:layout_marginBottom="0dp" />
     </LinearLayout>
+
+    <Button
+        android:text="Create Group"
+        android:textSize="12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:id="@+id/createGroupBtn"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/sendDataBtn" />
+
+    <Button
+        android:text="Discover"
+        android:textSize="12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:id="@+id/discoverBtn"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/createGroupBtn" />
 
 </RelativeLayout>

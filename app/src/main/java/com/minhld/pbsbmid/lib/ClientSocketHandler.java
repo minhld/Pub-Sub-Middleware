@@ -2,9 +2,6 @@ package com.minhld.pbsbmid.lib;
 
 import android.os.Handler;
 
-import com.minhld.multihop.supports.ChatManager;
-import com.minhld.multihop.supports.Utils;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
