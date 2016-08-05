@@ -15,6 +15,9 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.widget.TextView;
 
+import com.minhld.pbsbmid.pubsub.MidBroker;
+import com.minhld.pbsbmid.pubsub.MidPublisher;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collection;
@@ -81,28 +84,35 @@ public class WifiBroader extends BroadcastReceiver {
                 @Override
                 public void onConnectionInfoAvailable(WifiP2pInfo info) {
                     if (info.groupFormed && info.isGroupOwner) {
-                        if (mSocketHandler != null && mSocketHandler.isSocketWorking() &&
-                                mSocketHandler.socketType == Utils.SocketType.SERVER) {
-                            writeLog("reuse server @ " + info.groupOwnerAddress.getHostAddress());
-                        } else {
-                            try {
-                                mSocketHandler = new ServerSocketHandler(mSocketUIListener);
-                                mSocketHandler.start();
-                                writeLog("become server @ " + info.groupOwnerAddress.getHostAddress() +
-                                        " port: " + Utils.SERVER_PORT);
-                                deviceName = "server";
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                writeLog("[wifi] error: " + e.getMessage());
-                                return;     // we don't enable transmission
-                            }
-                        }
+//                        if (mSocketHandler != null && mSocketHandler.isSocketWorking() &&
+//                                mSocketHandler.socketType == Utils.SocketType.SERVER) {
+//                            writeLog("reuse server @ " + info.groupOwnerAddress.getHostAddress());
+//                        } else {
+//                            try {
+//                                mSocketHandler = new ServerSocketHandler(mSocketUIListener);
+//                                mSocketHandler.start();
+//                                writeLog("become server @ " + info.groupOwnerAddress.getHostAddress() +
+//                                        " port: " + Utils.SERVER_PORT);
+//                                deviceName = "server";
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                                writeLog("[wifi] error: " + e.getMessage());
+//                                return;     // we don't enable transmission
+//                            }
+//                        }
+
+                        // initiate the broker
+                        String brokerIp = info.groupOwnerAddress.getHostAddress();
+                        new MidBroker(brokerIp, mSocketUIListener).execute();
+                        writeLog("broker started");
                     } else if (info.groupFormed) {
-                        mSocketHandler = new ClientSocketHandler(mSocketUIListener, info.groupOwnerAddress);
-                        mSocketHandler.start();
-                        deviceName = "client-" + (int)(Math.random() * 100);
-                        writeLog("become client with name " + deviceName);
-                        broadCastListener.socketUpdated(Utils.SocketType.CLIENT, true);
+//                        mSocketHandler = new ClientSocketHandler(mSocketUIListener, info.groupOwnerAddress);
+//                        mSocketHandler.start();
+//                        deviceName = "client-" + (int)(Math.random() * 100);
+//                        writeLog("become client with name " + deviceName);
+//                        broadCastListener.socketUpdated(Utils.SocketType.CLIENT, true);
+                        String brokerIp = info.groupOwnerAddress.getHostAddress();
+                        new MidPublisher(brokerIp, mSocketUIListener).execute();
                     } else {
 
                     }
@@ -219,8 +229,8 @@ public class WifiBroader extends BroadcastReceiver {
      * @param listener
      */
     public void disconnect(final String deviceName, final WifiP2pConnectionListener listener){
-        // close the current socket
-        mSocketHandler.dispose();
+//        // close the current socket
+//        mSocketHandler.dispose();
 
         // dispose the group it connected to
         mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
@@ -306,12 +316,12 @@ public class WifiBroader extends BroadcastReceiver {
     }
 
     public void writeString(String msg) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] data = ("[" + deviceName + "] " + msg).getBytes();
-        byte[] lengthBytes = Utils.intToBytes(data.length);
-        bos.write(lengthBytes, 0, lengthBytes.length);
-        bos.write(data, 0, data.length);
-        sendObject(bos.toByteArray());
+//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//        byte[] data = ("[" + deviceName + "] " + msg).getBytes();
+//        byte[] lengthBytes = Utils.intToBytes(data.length);
+//        bos.write(lengthBytes, 0, lengthBytes.length);
+//        bos.write(data, 0, data.length);
+//        sendObject(bos.toByteArray());
     }
 
     /**
