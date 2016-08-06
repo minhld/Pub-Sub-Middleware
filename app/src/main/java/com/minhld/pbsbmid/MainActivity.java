@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.minhld.wfd.Utils;
 import com.minhld.wfd.WifiBroader;
-import com.minhld.wfd.WifiPeerListAdapter;
 
 import java.util.Collection;
 

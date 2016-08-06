@@ -1,4 +1,4 @@
-package com.minhld.wfd;
+package com.minhld.pbsbmid;
 
 /**
  * Created by minhld on 01/28/2016
@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.minhld.pbsbmid.R;
+import com.minhld.wfd.WifiBroader;
 
 import java.util.List;
 
