@@ -1,4 +1,4 @@
-package com.minhld.pbsbmid.lib;
+package com.minhld.wfd;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -15,10 +15,9 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.widget.TextView;
 
-import com.minhld.pbsbmid.pubsub.MidBroker;
-import com.minhld.pbsbmid.pubsub.MidPublisher;
+import com.minhld.pubsublib.MidBroker;
+import com.minhld.pubsublib.MidPublisher;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;

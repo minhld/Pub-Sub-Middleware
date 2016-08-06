@@ -1,4 +1,4 @@
-package com.minhld.pbsbmid.lib;
+package com.minhld.wfd;
 
 import android.os.Handler;
 

@@ -1,4 +1,4 @@
-package com.minhld.pbsbmid.pubsub;
+package com.minhld.pubsublib;
 
 /**
  * Created by minhld on 8/4/2016.

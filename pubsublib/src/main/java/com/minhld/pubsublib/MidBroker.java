@@ -1,4 +1,4 @@
-package com.minhld.pbsbmid.pubsub;
+package com.minhld.pubsublib;
 
 
 import android.os.AsyncTask;

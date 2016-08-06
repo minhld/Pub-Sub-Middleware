@@ -12,9 +12,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.minhld.pbsbmid.lib.Utils;
-import com.minhld.pbsbmid.lib.WifiBroader;
-import com.minhld.pbsbmid.lib.WifiPeerListAdapter;
+import com.minhld.wfd.Utils;
+import com.minhld.wfd.WifiBroader;
+import com.minhld.wfd.WifiPeerListAdapter;
 
 import java.util.Collection;
 
