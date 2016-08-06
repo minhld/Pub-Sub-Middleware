@@ -25,16 +25,6 @@ public class MidBroker extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
-//        try {
-//            String brokerUri = "broker:(tcp://" + this.brokerIp + ":61616)";
-//            BrokerService broker = BrokerFactory.createBroker(new URI(brokerUri));
-//            broker.start();
-//        } catch(URISyntaxException uriEx) {
-//            uriEx.printStackTrace();
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//        }
-
         String brokerUri = "tcp://" + this.brokerIp + ":" + Utils.BROKER_PORT;
         ZMQ.Context context = ZMQ.context(1);
         ZMQ.Socket socket = context.socket(ZMQ.REP);
