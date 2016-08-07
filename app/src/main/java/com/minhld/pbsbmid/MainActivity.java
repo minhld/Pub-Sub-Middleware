@@ -1,10 +1,5 @@
 package com.minhld.pbsbmid;
 
-import android.content.IntentFilter;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pInfo;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -12,11 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.minhld.wfd.Utils;
-import com.minhld.wfd.WFDManager;
-
-import java.util.Collection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,9 +27,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.infoText)
     TextView infoText;
 
-
     MidSupporter midSupporter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +39,10 @@ public class MainActivity extends AppCompatActivity {
 
         midSupporter = new MidSupporter(this, infoText);
 
-        // device list
+        // bind device list
         deviceList.setAdapter(midSupporter.getDeviceListAdapter());
+
+        // --- BUTTON EVENT HANDLERS ---
 
         createGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override

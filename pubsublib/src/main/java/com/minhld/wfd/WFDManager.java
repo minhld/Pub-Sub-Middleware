@@ -28,14 +28,14 @@ public class WFDManager extends BroadcastReceiver {
     IntentFilter mIntentFilter;
 
 //    SocketHandler mSocketHandler;
-    Handler mWFDListener;
+//    Handler mWFDListener;
     BroadCastListener broadCastListener;
 
     TextView logText;
 
-    public void setWFDListener(Handler skHandler) {
-        this.mWFDListener = skHandler;
-    }
+//    public void setWFDListener(Handler skHandler) {
+//        this.mWFDListener = skHandler;
+//    }
 
     public WFDManager(Activity c, TextView logText){
         this.logText = logText;

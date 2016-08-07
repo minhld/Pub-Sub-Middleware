@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.TextView;
 
+import com.minhld.pubsublib.MidBroker;
 import com.minhld.wfd.Utils;
 import com.minhld.wfd.WFDManager;
 
@@ -56,7 +57,7 @@ public class MidSupporter {
         this.context = context;
 
         wfdManager = new WFDManager(this.context, infoText);
-        wfdManager.setWFDListener(mainUiHandler);
+//        wfdManager.setWFDListener(mainUiHandler);
         wfdManager.setBroadCastListener(new WFDManager.BroadCastListener() {
             @Override
             public void peerDeviceListUpdated(Collection<WifiP2pDevice> deviceList) {
@@ -67,7 +68,13 @@ public class MidSupporter {
 
             @Override
             public void wfdEstablished(WifiP2pInfo p2pInfo) {
+                String brokerIp = p2pInfo.groupOwnerAddress.getHostAddress();
+                if (p2pInfo.groupFormed && p2pInfo.isGroupOwner) {
+                    // the group owner will also become a broker
+                    new MidBroker(brokerIp, mainUiHandler).execute();
+                } else if (p2pInfo.groupFormed) {
 
+                }
             }
         });
         mIntentFilter = wfdManager.getSingleIntentFilter();
@@ -83,10 +90,17 @@ public class MidSupporter {
         mIntentFilter = wfdManager.getSingleIntentFilter();
     }
 
+    /**
+     * create itself to be a group owner to handle a private group
+     */
     public void createGroup() {
-
+        wfdManager.createGroup();
     }
 
+    /**
+     * return the peer list adapter (for UI usage)
+     * @return
+     */
     public WifiPeerListAdapter getDeviceListAdapter() {
         return deviceListAdapter;
     }
