@@ -12,8 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.minhld.pbsbmid.R;
-import com.minhld.wfd.WifiBroader;
+import com.minhld.wfd.WFDManager;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ import java.util.List;
 public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
     private Context context;
     private List<WifiP2pDevice> items;
-    private WifiBroader mWifiBroader;
+    private WFDManager mWFDManager;
 
     /**
      * @param context
@@ -31,12 +30,12 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
      */
     public WifiPeerListAdapter(Context context, int textViewResourceId
                                /* ,List<WifiP2pDevice> objects*/
-                               , WifiBroader mWifiBroader) {
+                               , WFDManager mWFDManager) {
         super(context, textViewResourceId/*, objects*/);
 
         this.context = context;
         //this.items = objects;
-        this.mWifiBroader = mWifiBroader;
+        this.mWFDManager = mWFDManager;
     }
 
 //    @Override
@@ -87,11 +86,11 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
                 }
                 case WifiP2pDevice.CONNECTED: {
                     // just disconnect, no confirmation
-                    mWifiBroader.disconnect(device.deviceName, null);
+                    mWFDManager.disconnect(device.deviceName, null);
                     break;
                 }
                 case WifiP2pDevice.AVAILABLE: {
-                    mWifiBroader.connectToADevice(device, null);
+                    mWFDManager.connectToADevice(device, null);
                     break;
                 }
                 case WifiP2pDevice.UNAVAILABLE: {
@@ -100,7 +99,7 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
                 }
                 case WifiP2pDevice.FAILED: {
                     // attempting to connect
-                    mWifiBroader.connectToADevice(device, null);
+                    mWFDManager.connectToADevice(device, null);
                     break;
                 }
             }

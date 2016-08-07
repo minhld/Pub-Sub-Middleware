@@ -30,8 +30,8 @@ public class MidBroker extends AsyncTask {
 
         while(!Thread.currentThread().isInterrupted()) {
             byte[] msg = socket.recv(0);
-            uiThreadHandler.obtainMessage(Utils.MESSAGE_READ_SERVER, msg).sendToTarget();
             socket.send(msg, 0);
+//            uiThreadHandler.obtainMessage(Utils.MESSAGE_READ_SERVER, msg).sendToTarget();
         }
         socket.close();
         context.term();

@@ -15,10 +15,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.widget.TextView;
 
-import com.minhld.pubsublib.MidBroker;
-import com.minhld.pubsublib.MidPublisher;
-
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 
@@ -26,23 +22,22 @@ import java.util.Date;
  * Created by minhld on 7/25/2016.
  */
 
-public class WifiBroader extends BroadcastReceiver {
+public class WFDManager extends BroadcastReceiver {
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
     IntentFilter mIntentFilter;
 
-    SocketHandler mSocketHandler;
-    Handler mSocketUIListener;
+//    SocketHandler mSocketHandler;
+    Handler mWFDListener;
     BroadCastListener broadCastListener;
 
     TextView logText;
-    String deviceName;
 
-    public void setSocketHandler(Handler skHandler) {
-        this.mSocketUIListener = skHandler;
+    public void setWFDListener(Handler skHandler) {
+        this.mWFDListener = skHandler;
     }
 
-    public WifiBroader(Activity c, TextView logText){
+    public WFDManager(Activity c, TextView logText){
         this.logText = logText;
 
         this.mManager = (WifiP2pManager)c.getSystemService(Context.WIFI_P2P_SERVICE);
@@ -82,39 +77,20 @@ public class WifiBroader extends BroadcastReceiver {
             mManager.requestConnectionInfo(mChannel, new WifiP2pManager.ConnectionInfoListener() {
                 @Override
                 public void onConnectionInfoAvailable(WifiP2pInfo info) {
-                    if (info.groupFormed && info.isGroupOwner) {
-//                        if (mSocketHandler != null && mSocketHandler.isSocketWorking() &&
-//                                mSocketHandler.socketType == Utils.SocketType.SERVER) {
-//                            writeLog("reuse server @ " + info.groupOwnerAddress.getHostAddress());
-//                        } else {
-//                            try {
-//                                mSocketHandler = new ServerSocketHandler(mSocketUIListener);
-//                                mSocketHandler.start();
-//                                writeLog("become server @ " + info.groupOwnerAddress.getHostAddress() +
-//                                        " port: " + Utils.SERVER_PORT);
-//                                deviceName = "server";
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                                writeLog("[wifi] error: " + e.getMessage());
-//                                return;     // we don't enable transmission
-//                            }
-//                        }
-
-                        // initiate the broker
-                        String brokerIp = info.groupOwnerAddress.getHostAddress();
-                        new MidBroker(brokerIp, mSocketUIListener).execute();
-                        writeLog("broker started");
-                    } else if (info.groupFormed) {
-//                        mSocketHandler = new ClientSocketHandler(mSocketUIListener, info.groupOwnerAddress);
-//                        mSocketHandler.start();
-//                        deviceName = "client-" + (int)(Math.random() * 100);
-//                        writeLog("become client with name " + deviceName);
-//                        broadCastListener.socketUpdated(Utils.SocketType.CLIENT, true);
-                        String brokerIp = info.groupOwnerAddress.getHostAddress();
-                        new MidPublisher(brokerIp, mSocketUIListener).execute();
-                    } else {
-
+                    if (broadCastListener != null) {
+                        broadCastListener.wfdEstablished(info);
                     }
+//                    if (info.groupFormed && info.isGroupOwner) {
+//                        // if it is a group owner, it will become a broker
+//                        String brokerIp = info.groupOwnerAddress.getHostAddress();
+//                        new MidBroker(brokerIp, mWFDListener).execute();
+//                        writeLog("broker started");
+//                    } else if (info.groupFormed) {
+//                        String brokerIp = info.groupOwnerAddress.getHostAddress();
+//                        new MidPublisher(brokerIp, mWFDListener).execute();
+//                    } else {
+//
+//                    }
                 }
             });
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
@@ -152,13 +128,16 @@ public class WifiBroader extends BroadcastReceiver {
         });
     }
 
+    /**
+     * get information of the group
+     */
     public void requestGroupInfo() {
         mManager.requestGroupInfo(mChannel, new WifiP2pManager.GroupInfoListener() {
             @Override
             public void onGroupInfoAvailable(WifiP2pGroup group) {
-                writeLog("[group info] owner: " + group.isGroupOwner() + "; " +
+                writeLog("[g-info]: " + (group.isGroupOwner() ? "owner" : "p2p-clt") + "; " +
                         "name: " + group.getNetworkName() + "; " +
-                        "password " + group.getPassphrase());
+                        "pwd: " + group.getPassphrase());
             }
         });
     }
@@ -309,37 +288,49 @@ public class WifiBroader extends BroadcastReceiver {
         this.broadCastListener = pdlcListener;
     }
 
+    /**
+     * this class is to throw events from WFD Manager back to the UI thread
+     */
     public interface BroadCastListener {
+        /**
+         * this is called when the device list changes
+         * @param deviceList
+         */
         public void peerDeviceListUpdated(Collection<WifiP2pDevice> deviceList);
-        public void socketUpdated(Utils.SocketType socketType, boolean connected);
+
+        /**
+         * called when wifi direct connection is established
+         * @param p2pInfo
+         */
+        public void wfdEstablished(WifiP2pInfo p2pInfo);
     }
 
-    public void writeString(String msg) {
+//    public void writeString(String msg) {
 //        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        byte[] data = ("[" + deviceName + "] " + msg).getBytes();
 //        byte[] lengthBytes = Utils.intToBytes(data.length);
 //        bos.write(lengthBytes, 0, lengthBytes.length);
 //        bos.write(data, 0, data.length);
 //        sendObject(bos.toByteArray());
-    }
+//    }
 
-    /**
-     * this function will send an object through socket to the server
-     *
-     * @param st should be a serializable object
-     */
-    public void sendObject(Object st) {
-        if (st instanceof byte[]) {
-            mSocketHandler.write((byte[])st);
-        }else {
-            try {
-                // we need to serialize it to binary array before dispatching it
-                mSocketHandler.write(Utils.serialize(st));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    /**
+//     * this function will send an object through socket to the server
+//     *
+//     * @param st should be a serializable object
+//     */
+//    public void sendObject(Object st) {
+//        if (st instanceof byte[]) {
+//            mSocketHandler.write((byte[])st);
+//        }else {
+//            try {
+//                // we need to serialize it to binary array before dispatching it
+//                mSocketHandler.write(Utils.serialize(st));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     public void writeLog(final String msg){
         String outMsg = Utils.SDF.format(new Date()) + ": " + msg + "\n";
