@@ -14,11 +14,11 @@ import org.zeromq.ZMQ;
 
 public class MidBroker extends AsyncTask {
     private String brokerIp;
-    private final Handler uiThreadHandler;
+    private final Handler uiHandler;
 
-    public MidBroker(String _brokerIp, Handler _uiThreadHandler) {
+    public MidBroker(String _brokerIp, Handler _uiHandler) {
         this.brokerIp = _brokerIp;
-        this.uiThreadHandler = _uiThreadHandler;
+        this.uiHandler = _uiHandler;
     }
 
     @Override
@@ -30,8 +30,10 @@ public class MidBroker extends AsyncTask {
 
         while(!Thread.currentThread().isInterrupted()) {
             byte[] msg = socket.recv(0);
+            // spread out the message to all the members
+
             socket.send(msg, 0);
-//            uiThreadHandler.obtainMessage(Utils.MESSAGE_READ_SERVER, msg).sendToTarget();
+//            uiHandler.obtainMessage(Utils.MESSAGE_READ_SERVER, msg).sendToTarget();
         }
         socket.close();
         context.term();

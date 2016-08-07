@@ -10,7 +10,10 @@ import org.zeromq.ZMQ;
 /**
  * Created by minhld on 8/4/2016.
  */
-public class MidPublisher extends AsyncTask {
+public class MidPublisher extends Thread {
+    private ZMQ.Context context;
+    private ZMQ.Socket socket;
+
     private String groupIp;
     private Handler uiHandler;
 
@@ -19,25 +22,30 @@ public class MidPublisher extends AsyncTask {
         this.uiHandler = _uiHandler;
     }
 
-    @Override
-    protected Object doInBackground(Object[] objects) {
-        ZMQ.Context context = ZMQ.context(1);
-        ZMQ.Socket socket = context.socket(ZMQ.REQ);
+
+    public void run() {
+        context = ZMQ.context(1);
+        socket = context.socket(ZMQ.REQ);
         String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_PORT;
         socket.connect(bindGroupStr);
 
-        socket.send("Hello from client".getBytes(), 0);
-        byte[] result = socket.recv(0);
-        this.uiHandler.obtainMessage(Utils.MESSAGE_READ_CLIENT, result).sendToTarget();
-
-        socket.close();
-        context.term();
-
-        return null;
+        while(!Thread.currentThread().isInterrupted()) {
+            byte[] result = socket.recv(0);
+        }
+//        byte[] result = socket.recv(0);
+//        this.uiHandler.obtainMessage(Utils.MESSAGE_READ_CLIENT, result).sendToTarget();
     }
 
-    @Override
-    protected void onProgressUpdate(Object[] values) {
+    /**
+     * send data to the broker
+     * @param data
+     */
+    public void send(byte[] data) {
+        socket.send(data, 0);
+    }
 
+    public void dispose() {
+        socket.close();
+        context.term();
     }
 }
