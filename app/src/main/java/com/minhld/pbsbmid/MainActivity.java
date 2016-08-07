@@ -52,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
         midSupporter = new MidSupporter(this, infoText);
 
         // device list
-        deviceList.setAdapter(deviceListAdapter);
-
+        deviceList.setAdapter(midSupporter.getDeviceListAdapter());
 
         createGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override

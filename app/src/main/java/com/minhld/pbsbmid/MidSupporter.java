@@ -71,7 +71,7 @@ public class MidSupporter {
             }
         });
         mIntentFilter = wfdManager.getSingleIntentFilter();
-        deviceListAdapter = new WifiPeerListAdapter(this, R.layout.row_devices, wfdManager);
+        deviceListAdapter = new WifiPeerListAdapter(this.context, R.layout.row_devices, wfdManager);
     }
 
     /**
@@ -85,7 +85,10 @@ public class MidSupporter {
 
     public void createGroup() {
 
+    }
 
+    public WifiPeerListAdapter getDeviceListAdapter() {
+        return deviceListAdapter;
     }
 
     /**

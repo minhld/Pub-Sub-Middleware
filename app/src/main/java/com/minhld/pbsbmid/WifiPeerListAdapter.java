@@ -28,20 +28,12 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
      * @param context
      * @param textViewResourceId
      */
-    public WifiPeerListAdapter(Context context, int textViewResourceId
-                               /* ,List<WifiP2pDevice> objects*/
-                               , WFDManager mWFDManager) {
-        super(context, textViewResourceId/*, objects*/);
+    public WifiPeerListAdapter(Context context, int textViewResourceId, WFDManager mWFDManager) {
+        super(context, textViewResourceId);
 
         this.context = context;
-        //this.items = objects;
         this.mWFDManager = mWFDManager;
     }
-
-//    @Override
-//    public WifiP2pDevice getItem(int position) {
-//        return super.getItem(position);
-//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
