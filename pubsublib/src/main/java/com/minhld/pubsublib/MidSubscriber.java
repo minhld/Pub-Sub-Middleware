@@ -12,7 +12,7 @@ import java.util.Date;
  * Created by minhld on 8/4/2016.
  */
 
-public class MidConsumer extends Thread {
+public class MidSubscriber extends Thread {
     private final int PUB_INTERVAL = 1500;
     private ZMQ.Context context;
     private ZMQ.Socket socket;
@@ -20,9 +20,11 @@ public class MidConsumer extends Thread {
     private String groupIp;
     private Handler uiHandler;
 
-    public MidConsumer(String _groupIp, Handler _uiHandler) {
+    public MidSubscriber(String _groupIp, Handler _uiHandler) {
         this.groupIp = _groupIp;
         this.uiHandler = _uiHandler;
+
+        this.start();
     }
 
     public void run() {
@@ -32,12 +34,12 @@ public class MidConsumer extends Thread {
             String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XPUB_PORT;
             socket.connect(bindGroupStr);
 
+            this.uiHandler.obtainMessage(Utils.MESSAGE_INFO, "subscriber started...").sendToTarget();
+
             // loop until the thread is disposed
             while (!Thread.currentThread().isInterrupted()) {
-                if (socket.hasReceiveMore()) {
-                    byte[] msg = socket.recv();
-                    this.uiHandler.obtainMessage(Utils.MESSAGE_INFO, "client received: " + new String(msg)).sendToTarget();
-                }
+                byte[] msg = socket.recv();
+                this.uiHandler.obtainMessage(Utils.MESSAGE_INFO, "client received: " + new String(msg)).sendToTarget();
             }
 
             socket.close();

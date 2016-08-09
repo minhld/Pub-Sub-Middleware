@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.minhld.pubsublib.MidPublisher;
+import com.minhld.pubsublib.MidSubscriber;
 import com.minhld.wfd.Utils;
 
 import butterknife.BindView;
@@ -22,8 +24,11 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.discoverBtn)
     Button discoverBtn;
 
-    @BindView(R.id.sendDataBtn)
-    Button sendDataBtn;
+    @BindView(R.id.pubBtn)
+    Button pubBtn;
+
+    @BindView(R.id.subBtn)
+    Button subBtn;
 
     @BindView(R.id.deviceList)
     ListView deviceList;
@@ -75,10 +80,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        sendDataBtn.setOnClickListener(new View.OnClickListener() {
+        pubBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                new MidPublisher(UITools.GO_IP, mainUiHandler);
+            }
+        });
 
+        subBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MidSubscriber(UITools.GO_IP, mainUiHandler);
             }
         });
     }

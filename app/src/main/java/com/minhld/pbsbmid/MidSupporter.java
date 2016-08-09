@@ -27,6 +27,8 @@ public class MidSupporter {
     WFDManager wfdManager;
     IntentFilter mIntentFilter;
     WifiPeerListAdapter deviceListAdapter;
+    MidBroker mBroker;
+
 
 //    Handler mainUiHandler = new Handler() {
 //        @Override
@@ -76,11 +78,16 @@ public class MidSupporter {
 
                 String brokerIp = p2pInfo.groupOwnerAddress.getHostAddress();
                 if (p2pInfo.groupFormed && p2pInfo.isGroupOwner) {
+                    if (mBroker != null) {
+                        mainHandler.obtainMessage(Utils.MESSAGE_INFO, "broker reused").sendToTarget();
+                        return;
+                    }
+
                     // the group owner will also become a broker
-                    MidBroker broker = new MidBroker(brokerIp, mainHandler);
-                    broker.execute();
+                    mBroker = new MidBroker(brokerIp, mainHandler);
                 } else if (p2pInfo.groupFormed) {
-                    new MidPublisher(brokerIp, mainHandler).start();
+                    // let user select to be either publisher or subscriber
+//                    new MidPublisher(brokerIp, mainHandler).start();
                 }
             }
         });

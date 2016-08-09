@@ -23,6 +23,8 @@ public class MidPublisher extends Thread {
     public MidPublisher(String _groupIp, Handler _uiHandler) {
         this.groupIp = _groupIp;
         this.uiHandler = _uiHandler;
+
+        this.start();
     }
 
     public void run() {
@@ -31,6 +33,8 @@ public class MidPublisher extends Thread {
             socket = context.socket(ZMQ.PUB);
             String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XSUB_PORT;
             socket.connect(bindGroupStr);
+
+            this.uiHandler.obtainMessage(Utils.MESSAGE_INFO, "publisher started...").sendToTarget();
 
             // loop until the thread is disposed
             while (!Thread.currentThread().isInterrupted()) {

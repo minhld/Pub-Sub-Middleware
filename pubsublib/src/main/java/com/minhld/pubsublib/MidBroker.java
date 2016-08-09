@@ -11,17 +11,18 @@ import org.zeromq.ZMQ;
  * Created by minhld on 8/4/2016.
  * This class is to simulate an ActiveMQ on Android
  */
-public class MidBroker extends AsyncTask {
+public class MidBroker extends Thread {
     private String brokerIp;
     private final Handler uiHandler;
 
     public MidBroker(String _brokerIp, Handler _uiHandler) {
         this.brokerIp = _brokerIp;
         this.uiHandler = _uiHandler;
+
+        this.start();
     }
 
-    @Override
-    protected Object doInBackground(Object[] objects) {
+    public void run() {
         ZMQ.Context context = ZMQ.context(1);
 
         // initiate publish socket
@@ -41,12 +42,6 @@ public class MidBroker extends AsyncTask {
         xsubSk.close();
         xpubSk.close();
         context.term();
-
-        return null;
     }
 
-    @Override
-    protected void onProgressUpdate(Object[] values) {
-        // temporarily unused
-    }
 }

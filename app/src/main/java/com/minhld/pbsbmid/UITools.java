@@ -16,6 +16,7 @@ import java.util.Date;
  * Created by minhld on 01/28/2016.
  */
 public class UITools {
+    public static final String GO_IP = "192.168.49.1";
     public static final SimpleDateFormat SDF = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
 
     /**
