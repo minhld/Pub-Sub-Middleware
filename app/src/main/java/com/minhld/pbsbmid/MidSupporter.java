@@ -68,10 +68,15 @@ public class MidSupporter {
 
             @Override
             public void wfdEstablished(WifiP2pInfo p2pInfo) {
+                if (p2pInfo.groupOwnerAddress == null) {
+                    return;
+                }
+
                 String brokerIp = p2pInfo.groupOwnerAddress.getHostAddress();
                 if (p2pInfo.groupFormed && p2pInfo.isGroupOwner) {
                     // the group owner will also become a broker
-                    new MidBroker(brokerIp, mainUiHandler).execute();
+                    MidBroker broker = new MidBroker(brokerIp, mainUiHandler);
+                    broker.execute();
                 } else if (p2pInfo.groupFormed) {
 
                 }

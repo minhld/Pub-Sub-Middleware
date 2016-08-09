@@ -30,7 +30,8 @@ import java.util.Map;
  */
 public class Utils {
     public static final int SERVER_PORT = 8881;
-    public static final int BROKER_PORT = 8383;
+    public static final int BROKER_XPUB_PORT = 8383;
+    public static final int BROKER_XSUB_PORT = 8388;
     public static final int SERVER_TIMEOUT = 5000;
     public static final int MESSAGE_READ_CLIENT = 0x500 + 1;
     public static final int MESSAGE_READ_SERVER = 0x500 + 2;

@@ -22,16 +22,17 @@ public class MidPublisher extends Thread {
         this.uiHandler = _uiHandler;
     }
 
-
     public void run() {
         context = ZMQ.context(1);
-        socket = context.socket(ZMQ.REQ);
-        String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_PORT;
+        socket = context.socket(ZMQ.REP);
+        String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XPUB_PORT;
         socket.connect(bindGroupStr);
 
-        while(!Thread.currentThread().isInterrupted()) {
-            byte[] result = socket.recv(0);
-        }
+
+
+//        while(!Thread.currentThread().isInterrupted()) {
+//            byte[] result = socket.recv(0);
+//        }
 //        byte[] result = socket.recv(0);
 //        this.uiHandler.obtainMessage(Utils.MESSAGE_READ_CLIENT, result).sendToTarget();
     }

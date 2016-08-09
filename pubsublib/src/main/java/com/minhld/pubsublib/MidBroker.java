@@ -11,7 +11,6 @@ import org.zeromq.ZMQ;
  * Created by minhld on 8/4/2016.
  * This class is to simulate an ActiveMQ on Android
  */
-
 public class MidBroker extends AsyncTask {
     private String brokerIp;
     private final Handler uiHandler;
@@ -23,19 +22,31 @@ public class MidBroker extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
-        String brokerUri = "tcp://" + this.brokerIp + ":" + Utils.BROKER_PORT;
         ZMQ.Context context = ZMQ.context(1);
-        ZMQ.Socket socket = context.socket(ZMQ.REP);
-        socket.bind(brokerUri);
 
-        while(!Thread.currentThread().isInterrupted()) {
-            byte[] msg = socket.recv(0);
-            // spread out the message to all the members
+        // initiate publish socket
+        String xpubUri = "tcp://" + this.brokerIp + ":" + Utils.BROKER_XPUB_PORT;
+        ZMQ.Socket xpubSk = context.socket(ZMQ.XPUB);
+        xpubSk.bind(xpubUri);
 
-            socket.send(msg, 0);
-//            uiHandler.obtainMessage(Utils.MESSAGE_READ_SERVER, msg).sendToTarget();
-        }
-        socket.close();
+        // initiate subscribe socket
+        String xsubUri = "tcp://" + this.brokerIp + ":" + Utils.BROKER_XSUB_PORT;
+        ZMQ.Socket xsubSk = context.socket(ZMQ.XSUB);
+        xsubSk.bind(xsubUri);
+
+        // bind the two sockets together
+        ZMQ.proxy(xsubSk, xpubSk, null);
+
+//        while(!Thread.currentThread().isInterrupted()) {
+//            byte[] msg = socket.recv(0);
+//            // spread out the message to all the members
+//
+//            socket.send(msg, 0);
+////            uiHandler.obtainMessage(Utils.MESSAGE_READ_SERVER, msg).sendToTarget();
+//        }
+
+        xsubSk.close();
+        xpubSk.close();
         context.term();
 
         return null;
@@ -45,6 +56,4 @@ public class MidBroker extends AsyncTask {
     protected void onProgressUpdate(Object[] values) {
 
     }
-
-
 }
