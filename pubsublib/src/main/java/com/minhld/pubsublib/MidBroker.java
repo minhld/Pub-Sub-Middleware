@@ -34,16 +34,9 @@ public class MidBroker extends AsyncTask {
         ZMQ.Socket xsubSk = context.socket(ZMQ.XSUB);
         xsubSk.bind(xsubUri);
 
-        // bind the two sockets together
+        // bind the two sockets together - this will suspend here to listen
+        this.uiHandler.obtainMessage(Utils.MESSAGE_INFO, "broker started...").sendToTarget();
         ZMQ.proxy(xsubSk, xpubSk, null);
-
-//        while(!Thread.currentThread().isInterrupted()) {
-//            byte[] msg = socket.recv(0);
-//            // spread out the message to all the members
-//
-//            socket.send(msg, 0);
-////            uiHandler.obtainMessage(Utils.MESSAGE_READ_SERVER, msg).sendToTarget();
-//        }
 
         xsubSk.close();
         xpubSk.close();
@@ -54,6 +47,6 @@ public class MidBroker extends AsyncTask {
 
     @Override
     protected void onProgressUpdate(Object[] values) {
-
+        // temporarily unused
     }
 }

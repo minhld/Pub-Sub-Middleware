@@ -28,17 +28,17 @@ public class WFDManager extends BroadcastReceiver {
     IntentFilter mIntentFilter;
 
 //    SocketHandler mSocketHandler;
-//    Handler mWFDListener;
+    Handler mHandler;
     BroadCastListener broadCastListener;
 
-    TextView logText;
+//    TextView logText;
 
-//    public void setWFDListener(Handler skHandler) {
-//        this.mWFDListener = skHandler;
-//    }
+    public void setWFDListener(Handler skHandler) {
+        this.mHandler = skHandler;
+    }
 
-    public WFDManager(Activity c, TextView logText){
-        this.logText = logText;
+    public WFDManager(Activity c/*, TextView logText */){
+//        this.logText = logText;
 
         this.mManager = (WifiP2pManager)c.getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(c, c.getMainLooper(), null);
@@ -333,7 +333,8 @@ public class WFDManager extends BroadcastReceiver {
 //    }
 
     public void writeLog(final String msg){
-        String outMsg = Utils.SDF.format(new Date()) + ": " + msg + "\n";
-        logText.append(outMsg);
+//        String outMsg = Utils.SDF.format(new Date()) + ": " + msg;
+        mHandler.obtainMessage(Utils.MESSAGE_INFO, msg).sendToTarget();
+//        logText.append(outMsg);
     }
 }

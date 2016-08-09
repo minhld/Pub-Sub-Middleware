@@ -10,6 +10,7 @@ import android.os.Message;
 import android.widget.TextView;
 
 import com.minhld.pubsublib.MidBroker;
+import com.minhld.pubsublib.MidPublisher;
 import com.minhld.wfd.Utils;
 import com.minhld.wfd.WFDManager;
 
@@ -17,8 +18,9 @@ import java.util.Collection;
 
 /**
  * Created by minhld on 8/6/2016.
- * This class utilizes the pubsub library to provide full functionality of publish-subscribe to
- * the client application
+ *
+ * This class utilizes the pubsub library to provide full functionality of
+ * publish-subscribe to the client application
  */
 public class MidSupporter {
     Activity context;
@@ -26,10 +28,10 @@ public class MidSupporter {
     IntentFilter mIntentFilter;
     WifiPeerListAdapter deviceListAdapter;
 
-    Handler mainUiHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
+//    Handler mainUiHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            switch (msg.what) {
 //                case Utils.MESSAGE_READ_SERVER: {
 //                    String strMsg = msg.obj.toString();
 //                    UITools.writeLog(MainActivity.this, infoText, strMsg);
@@ -49,15 +51,15 @@ public class MidSupporter {
 //                    UITools.writeLog(MainActivity.this, infoText, strMsg);
 //                    break;
 //                }
-            }
-        }
-    };
+//            }
+//        }
+//    };
 
-    public MidSupporter(Activity context, TextView infoText) {
+    public MidSupporter(Activity context, final Handler mainHandler) {
         this.context = context;
 
-        wfdManager = new WFDManager(this.context, infoText);
-//        wfdManager.setWFDListener(mainUiHandler);
+        wfdManager = new WFDManager(this.context);
+        wfdManager.setWFDListener(mainHandler);
         wfdManager.setBroadCastListener(new WFDManager.BroadCastListener() {
             @Override
             public void peerDeviceListUpdated(Collection<WifiP2pDevice> deviceList) {
@@ -75,10 +77,10 @@ public class MidSupporter {
                 String brokerIp = p2pInfo.groupOwnerAddress.getHostAddress();
                 if (p2pInfo.groupFormed && p2pInfo.isGroupOwner) {
                     // the group owner will also become a broker
-                    MidBroker broker = new MidBroker(brokerIp, mainUiHandler);
+                    MidBroker broker = new MidBroker(brokerIp, mainHandler);
                     broker.execute();
                 } else if (p2pInfo.groupFormed) {
-
+                    new MidPublisher(brokerIp, mainHandler).start();
                 }
             }
         });
