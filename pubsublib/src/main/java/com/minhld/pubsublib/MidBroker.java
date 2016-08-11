@@ -6,7 +6,7 @@ import org.zeromq.ZMQ;
 
 /**
  * Created by minhld on 8/4/2016.
- * This class is to simulate an ActiveMQ on Android
+ * This class works as a broker in the middleware on Android
  */
 public class MidBroker extends Thread {
     private String brokerIp;

@@ -1,15 +1,13 @@
 package com.minhld.pubsublib;
 
-import android.os.AsyncTask;
-import android.os.Handler;
-
 import com.minhld.wfd.Utils;
 
 import org.zeromq.ZMQ;
 
-import java.util.Date;
-
 /**
+ * Publisher - push data to the brokers or subscribers
+ * Supports two mode
+ *
  * Created by minhld on 8/4/2016.
  */
 public abstract class MidPublisher extends Thread {
@@ -19,22 +17,41 @@ public abstract class MidPublisher extends Thread {
 
     private String groupIp;
     private int sendInterval;
+    private boolean neededBroker;
+
+    public void setSendInterval(int _interval) {
+        this.sendInterval = _interval;
+    }
+
+    public void setAlsoGroupOwner(boolean _neededBroker) {
+        this.neededBroker = _neededBroker;
+    }
 
     public MidPublisher() {
         this.groupIp = "*";
         this.sendInterval = PUB_INTERVAL;
+        this.neededBroker = true;
         this.start();
     }
 
     public MidPublisher(String _groupIp) {
         this.groupIp = _groupIp;
         this.sendInterval = PUB_INTERVAL;
+        this.neededBroker = true;
         this.start();
     }
 
-    public MidPublisher(String _groupIp, int interval) {
+    public MidPublisher(String _groupIp, int _interval) {
         this.groupIp = _groupIp;
-        this.sendInterval = interval;
+        this.sendInterval = _interval;
+        this.neededBroker = true;
+        this.start();
+    }
+
+    public MidPublisher(String _groupIp, int _interval, boolean _neededBroker) {
+        this.groupIp = _groupIp;
+        this.sendInterval = _interval;
+        this.neededBroker = _neededBroker;
         this.start();
     }
 
@@ -43,7 +60,13 @@ public abstract class MidPublisher extends Thread {
             context = ZMQ.context(1);
             publisher = context.socket(ZMQ.PUB);
             String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XPUB_PORT;
-            publisher.connect(bindGroupStr);
+            if (this.neededBroker) {
+                // this will connect to a broker
+                publisher.connect(bindGroupStr);
+            } else {
+                // this will set it as a self-control publisher
+                publisher.bind(bindGroupStr);
+            }
 
             // loop until the thread is disposed
             while (!Thread.currentThread().isInterrupted()) {
