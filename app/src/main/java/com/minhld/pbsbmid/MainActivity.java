@@ -14,6 +14,8 @@ import com.minhld.pubsublib.MidPublisher;
 import com.minhld.pubsublib.MidSubscriber;
 import com.minhld.wfd.Utils;
 
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -83,16 +85,35 @@ public class MainActivity extends AppCompatActivity {
         pubBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MidPublisher(UITools.GO_IP, mainUiHandler);
+                new ExPublisher(UITools.GO_IP);
             }
         });
 
         subBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MidSubscriber(UITools.GO_IP, mainUiHandler);
+                new MidSubscriber(UITools.GO_IP, new MidSubscriber.MessageListener() {
+                    @Override
+                    public void msgReceived(String topic, byte[] msg) {
+                        UITools.writeLog(MainActivity.this, infoText, topic + ": " + new String(msg));
+                    }
+                });
             }
         });
+    }
+
+    public class ExPublisher extends MidPublisher {
+
+        public ExPublisher(String _groupIp) {
+            super(_groupIp, 2000);
+        }
+
+        @Override
+        public void send() {
+            String newDate = new Date().toString();
+            sendFrame("ADFB", newDate.getBytes());
+            sendFrame("CDEF", newDate.getBytes());
+        };
     }
 
     @Override

@@ -1,52 +1,72 @@
 package com.minhld.pubsublib;
 
-import android.os.Handler;
-
 import com.minhld.wfd.Utils;
 
 import org.zeromq.ZMQ;
-
-import java.util.Date;
 
 /**
  * Created by minhld on 8/4/2016.
  */
 
 public class MidSubscriber extends Thread {
-    private final int PUB_INTERVAL = 1500;
     private ZMQ.Context context;
-    private ZMQ.Socket socket;
+    private ZMQ.Socket subscriber;
 
     private String groupIp;
-    private Handler uiHandler;
+    private String[] topics;
+    private MessageListener mListener;
 
-    public MidSubscriber(String _groupIp, Handler _uiHandler) {
+    public MidSubscriber(MessageListener _listener) {
+        this.groupIp = "*";
+        this.topics = new String[] { "" };
+        this.mListener = _listener;
+        this.start();
+    }
+
+    public MidSubscriber(String _groupIp, MessageListener _listener) {
         this.groupIp = _groupIp;
-        this.uiHandler = _uiHandler;
+        this.topics = new String[] { "" };
+        this.mListener = _listener;
+        this.start();
+    }
 
+    public MidSubscriber(String _groupIp, String[] _topics, MessageListener _listener) {
+        this.groupIp = _groupIp;
+        this.topics = _topics;
+        this.mListener = _listener;
         this.start();
     }
 
     public void run() {
         try {
             context = ZMQ.context(1);
-            socket = context.socket(ZMQ.SUB);
-            String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XPUB_PORT;
-            socket.connect(bindGroupStr);
+            subscriber = context.socket(ZMQ.SUB);
+            String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XSUB_PORT;
+            subscriber.connect(bindGroupStr);
 
-            this.uiHandler.obtainMessage(Utils.MESSAGE_INFO, "subscriber started...").sendToTarget();
-
-            // loop until the thread is disposed
-            while (!Thread.currentThread().isInterrupted()) {
-                byte[] msg = socket.recv();
-                this.uiHandler.obtainMessage(Utils.MESSAGE_INFO, "client received: " + new String(msg)).sendToTarget();
+            // subscribe all the available topics
+            for (int i = 0; i < this.topics.length; i++) {
+                subscriber.subscribe(topics[i].getBytes());
             }
 
-            socket.close();
+            // loop until the thread is disposed
+            String topic;
+            byte[] msg = null;
+            while (!Thread.currentThread().isInterrupted()) {
+                topic = subscriber.recvStr();
+                msg = subscriber.recv();
+                this.mListener.msgReceived(topic, msg);
+            }
+
+            subscriber.close();
             context.term();
         } catch (Exception e) {
             // exception there - leave it for now
 
         }
+    }
+
+    public interface MessageListener {
+        public void msgReceived(String topic, byte[] msg);
     }
 }

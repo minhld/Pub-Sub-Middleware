@@ -1,8 +1,5 @@
 package com.minhld.pubsublib;
 
-import android.os.AsyncTask;
-import android.os.Handler;
-
 import com.minhld.wfd.Utils;
 
 import org.zeromq.ZMQ;
@@ -13,12 +10,14 @@ import org.zeromq.ZMQ;
  */
 public class MidBroker extends Thread {
     private String brokerIp;
-    private final Handler uiHandler;
 
-    public MidBroker(String _brokerIp, Handler _uiHandler) {
+    public MidBroker() {
+        this.brokerIp = "*";
+        this.start();
+    }
+
+    public MidBroker(String _brokerIp) {
         this.brokerIp = _brokerIp;
-        this.uiHandler = _uiHandler;
-
         this.start();
     }
 
@@ -26,22 +25,20 @@ public class MidBroker extends Thread {
         ZMQ.Context context = ZMQ.context(1);
 
         // initiate publish socket
-        String xpubUri = "tcp://" + this.brokerIp + ":" + Utils.BROKER_XPUB_PORT;
+        String xpubUri = "tcp://" + this.brokerIp + ":" + Utils.BROKER_XSUB_PORT;
         ZMQ.Socket xpubSk = context.socket(ZMQ.XPUB);
         xpubSk.bind(xpubUri);
 
         // initiate subscribe socket
-        String xsubUri = "tcp://" + this.brokerIp + ":" + Utils.BROKER_XSUB_PORT;
+        String xsubUri = "tcp://" + this.brokerIp + ":" + Utils.BROKER_XPUB_PORT;
         ZMQ.Socket xsubSk = context.socket(ZMQ.XSUB);
         xsubSk.bind(xsubUri);
 
         // bind the two sockets together - this will suspend here to listen
-        this.uiHandler.obtainMessage(Utils.MESSAGE_INFO, "broker started...").sendToTarget();
         ZMQ.proxy(xsubSk, xpubSk, null);
 
         xsubSk.close();
         xpubSk.close();
         context.term();
     }
-
 }

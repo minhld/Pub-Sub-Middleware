@@ -84,7 +84,7 @@ public class MidSupporter {
                     }
 
                     // the group owner will also become a broker
-                    mBroker = new MidBroker(brokerIp, mainHandler);
+                    mBroker = new MidBroker(brokerIp);
                 } else if (p2pInfo.groupFormed) {
                     // let user select to be either publisher or subscriber
 //                    new MidPublisher(brokerIp, mainHandler).start();
