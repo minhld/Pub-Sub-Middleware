@@ -12,26 +12,39 @@ public class MidSubscriber extends Thread {
     private ZMQ.Context context;
     private ZMQ.Socket subscriber;
 
-    private String groupIp;
-    private String[] topics;
+    private String groupIp = "*";
+    private int port = Utils.BROKER_XSUB_PORT;
+    private String[] topics = new String[] { "" };
     private MessageListener mListener;
 
     public MidSubscriber(MessageListener _listener) {
-        this.groupIp = "*";
-        this.topics = new String[] { "" };
         this.mListener = _listener;
         this.start();
     }
 
     public MidSubscriber(String _groupIp, MessageListener _listener) {
         this.groupIp = _groupIp;
-        this.topics = new String[] { "" };
+        this.mListener = _listener;
+        this.start();
+    }
+
+    public MidSubscriber(String _groupIp, int _port, MessageListener _listener) {
+        this.groupIp = _groupIp;
+        this.port = _port;
         this.mListener = _listener;
         this.start();
     }
 
     public MidSubscriber(String _groupIp, String[] _topics, MessageListener _listener) {
         this.groupIp = _groupIp;
+        this.topics = _topics;
+        this.mListener = _listener;
+        this.start();
+    }
+
+    public MidSubscriber(String _groupIp, int _port, String[] _topics, MessageListener _listener) {
+        this.groupIp = _groupIp;
+        this.port = _port;
         this.topics = _topics;
         this.mListener = _listener;
         this.start();

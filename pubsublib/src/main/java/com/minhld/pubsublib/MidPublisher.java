@@ -15,9 +15,10 @@ public abstract class MidPublisher extends Thread {
     private ZMQ.Context context;
     private ZMQ.Socket publisher;
 
-    private String groupIp;
-    private int sendInterval;
-    private boolean neededBroker;
+    private String groupIp = "*";
+    private int port = Utils.BROKER_XPUB_PORT;
+    private int sendInterval = PUB_INTERVAL;
+    private boolean neededBroker = false;
 
     public void setSendInterval(int _interval) {
         this.sendInterval = _interval;
@@ -28,29 +29,29 @@ public abstract class MidPublisher extends Thread {
     }
 
     public MidPublisher() {
-        this.groupIp = "*";
-        this.sendInterval = PUB_INTERVAL;
-        this.neededBroker = true;
         this.start();
     }
 
     public MidPublisher(String _groupIp) {
         this.groupIp = _groupIp;
-        this.sendInterval = PUB_INTERVAL;
-        this.neededBroker = true;
         this.start();
     }
 
-    public MidPublisher(String _groupIp, int _interval) {
+    public MidPublisher(String _groupIp, int _port) {
         this.groupIp = _groupIp;
-        this.sendInterval = _interval;
-        this.neededBroker = true;
+        this.port = _port;
         this.start();
     }
 
-    public MidPublisher(String _groupIp, int _interval, boolean _neededBroker) {
+    public MidPublisher(String _groupIp, boolean _neededBroker) {
         this.groupIp = _groupIp;
-        this.sendInterval = _interval;
+        this.neededBroker = _neededBroker;
+        this.start();
+    }
+
+    public MidPublisher(String _groupIp, int _port, boolean _neededBroker) {
+        this.groupIp = _groupIp;
+        this.port = _port;
         this.neededBroker = _neededBroker;
         this.start();
     }
