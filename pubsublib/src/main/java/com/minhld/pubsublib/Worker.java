@@ -11,14 +11,14 @@ import org.zeromq.ZMQ;
  *
  * Created by minhld on 8/18/2016.
  */
-public abstract class MidWorker extends Thread {
+public abstract class Worker extends Thread {
     private String groupIp = "*";
 
-    public MidWorker() {
+    public Worker() {
         this.start();
     }
 
-    public MidWorker(String _groupIp) {
+    public Worker(String _groupIp) {
         this.groupIp = _groupIp;
         this.start();
     }
@@ -62,5 +62,12 @@ public abstract class MidWorker extends Thread {
         }
     }
 
+    /**
+     * this abstract function needs to be filled. this is to
+     * define how worker will complete the work
+     *
+     * @param request
+     * @return
+     */
     public abstract byte[] resolveRequest(byte[] request);
 }

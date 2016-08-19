@@ -16,22 +16,22 @@ import java.util.Queue;
  *  - Router mode
  *
  */
-public class MidBroker extends Thread {
+public class Broker extends Thread {
     private String brokerIp = "*";
 
     // default type of the broker is publish-subscribe mode
     private Utils.PubSubType pubSubType = Utils.PubSubType.PubSub;
 
-    public MidBroker() {
+    public Broker() {
         this.start();
     }
 
-    public MidBroker(Utils.PubSubType _pubSubType) {
+    public Broker(Utils.PubSubType _pubSubType) {
         this.pubSubType = _pubSubType;
         this.start();
     }
 
-    public MidBroker(String _brokerIp) {
+    public Broker(String _brokerIp) {
         this.brokerIp = _brokerIp;
         this.start();
     }

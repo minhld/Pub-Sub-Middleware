@@ -8,7 +8,7 @@ import org.zeromq.ZMQ;
  * Created by minhld on 8/4/2016.
  */
 
-public class MidSubscriber extends Thread {
+public class Subscriber extends Thread {
     private String groupIp = "*";
     private int port = Utils.BROKER_XSUB_PORT;
     private String[] topics = new String[] { "" };
@@ -18,28 +18,28 @@ public class MidSubscriber extends Thread {
         this.mListener = _listener;
     }
 
-    public MidSubscriber() {
+    public Subscriber() {
         this.start();
     }
 
-    public MidSubscriber(String _groupIp) {
+    public Subscriber(String _groupIp) {
         this.groupIp = _groupIp;
         this.start();
     }
 
-    public MidSubscriber(String _groupIp, int _port) {
+    public Subscriber(String _groupIp, int _port) {
         this.groupIp = _groupIp;
         this.port = _port;
         this.start();
     }
 
-    public MidSubscriber(String _groupIp, String[] _topics) {
+    public Subscriber(String _groupIp, String[] _topics) {
         this.groupIp = _groupIp;
         this.topics = _topics;
         this.start();
     }
 
-    public MidSubscriber(String _groupIp, int _port, String[] _topics) {
+    public Subscriber(String _groupIp, int _port, String[] _topics) {
         this.groupIp = _groupIp;
         this.port = _port;
         this.topics = _topics;

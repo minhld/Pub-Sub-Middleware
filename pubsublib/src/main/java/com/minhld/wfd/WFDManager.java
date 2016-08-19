@@ -83,11 +83,11 @@ public class WFDManager extends BroadcastReceiver {
 //                    if (info.groupFormed && info.isGroupOwner) {
 //                        // if it is a group owner, it will become a broker
 //                        String brokerIp = info.groupOwnerAddress.getHostAddress();
-//                        new MidBroker(brokerIp, mWFDListener).execute();
+//                        new Broker(brokerIp, mWFDListener).execute();
 //                        writeLog("broker started");
 //                    } else if (info.groupFormed) {
 //                        String brokerIp = info.groupOwnerAddress.getHostAddress();
-//                        new MidPublisher(brokerIp, mWFDListener).execute();
+//                        new Publisher(brokerIp, mWFDListener).execute();
 //                    } else {
 //
 //                    }

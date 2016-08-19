@@ -10,8 +10,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.minhld.pubsublib.MidPublisher;
-import com.minhld.pubsublib.MidSubscriber;
+import com.minhld.pubsublib.Subscriber;
+import com.minhld.pubsublib.Publisher;
 import com.minhld.wfd.Utils;
 
 import java.util.Date;
@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
         subBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MidSubscriber subscriber = new MidSubscriber(UITools.GO_IP);
-                subscriber.setMessageListener(new MidSubscriber.MessageListener() {
+                Subscriber subscriber = new Subscriber(UITools.GO_IP);
+                subscriber.setMessageListener(new Subscriber.MessageListener() {
                     @Override
                     public void msgReceived(String topic, byte[] msg) {
                         UITools.writeLog(MainActivity.this, infoText, topic + ": " + new String(msg));
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public class ExPublisher extends MidPublisher {
+    public class ExPublisher extends Publisher {
 
         public ExPublisher(String _groupIp) {
             super(_groupIp, 2000);

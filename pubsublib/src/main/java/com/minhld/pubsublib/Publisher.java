@@ -10,7 +10,7 @@ import org.zeromq.ZMQ;
  *
  * Created by minhld on 8/4/2016.
  */
-public abstract class MidPublisher extends Thread {
+public abstract class Publisher extends Thread {
     private final int PUB_INTERVAL = 1500;
     private ZMQ.Socket publisher;
 
@@ -27,16 +27,16 @@ public abstract class MidPublisher extends Thread {
         this.neededBroker = _neededBroker;
     }
 
-    public MidPublisher() {
+    public Publisher() {
         this.start();
     }
 
-    public MidPublisher(String _groupIp) {
+    public Publisher(String _groupIp) {
         this.groupIp = _groupIp;
         this.start();
     }
 
-    public MidPublisher(String _groupIp, int _port) {
+    public Publisher(String _groupIp, int _port) {
         this.groupIp = _groupIp;
         this.port = _port;
         this.start();

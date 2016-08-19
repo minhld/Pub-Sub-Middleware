@@ -5,11 +5,11 @@ import com.minhld.wfd.Utils;
 import org.zeromq.ZMQ;
 
 /**
- *
+ * this Client is used in Router mode
  * Created by minhld on 8/18/2016.
  */
 
-public class MidClient extends Thread {
+public class Client extends Thread {
     private ZMQ.Socket requester;
     private String groupIp = "*";
     private int port = Utils.BROKER_XSUB_PORT;

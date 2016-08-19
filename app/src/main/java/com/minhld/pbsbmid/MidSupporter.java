@@ -1,16 +1,12 @@
 package com.minhld.pbsbmid;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Handler;
-import android.os.Message;
-import android.widget.TextView;
 
-import com.minhld.pubsublib.MidBroker;
-import com.minhld.pubsublib.MidPublisher;
+import com.minhld.pubsublib.Broker;
 import com.minhld.wfd.Utils;
 import com.minhld.wfd.WFDManager;
 
@@ -27,7 +23,7 @@ public class MidSupporter {
     WFDManager wfdManager;
     IntentFilter mIntentFilter;
     WifiPeerListAdapter deviceListAdapter;
-    MidBroker mBroker;
+    Broker mBroker;
 
 
 //    Handler mainUiHandler = new Handler() {
@@ -84,10 +80,10 @@ public class MidSupporter {
                     }
 
                     // the group owner will also become a broker
-                    mBroker = new MidBroker(brokerIp);
+                    mBroker = new Broker(brokerIp);
                 } else if (p2pInfo.groupFormed) {
                     // let user select to be either publisher or subscriber
-//                    new MidPublisher(brokerIp, mainHandler).start();
+//                    new Publisher(brokerIp, mainHandler).start();
                 }
             }
         });
