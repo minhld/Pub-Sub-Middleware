@@ -43,6 +43,9 @@ public abstract class Publisher extends Thread {
     }
 
     public void run() {
+        // prepare before running
+        prepare();
+
         try {
             ZMQ.Context context = ZMQ.context(1);
             publisher = context.socket(ZMQ.PUB);
@@ -73,6 +76,12 @@ public abstract class Publisher extends Thread {
 
         }
     }
+
+    /**
+     * this function should be implemented to provide preparation code
+     * before the process is being run
+     */
+    protected abstract void prepare();
 
     /**
      * fill in the abstract send function to implement what the publisher
