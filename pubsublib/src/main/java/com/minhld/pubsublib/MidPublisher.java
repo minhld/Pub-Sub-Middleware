@@ -24,7 +24,7 @@ public abstract class MidPublisher extends Thread {
         this.sendInterval = _interval;
     }
 
-    public void setAlsoGroupOwner(boolean _neededBroker) {
+    public void setNeededBroker(boolean _neededBroker) {
         this.neededBroker = _neededBroker;
     }
 
@@ -40,19 +40,6 @@ public abstract class MidPublisher extends Thread {
     public MidPublisher(String _groupIp, int _port) {
         this.groupIp = _groupIp;
         this.port = _port;
-        this.start();
-    }
-
-    public MidPublisher(String _groupIp, boolean _neededBroker) {
-        this.groupIp = _groupIp;
-        this.neededBroker = _neededBroker;
-        this.start();
-    }
-
-    public MidPublisher(String _groupIp, int _port, boolean _neededBroker) {
-        this.groupIp = _groupIp;
-        this.port = _port;
-        this.neededBroker = _neededBroker;
         this.start();
     }
 

@@ -92,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
         subBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MidSubscriber(UITools.GO_IP, new MidSubscriber.MessageListener() {
+                MidSubscriber subscriber = new MidSubscriber(UITools.GO_IP);
+                subscriber.setMessageListener(new MidSubscriber.MessageListener() {
                     @Override
                     public void msgReceived(String topic, byte[] msg) {
                         UITools.writeLog(MainActivity.this, infoText, topic + ": " + new String(msg));

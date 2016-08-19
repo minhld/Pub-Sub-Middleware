@@ -39,6 +39,11 @@ public class Utils {
     public static final int MESSAGE_READ_NO_FILE = 0x500 + 5;
     public static final int MESSAGE_INFO = 0x500 + 6;
 
+    public static enum PubSubType {
+        PubSub,
+        Router
+    }
+
     // same value as MESSAGE_READ_SERVER, because it will be used for replacing
     // each other sometimes.
     public static final int JOB_OK = 0x500 + 2;

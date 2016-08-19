@@ -17,36 +17,35 @@ public class MidSubscriber extends Thread {
     private String[] topics = new String[] { "" };
     private MessageListener mListener;
 
-    public MidSubscriber(MessageListener _listener) {
+    public void setMessageListener(MessageListener _listener) {
         this.mListener = _listener;
+    }
+
+    public MidSubscriber() {
         this.start();
     }
 
-    public MidSubscriber(String _groupIp, MessageListener _listener) {
+    public MidSubscriber(String _groupIp) {
         this.groupIp = _groupIp;
-        this.mListener = _listener;
         this.start();
     }
 
-    public MidSubscriber(String _groupIp, int _port, MessageListener _listener) {
-        this.groupIp = _groupIp;
-        this.port = _port;
-        this.mListener = _listener;
-        this.start();
-    }
-
-    public MidSubscriber(String _groupIp, String[] _topics, MessageListener _listener) {
-        this.groupIp = _groupIp;
-        this.topics = _topics;
-        this.mListener = _listener;
-        this.start();
-    }
-
-    public MidSubscriber(String _groupIp, int _port, String[] _topics, MessageListener _listener) {
+    public MidSubscriber(String _groupIp, int _port) {
         this.groupIp = _groupIp;
         this.port = _port;
+        this.start();
+    }
+
+    public MidSubscriber(String _groupIp, String[] _topics) {
+        this.groupIp = _groupIp;
         this.topics = _topics;
-        this.mListener = _listener;
+        this.start();
+    }
+
+    public MidSubscriber(String _groupIp, int _port, String[] _topics) {
+        this.groupIp = _groupIp;
+        this.port = _port;
+        this.topics = _topics;
         this.start();
     }
 
