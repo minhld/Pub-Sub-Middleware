@@ -12,7 +12,6 @@ import org.zeromq.ZMQ;
  */
 public abstract class MidPublisher extends Thread {
     private final int PUB_INTERVAL = 1500;
-    private ZMQ.Context context;
     private ZMQ.Socket publisher;
 
     private String groupIp = "*";
@@ -45,7 +44,7 @@ public abstract class MidPublisher extends Thread {
 
     public void run() {
         try {
-            context = ZMQ.context(1);
+            ZMQ.Context context = ZMQ.context(1);
             publisher = context.socket(ZMQ.PUB);
             String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XPUB_PORT;
             if (this.neededBroker) {

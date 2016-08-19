@@ -9,9 +9,6 @@ import org.zeromq.ZMQ;
  */
 
 public class MidSubscriber extends Thread {
-    private ZMQ.Context context;
-    private ZMQ.Socket subscriber;
-
     private String groupIp = "*";
     private int port = Utils.BROKER_XSUB_PORT;
     private String[] topics = new String[] { "" };
@@ -51,8 +48,8 @@ public class MidSubscriber extends Thread {
 
     public void run() {
         try {
-            context = ZMQ.context(1);
-            subscriber = context.socket(ZMQ.SUB);
+            ZMQ.Context context = ZMQ.context(1);
+            ZMQ.Socket subscriber = context.socket(ZMQ.SUB);
             String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XSUB_PORT;
             subscriber.connect(bindGroupStr);
 

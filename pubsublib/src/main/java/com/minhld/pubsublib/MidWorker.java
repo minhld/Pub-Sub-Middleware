@@ -35,11 +35,15 @@ public abstract class MidWorker extends Thread {
             // inform broker i am ready
             worker.send(Utils.WORKER_READY);
 
-            byte[] request, result;
+            String clientAddr;
+            byte[] request, result, empty;
             while (!Thread.currentThread().isInterrupted()) {
-                String clientAddr = worker.recvStr();
-                String empty = worker.recvStr();
-                assert (empty.length() == 0);
+                // get client address
+                clientAddr = worker.recvStr();
+
+                // delimiter
+                empty = worker.recv();
+                assert (empty.length == 0);
 
                 // get request, send reply
                 request = worker.recv();
