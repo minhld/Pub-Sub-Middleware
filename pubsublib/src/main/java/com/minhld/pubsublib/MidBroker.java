@@ -4,6 +4,9 @@ import com.minhld.wfd.Utils;
 
 import org.zeromq.ZMQ;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * Created by minhld on 8/4/2016.
  * This class work as a broker among the devices in mobile network.
@@ -14,13 +17,17 @@ import org.zeromq.ZMQ;
  *
  */
 public class MidBroker extends Thread {
-    private String brokerIp;
+    private String brokerIp = "*";
 
     // default type of the broker is publish-subscribe mode
     private Utils.PubSubType pubSubType = Utils.PubSubType.PubSub;
 
     public MidBroker() {
-        this.brokerIp = "*";
+        this.start();
+    }
+
+    public MidBroker(Utils.PubSubType _pubSubType) {
+        this.pubSubType = _pubSubType;
         this.start();
     }
 
@@ -79,7 +86,88 @@ public class MidBroker extends Thread {
      * which is for job distribution
      */
     private void initRouterMode() {
+        ZMQ.Context context = ZMQ.context(1);
 
+        // initiate publish socket
+        String frontendPort = "tcp://" + this.brokerIp + ":" + Utils.BROKER_XSUB_PORT;
+        ZMQ.Socket frontend = context.socket(ZMQ.ROUTER);
+        frontend.bind(frontendPort);
+
+        // initiate subscribe socket
+        String backendPort = "tcp://" + this.brokerIp + ":" + Utils.BROKER_XPUB_PORT;
+        ZMQ.Socket backend = context.socket(ZMQ.ROUTER);
+        backend.bind(backendPort);
+
+        // Queue of available workers
+        Queue<String> workerQueue = new LinkedList<>();
+
+        String workerAddr, clientAddr;
+        byte[] empty, request, reply;
+        while (!Thread.currentThread().isInterrupted()) {
+            ZMQ.Poller items = new ZMQ.Poller(2);
+            items.register(backend, ZMQ.Poller.POLLIN);
+            items.register(frontend, ZMQ.Poller.POLLIN);
+
+            if (items.poll() < 0)
+                break;
+
+            // handle worker activity on back-end
+            if (items.pollin(0)) {
+                // queue worker address for LRU routing
+                workerAddr = backend.recvStr();
+                workerQueue.add(workerAddr);
+
+                // second frame is a delimiter, empty
+                empty = backend.recv();
+                assert (empty.length == 0);
+
+                // third frame is READY or else a client reply address
+                clientAddr = backend.recvStr();
+
+                // if client reply, send rest back to front-end
+                if (!clientAddr.equals(Utils.WORKER_READY)) {
+                    // check the delimiter again
+                    empty = backend.recv();
+                    assert (empty.length == 0);
+
+                    // collect the main data frame
+                    reply = backend.recv();
+
+                    // flush them out to the front-end
+                    frontend.sendMore(clientAddr);
+                    frontend.sendMore(Utils.BROKER_DELIMITER);
+                    frontend.send(reply);
+                }
+            }
+
+            // handle client activity at front-end
+            if (items.pollin(1)) {
+                // now get next client request, route to LRU worker
+                // client request is [address][empty][request]
+                clientAddr = frontend.recvStr();
+
+                // check 2nd frame
+                empty = frontend.recv();
+                assert (empty.length == 0);
+
+                // get 3rd frame
+                request = frontend.recv();
+
+                // get worker address from the queue
+                workerAddr = workerQueue.poll();
+
+                backend.sendMore(workerAddr);
+                backend.sendMore(Utils.BROKER_DELIMITER);
+                backend.sendMore(clientAddr);
+                backend.sendMore(Utils.BROKER_DELIMITER);
+                backend.send (request);
+            }
+
+        }
+
+        frontend.close();
+        backend.close();
+        context.term();
     }
 
 }
