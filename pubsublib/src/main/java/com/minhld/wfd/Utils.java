@@ -44,6 +44,11 @@ public class Utils {
         Router
     }
 
+    public static enum BrokerType {
+        Broker,
+        Brokerless
+    }
+
     // same value as MESSAGE_READ_SERVER, because it will be used for replacing
     // each other sometimes.
     public static final int JOB_OK = 0x500 + 2;

@@ -13,6 +13,10 @@ import org.zeromq.ZMQ;
  */
 public abstract class Worker extends Thread {
     private String groupIp = "*";
+    private int port = Utils.BROKER_XPUB_PORT;
+
+    // default type of the broker is publish-subscribe mode
+    private Utils.BrokerType brokerType = Utils.BrokerType.Broker;
 
     public Worker() {
         this.start();
@@ -23,16 +27,43 @@ public abstract class Worker extends Thread {
         this.start();
     }
 
+    public Worker(String _groupIp, int _port) {
+        this.groupIp = _groupIp;
+        this.port = _port;
+        this.start();
+    }
+
     public void run() {
+        switch (this.brokerType) {
+            case Broker: {
+                initWithBroker();
+                break;
+            }
+
+            case Brokerless: {
+                initWithoutBroker();
+                break;
+            }
+        }
+    }
+
+    public void setBrokerType(Utils.BrokerType _brokerType) {
+        this.brokerType = _brokerType;
+    }
+
+    /**
+     * initiate worker with broker at the middle
+     */
+    private void initWithBroker() {
         try {
             ZMQ.Context context = ZMQ.context(1);
 
-            //  Socket to talk to clients
+            //  Socket to talk to clients and set its Id
             ZMQ.Socket worker = context.socket(ZMQ.REQ);
             ZHelper.setId (worker);
-            worker.connect("tcp://" + groupIp + ":" + Utils.BROKER_XPUB_PORT);
+            worker.connect("tcp://" + this.groupIp + ":" + this.port);
 
-            // inform broker i am ready
+            // inform broker that i am ready
             worker.send(Utils.WORKER_READY);
 
             String clientAddr;
@@ -60,6 +91,14 @@ public abstract class Worker extends Thread {
             // exception there - leave it for now
             e.printStackTrace();
         }
+    }
+
+    /**
+     * initiate worker without broker at the middle.
+     * worker also takes the role of broker
+     */
+    private void initWithoutBroker() {
+
     }
 
     /**

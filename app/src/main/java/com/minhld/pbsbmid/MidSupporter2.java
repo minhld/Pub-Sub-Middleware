@@ -16,16 +16,16 @@ import java.util.Collection;
  * Created by minhld on 8/6/2016.
  *
  * This class utilizes the pubsub library to provide full functionality of
- * publish-subscribe to the client application
+ * router mode application
  */
-public class MidSupporter {
+public class MidSupporter2 {
     Activity context;
     WFDManager wfdManager;
     IntentFilter mIntentFilter;
     WifiPeerListAdapter deviceListAdapter;
     Broker mBroker;
 
-    public MidSupporter(Activity context, final Handler mainHandler) {
+    public MidSupporter2(Activity context, final Handler mainHandler) {
         this.context = context;
 
         wfdManager = new WFDManager(this.context);
