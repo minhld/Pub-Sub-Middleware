@@ -10,8 +10,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.minhld.pubsublib.Client;
 import com.minhld.pubsublib.Subscriber;
 import com.minhld.pubsublib.Publisher;
+import com.minhld.pubsublib.Worker;
 import com.minhld.wfd.Utils;
 
 import java.util.Date;
@@ -51,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    MidSupporter midSupporter;
+//    MidSupporter midSupporter;
+    MidSupporter2 midSupporter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         infoText.setMovementMethod(new ScrollingMovementMethod());
 
-        midSupporter = new MidSupporter(this, mainUiHandler);
+//        midSupporter = new MidSupporter(this, mainUiHandler);
+        midSupporter = new MidSupporter2(this, mainUiHandler);
 
         // bind device list
         deviceList.setAdapter(midSupporter.getDeviceListAdapter());
@@ -85,37 +89,68 @@ public class MainActivity extends AppCompatActivity {
         pubBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ExPublisher(UITools.GO_IP);
+//                new ExPublisher(UITools.GO_IP);
+                new ExWorker();
             }
         });
 
         subBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Subscriber subscriber = new Subscriber(UITools.GO_IP);
-                subscriber.setMessageListener(new Subscriber.MessageListener() {
-                    @Override
-                    public void msgReceived(String topic, byte[] msg) {
-                        UITools.writeLog(MainActivity.this, infoText, topic + ": " + new String(msg));
-                    }
-                });
+//                Subscriber subscriber = new Subscriber(UITools.GO_IP);
+//                subscriber.setMessageListener(new Subscriber.MessageListener() {
+//                    @Override
+//                    public void msgReceived(String topic, byte[] msg) {
+//                        UITools.writeLog(MainActivity.this, infoText, topic + ": " + new String(msg));
+//                    }
+//                });
+                new ExClient();
             }
         });
     }
 
-    public class ExPublisher extends Publisher {
+    public class ExClient extends Client {
 
-        public ExPublisher(String _groupIp) {
-            super(_groupIp, 2000);
+        public ExClient() {
+            super(UITools.GO_IP);
         }
 
         @Override
         public void send() {
-            String newDate = new Date().toString();
-            sendFrame("ADFB", newDate.getBytes());
-            sendFrame("CDEF", newDate.getBytes());
-        };
+            sendMessage("HELLO THERE!");
+        }
+
+        @Override
+        public void resolveResult(byte[] result) {
+            UITools.writeLog(MainActivity.this, infoText, "From worker: " + new String(result));
+        }
     }
+
+    public class ExWorker extends Worker {
+
+        public ExWorker() {
+            super(UITools.GO_IP);
+        }
+
+        @Override
+        public byte[] resolveRequest(byte[] request) {
+            return "FROM WORKER ".getBytes();
+        }
+    }
+
+//    public class ExPublisher extends Publisher {
+//
+//        public ExPublisher(String _groupIp) {
+//            super(_groupIp, 2000);
+//        }
+//
+//        @Override
+//        public void send() {
+//            String newDate = new Date().toString();
+//            sendFrame("ADFB", newDate.getBytes());
+//            sendFrame("CDEF", newDate.getBytes());
+//        };
+//    }
 
     @Override
     protected void onPause() {

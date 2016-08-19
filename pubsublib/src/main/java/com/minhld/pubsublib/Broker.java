@@ -22,7 +22,8 @@ public class Broker extends Thread {
     // default type of the broker is publish-subscribe mode
     private Utils.PubSubType pubSubType = Utils.PubSubType.PubSub;
 
-    public Broker() {
+    public Broker(String _brokerIp) {
+        this.brokerIp = _brokerIp;
         this.start();
     }
 
@@ -31,8 +32,9 @@ public class Broker extends Thread {
         this.start();
     }
 
-    public Broker(String _brokerIp) {
+    public Broker(String _brokerIp, Utils.PubSubType _pubSubType) {
         this.brokerIp = _brokerIp;
+        this.pubSubType = _pubSubType;
         this.start();
     }
 
