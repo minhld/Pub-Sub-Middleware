@@ -49,7 +49,7 @@ public abstract class Publisher extends Thread {
         try {
             ZMQ.Context context = ZMQ.context(1);
             publisher = context.socket(ZMQ.PUB);
-            String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XPUB_PORT;
+            String bindGroupStr = "tcp://" + this.groupIp + ":" + this.port;
             if (this.neededBroker) {
                 // this will connect to a broker
                 publisher.connect(bindGroupStr);
@@ -73,7 +73,7 @@ public abstract class Publisher extends Thread {
             context.term();
         } catch (Exception e) {
             // exception there - leave it for now
-
+            e.printStackTrace();
         }
     }
 

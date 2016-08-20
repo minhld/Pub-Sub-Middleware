@@ -102,7 +102,7 @@ public class VideoShareActivity extends AppCompatActivity {
         subBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Subscriber subscriber = new Subscriber(UITools.GO_IP);
+                Subscriber subscriber = new Subscriber(UITools.GO_IP, Utils.BROKER_XPUB_PORT, new String[] { "video_frame" });
                 subscriber.setMessageListener(new Subscriber.MessageListener() {
                     @Override
                     public void msgReceived(String topic, byte[] msg) {
@@ -133,7 +133,8 @@ public class VideoShareActivity extends AppCompatActivity {
         int frmIndex = 1;
 
         public ExPublisher() {
-            super(UITools.GO_IP, 10);
+            super(UITools.GO_IP);
+            this.setSendInterval(10);
         }
 
         @Override
@@ -150,6 +151,8 @@ public class VideoShareActivity extends AppCompatActivity {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 currentFrame.compress(Bitmap.CompressFormat.PNG, 80, stream);
                 sendFrame("video_frame", stream.toByteArray());
+                UITools.writeLog(VideoShareActivity.this, infoText, "frame sent: " + stream.size());
+                stream.close();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

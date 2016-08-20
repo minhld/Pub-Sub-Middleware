@@ -52,7 +52,7 @@ public class MidSupporter2 {
                     }
 
                     // the group owner will also become a broker
-                    mBroker = new Broker(brokerIp, Utils.PubSubType.Router);
+//                    mBroker = new Broker(brokerIp, Utils.PubSubType.Router);
                 } else if (p2pInfo.groupFormed) {
                     // let user select to be either publisher or subscriber
 //                    new Publisher(brokerIp, mainHandler).start();

@@ -50,7 +50,7 @@ public class Subscriber extends Thread {
         try {
             ZMQ.Context context = ZMQ.context(1);
             ZMQ.Socket subscriber = context.socket(ZMQ.SUB);
-            String bindGroupStr = "tcp://" + this.groupIp + ":" + Utils.BROKER_XSUB_PORT;
+            String bindGroupStr = "tcp://" + this.groupIp + ":" + this.port;
             subscriber.connect(bindGroupStr);
 
             // subscribe all the available topics

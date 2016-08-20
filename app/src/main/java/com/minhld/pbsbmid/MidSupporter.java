@@ -23,7 +23,7 @@ public class MidSupporter {
     WFDManager wfdManager;
     IntentFilter mIntentFilter;
     WifiPeerListAdapter deviceListAdapter;
-    Broker mBroker;
+//    Broker mBroker;
 
     public MidSupporter(Activity context, final Handler mainHandler) {
         this.context = context;
@@ -46,13 +46,13 @@ public class MidSupporter {
 
                 String brokerIp = p2pInfo.groupOwnerAddress.getHostAddress();
                 if (p2pInfo.groupFormed && p2pInfo.isGroupOwner) {
-                    if (mBroker != null) {
-                        mainHandler.obtainMessage(Utils.MESSAGE_INFO, "broker reused").sendToTarget();
-                        return;
-                    }
+//                    if (mBroker != null) {
+//                        mainHandler.obtainMessage(Utils.MESSAGE_INFO, "broker reused").sendToTarget();
+//                        return;
+//                    }
 
                     // the group owner will also become a broker
-                    mBroker = new Broker(brokerIp);
+//                    mBroker = new Broker(brokerIp);
                 } else if (p2pInfo.groupFormed) {
                     // let user select to be either publisher or subscriber
 //                    new Publisher(brokerIp, mainHandler).start();
