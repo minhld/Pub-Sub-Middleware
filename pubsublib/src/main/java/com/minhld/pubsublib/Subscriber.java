@@ -71,7 +71,7 @@ public class Subscriber extends Thread {
             context.term();
         } catch (Exception e) {
             // exception there - leave it for now
-
+            e.printStackTrace();
         }
     }
 

@@ -105,10 +105,16 @@ public class VideoShareActivity extends AppCompatActivity {
                 Subscriber subscriber = new Subscriber(UITools.GO_IP, Utils.BROKER_XPUB_PORT, new String[] { "video_frame" });
                 subscriber.setMessageListener(new Subscriber.MessageListener() {
                     @Override
-                    public void msgReceived(String topic, byte[] msg) {
+                    public void msgReceived(String topic, final byte[] msg) {
                         // msg - bitmap data
-                        Bitmap frame = BitmapFactory.decodeByteArray(msg, 0, msg.length);
-                        imager.setImageBitmap(frame);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Bitmap frame = BitmapFactory.decodeByteArray(msg, 0, msg.length);
+                                imager.setImageBitmap(frame);
+                            }
+                        });
+
                     }
                 });
             }
@@ -153,14 +159,16 @@ public class VideoShareActivity extends AppCompatActivity {
                 sendFrame("video_frame", stream.toByteArray());
                 UITools.writeLog(VideoShareActivity.this, infoText, "frame sent: " + stream.size());
                 stream.close();
+                frmIndex++;
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    retriever.release();
-                } catch (RuntimeException ex) {
-                }
             }
+//            finally {
+//                try {
+//                    retriever.release();
+//                } catch (RuntimeException ex) {
+//                }
+//            }
         };
     }
 
