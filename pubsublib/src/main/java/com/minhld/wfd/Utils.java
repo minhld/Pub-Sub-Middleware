@@ -84,8 +84,12 @@ public class Utils {
     public static final String MSG_ACK = "ACK";
     public static final int MAX_ACK_SIZE = 1024;
 
+    public static final String BROKER_GENERAL_IP = "*";
+    public static final String BROKER_SPECIFIC_IP = "192.168.49.1";
     public static final String BROKER_DELIMITER = "";
     public static final String WORKER_READY = "READY";
+    public static final String CLIENT_REQ_RES = "CLIENT_REQ";
+    public static final String WORKER_REP_RES = "WORKER_REP";
 
     public enum SocketType {
         SERVER,
