@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.minhld.pbsbjob.MidClient;
+import com.minhld.pubsublib.Worker;
 import com.minhld.wfd.Utils;
 
 import butterknife.BindView;
@@ -48,5 +50,46 @@ public class JobTestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jobtest);
+    }
+
+    private void initSystem() {
+        // start workers
+        new ExMidWorker();
+        new ExMidWorker();
+
+        // start clients
+        new ExMidClient();
+    }
+
+    class ExMidWorker extends Worker {
+        @Override
+        public byte[] resolveRequest(byte[] request) {
+            // 1. receive the job request
+            // 2. analyze the package -> job + data
+            // 3. execute job on data and return result
+            return new byte[0];
+        }
+    }
+
+    class ExMidClient extends MidClient {
+        public ExMidClient() {
+            super(UITools.GO_IP);
+        }
+
+        @Override
+        public boolean resReqResponse(byte[] response) {
+            // whether to dispatch job package or not
+            return false;
+        }
+
+        @Override
+        public void send() {
+            // define what to send to the broker
+        }
+
+        @Override
+        public void resolveResult(byte[] result) {
+            // when result comes
+        }
     }
 }
