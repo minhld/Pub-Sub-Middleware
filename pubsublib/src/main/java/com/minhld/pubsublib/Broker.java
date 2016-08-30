@@ -18,6 +18,7 @@ import java.util.Queue;
  */
 public class Broker extends Thread {
     private String brokerIp = "*";
+    private Queue<String> workerQueue;
 
     // default type of the broker is publish-subscribe mode
     private Utils.PubSubType pubSubType = Utils.PubSubType.PubSub;
@@ -101,7 +102,7 @@ public class Broker extends Thread {
         backend.bind(backendPort);
 
         // Queue of available workers
-        Queue<String> workerQueue = new LinkedList<>();
+        workerQueue = new LinkedList<>();
 
         String workerAddr, clientAddr;
         byte[] empty, request, reply;
@@ -172,4 +173,91 @@ public class Broker extends Thread {
         context.term();
     }
 
+    /**
+     * this class handles sending/receiving ACKs between
+     * broker - workers
+     *
+     * @author minhld
+     */
+    class AckHandler extends Thread {
+        ZMQ.Context parentContext;
+        String brokerIp;
+
+        /**
+         * socket to talk to workers
+         */
+        private ZMQ.Socket requester;
+        private AckListener ackListener;
+
+        public AckHandler(ZMQ.Context _parentContext, String _brokerIp, AckListener _ackListener) {
+            this.parentContext = _parentContext;
+            this.brokerIp = _brokerIp;
+            this.ackListener = _ackListener;
+            this.start();
+        }
+
+        public void sendAck() {
+            requester.sendMore("request");
+            requester.send("ack_request");
+        }
+
+        public void run() {
+            try {
+                ZMQ.Context context = ZMQ.context(1);
+
+                //  Socket to talk to workers
+                requester = context.socket(ZMQ.PUB);
+                requester.setIdentity("broker_ack".getBytes());
+                requester.bind("tcp://" + this.brokerIp + ":5555");
+
+                ZMQ.Socket inquirier = context.socket(ZMQ.REP);
+                inquirier.bind("tcp://" + this.brokerIp + ":5556");
+
+                ZMQ.Poller poller = new ZMQ.Poller(1);
+                poller.register(inquirier, ZMQ.Poller.POLLIN);
+
+                byte[] resp;
+                while (!isInterrupted()) {
+                    requester.sendMore("request");
+                    requester.send("ack_request");
+
+                    int totalPoll = 0;
+                    while (totalPoll < workerQueue.size() && poller.poll() > 0) {
+                        // received the response from client
+                        resp = inquirier.recv();
+
+                        // do something with the response
+
+
+                        // and trigger back the client
+                        inquirier.send("");
+
+                        totalPoll++;
+
+//	            		if (totalPoll == workerQueue.size()) {
+//	            			// when ACKs from all workers received
+//	            			totalPoll = 0;
+//
+//	            			// dispatch signal
+//	            			// do something here
+//
+//	            			break;
+//	            		}
+                    }
+                }
+
+                requester.close();
+                inquirier.close();
+                context.term();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public interface AckListener {
+        public void allAcksReceived();
+    }
 }
