@@ -55,7 +55,6 @@ public class TestActivity extends AppCompatActivity {
     };
 
     MidSupporter midSupporter;
-//    MidSupporter2 midSupporter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,6 @@ public class TestActivity extends AppCompatActivity {
         infoText.setMovementMethod(new ScrollingMovementMethod());
 
         midSupporter = new MidSupporter(this, mainUiHandler);
-//        midSupporter = new MidSupporter2(this, mainUiHandler);
 
         // bind device list
         deviceList.setAdapter(midSupporter.getDeviceListAdapter());
@@ -117,7 +115,8 @@ public class TestActivity extends AppCompatActivity {
         }
 
         public ExPublisher(String _groupIp) {
-            super(_groupIp, 2000);
+            super(_groupIp);
+            setSendInterval(2000);
         }
 
         @Override

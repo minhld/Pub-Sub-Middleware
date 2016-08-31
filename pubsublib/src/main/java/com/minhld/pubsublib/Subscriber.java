@@ -64,7 +64,9 @@ public class Subscriber extends Thread {
             while (!Thread.currentThread().isInterrupted()) {
                 topic = subscriber.recvStr();
                 msg = subscriber.recv();
-                this.mListener.msgReceived(topic, msg);
+                if (this.mListener != null) {
+                    this.mListener.msgReceived(topic, msg);
+                }
             }
 
             subscriber.close();
