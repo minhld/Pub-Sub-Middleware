@@ -1,13 +1,13 @@
 package com.minhld.pbsbjob;
 
-import com.minhld.pubsublib.Client;
 import com.minhld.pubsublib.ZHelper;
 import com.minhld.wfd.Utils;
 
 import org.zeromq.ZMQ;
 
 /**
- * This client
+ * The client sends tasks to broker to request for an execution
+ *
  * Created by minhld on 8/24/2016.
  */
 

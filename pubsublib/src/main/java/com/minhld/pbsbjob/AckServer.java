@@ -37,7 +37,7 @@ public abstract class AckServer extends Thread {
      * when server receive a request from a client, it will quickly
      * contact with its nearby workers to find out capability. this
      * function is to send ACKs to the workers to discover their
-     * capability for the current task. 
+     * capability for the current task.
      */
     public void sendAck() {
         requester.sendMore("request");

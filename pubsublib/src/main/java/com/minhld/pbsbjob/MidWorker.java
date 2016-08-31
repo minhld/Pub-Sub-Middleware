@@ -7,6 +7,11 @@ import com.minhld.wfd.Utils;
 import org.zeromq.ZMQ;
 
 /**
+ * The worker receives job from broker and execute it. The worker
+ * also reports by sending responses back to the broker to describe
+ * its resource status (including RAM, CPU, battery and network
+ * condition).
+ *
  * Created by minhld on 8/24/2016.
  */
 
