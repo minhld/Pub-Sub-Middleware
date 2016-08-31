@@ -33,11 +33,24 @@ public abstract class AckServer extends Thread {
         this.start();
     }
 
+    /**
+     * when server receive a request from a client, it will quickly
+     * contact with its nearby workers to find out capability. this
+     * function is to send ACKs to the workers to discover their
+     * capability for the current task. 
+     */
     public void sendAck() {
         requester.sendMore("request");
         requester.send("ack_request");
     }
 
+    /**
+     * the number of workers must be updated so that it will be used
+     * in the loop entrance to determine when a loop is finished and
+     * we can send out an event message.
+     *
+     * @param workerNumber
+     */
     public void updateWorkerNumbers(int workerNumber) {
         this.workerNumber = workerNumber;
     }
@@ -91,7 +104,7 @@ public abstract class AckServer extends Thread {
     }
 
     /**
-     * this function defines how to solve the responses from a client.
+     * this function defines how to solve the responses from a worker.
      * normally, ACK server will summary information from all the responses
      * and evaluate it into a single value before sending it back to the
      * client device.
