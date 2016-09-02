@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +36,9 @@ public class TestActivity extends AppCompatActivity {
     @BindView(R.id.subBtn)
     Button subBtn;
 
+    @BindView(R.id.packSizeEdit)
+    EditText packSizeEdit;
+
     @BindView(R.id.deviceList)
     ListView deviceList;
 
@@ -59,7 +63,7 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_test);
 
         ButterKnife.bind(this);
         infoText.setMovementMethod(new ScrollingMovementMethod());
@@ -100,7 +104,7 @@ public class TestActivity extends AppCompatActivity {
                     @Override
                     public void msgReceived(String topic, byte[] msg) {
                         //
-                        Utils.appendTestInfo(fileLabel, new String(msg));
+                        Utils.appendTestInfo(fileLabel, new String(msg).trim());
 
                         // print out
                         UITools.writeLog(TestActivity.this, infoText, topic + ": " + new String(msg));
@@ -109,10 +113,13 @@ public class TestActivity extends AppCompatActivity {
 
             }
         });
+
+        Utils.grandWritePermission(this);
     }
 
     // TEST:
-    int packageSize = 1;
+    int packageSize = 10;
+    int count = 0;
     String fileLabel = packageSize + "k_package";
 
 
@@ -131,6 +138,8 @@ public class TestActivity extends AppCompatActivity {
         @Override
         public void send() {
             String time = "" + new Date().getTime();
+            String sizeStr = packSizeEdit.getText().toString();
+            packageSize = Integer.parseInt(sizeStr);
 
             // prepare data
             StringBuffer data = new StringBuffer(time);
@@ -146,6 +155,8 @@ public class TestActivity extends AppCompatActivity {
 
             // and send
             sendFrame("ADFB", data.toString().getBytes());
+
+            UITools.writeLog(TestActivity.this, infoText, ++count + " " + data.toString().trim());
         };
     }
 
