@@ -99,6 +99,10 @@ public class TestActivity extends AppCompatActivity {
                 subscriber.setMessageListener(new Subscriber.MessageListener() {
                     @Override
                     public void msgReceived(String topic, byte[] msg) {
+                        //
+                        Utils.appendTestInfo(fileLabel, new String(msg));
+
+                        // print out
                         UITools.writeLog(TestActivity.this, infoText, topic + ": " + new String(msg));
                     }
                 });
@@ -106,6 +110,11 @@ public class TestActivity extends AppCompatActivity {
             }
         });
     }
+
+    // TEST:
+    int packageSize = 1;
+    String fileLabel = packageSize + "k_package";
+
 
     class ExPublisher extends Publisher {
 
@@ -121,9 +130,22 @@ public class TestActivity extends AppCompatActivity {
 
         @Override
         public void send() {
-            String newDate = new Date().toString();
-            sendFrame("ADFB", newDate.getBytes());
-            sendFrame("CDEF", newDate.getBytes());
+            String time = "" + new Date().getTime();
+
+            // prepare data
+            StringBuffer data = new StringBuffer(time);
+            data.setLength(packageSize * 1024);
+
+//            byte[] data = new byte[packageSize * 1024];
+//            for (int i = 0; i < data.length; i++) {
+//                data[i] = (byte)(Math.random() * 255);
+//            }
+
+            // start noting
+            Utils.appendTestInfo(fileLabel, time);
+
+            // and send
+            sendFrame("ADFB", data.toString().getBytes());
         };
     }
 

@@ -16,14 +16,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import dalvik.system.DexClassLoader;
 
 /**
  * Created by minhld on 9/22/2015.
@@ -155,25 +160,21 @@ public class Utils {
      * @throws Exception
      */
     public static Object runRemote(Context c, String jobPath, Object srcObject, Class type) throws Exception {
-//        // check if the files are valid or not
-//        if (!new File(jobPath).exists()) {
-//            throw new Exception("job or data file does not exist");
-//        }
-//
-//        // address the class object and its executable method
-//        String dex_dir = c.getDir("dex", 0).getAbsolutePath();
-//        ClassLoader parent  = c.getClass().getClassLoader();
-//        DexClassLoader loader = new DexClassLoader(jobPath, dex_dir, null, parent);
-//        Class jobClass = loader.loadClass(JOB_CLASS_NAME);
-//        Object o = jobClass.newInstance();
-//        Method m = jobClass.getMethod(JOB_EXEC_METHOD, type);
-//
-//        // address the resource
-//        return m.invoke(o, srcObject);
-        // this is urgent case so that we wont use DexClassLoader
+        // check if the files are valid or not
+        if (!new File(jobPath).exists()) {
+            throw new Exception("job or data file does not exist");
+        }
 
-        // we will use Job object directly
-        return null;
+        // address the class object and its executable method
+        String dex_dir = c.getDir("dex", 0).getAbsolutePath();
+        ClassLoader parent  = c.getClass().getClassLoader();
+        DexClassLoader loader = new DexClassLoader(jobPath, dex_dir, null, parent);
+        Class jobClass = loader.loadClass(JOB_CLASS_NAME);
+        Object o = jobClass.newInstance();
+        Method m = jobClass.getMethod(JOB_EXEC_METHOD, type);
+
+        // address the resource
+        return m.invoke(o, srcObject);
     }
 
     /**
@@ -281,4 +282,31 @@ public class Utils {
                 Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
     }
 
+    /**
+     * appends a test value (key + value) to a text file in the Download folder
+     *
+     * @param fileName
+     * @param test
+     * @param values
+     */
+    public static void appendTestInfo(String fileName, String test, long... values) {
+        try {
+            File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            String testResultPath = downloadFolder.getAbsolutePath() + "/" + fileName + ".txt";
+            FileWriter writer = new FileWriter(testResultPath, true);
+            if (values.length == 0) {
+                writer.write(test + " " + new Date().getTime() + "\n");
+            } else {
+                writer.write(test);
+                for (int i = 0; i < values.length; i++) {
+                    writer.write(" " + values[i]);
+                }
+                writer.write("\n");
+            }
+
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

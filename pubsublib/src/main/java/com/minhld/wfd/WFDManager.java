@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
+ * handles all WFD connection matters
+ *
  * Created by minhld on 7/25/2016.
  */
 
@@ -27,19 +29,17 @@ public class WFDManager extends BroadcastReceiver {
     WifiP2pManager.Channel mChannel;
     IntentFilter mIntentFilter;
 
-//    SocketHandler mSocketHandler;
     Handler mHandler;
     BroadCastListener broadCastListener;
 
-//    TextView logText;
+    // TEST:
+    String connectedDeviceName = "";
 
     public void setWFDListener(Handler skHandler) {
         this.mHandler = skHandler;
     }
 
-    public WFDManager(Activity c/*, TextView logText */){
-//        this.logText = logText;
-
+    public WFDManager(Activity c){
         this.mManager = (WifiP2pManager)c.getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(c, c.getMainLooper(), null);
     }
@@ -65,7 +65,7 @@ public class WFDManager extends BroadcastReceiver {
                 public void onPeersAvailable(WifiP2pDeviceList peers) {
                     Collection<WifiP2pDevice> deviceList = peers.getDeviceList();
                     reloadDeviceList(deviceList);
-//
+
                     if (broadCastListener != null){
                         broadCastListener.peerDeviceListUpdated(deviceList);
                     }
@@ -146,10 +146,16 @@ public class WFDManager extends BroadcastReceiver {
      * send the request
      */
     public void discoverPeers(){
+        // TEST: start the clock
+        Utils.appendTestInfo("discover", "discovery starts");
+
         this.mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
 
             @Override
             public void onSuccess() {
+                // TEST: end the clock
+                Utils.appendTestInfo("discover", "discovery ends");
+
                 writeLog("discovery called successfully");
             }
 
@@ -177,6 +183,10 @@ public class WFDManager extends BroadcastReceiver {
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
         config.wps.setup = WpsInfo.PBC;
+
+        // TEST: start connect clock
+        Utils.appendTestInfo("connect", "connect " + device.deviceName + " starts");
+        connectedDeviceName = device.deviceName;
 
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
 
@@ -279,6 +289,10 @@ public class WFDManager extends BroadcastReceiver {
             if (device.status == WifiP2pDevice.CONNECTED) {
                 xDev = new Utils.XDevice(device.deviceAddress, device.deviceName);
                 Utils.connectedDevices.put(device.deviceName, xDev);
+
+                if (device.deviceName.equals(connectedDeviceName)) {
+                    Utils.appendTestInfo("connect", "connect " + connectedDeviceName + " ends");
+                }
             }
         }
 
@@ -333,8 +347,6 @@ public class WFDManager extends BroadcastReceiver {
 //    }
 
     public void writeLog(final String msg){
-//        String outMsg = Utils.SDF.format(new Date()) + ": " + msg;
         mHandler.obtainMessage(Utils.MESSAGE_INFO, msg).sendToTarget();
-//        logText.append(outMsg);
     }
 }
