@@ -47,17 +47,6 @@
                 android:textSize="15dp" />
 
         </LinearLayout>
-
-        <!--
-        <ListView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/wifiList"
-            android:layout_alignParentBottom="true"
-            android:layout_toEndOf="@+id/createGroupBtn"
-            android:layout_marginBottom="0dp" />
-        -->
     </LinearLayout>
 
     <Button

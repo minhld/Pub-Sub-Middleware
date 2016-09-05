@@ -107,9 +107,6 @@ public class TestActivity extends AppCompatActivity {
                 subscriber.setMessageListener(new Subscriber.MessageListener() {
                     @Override
                     public void msgReceived(String topic, final byte[] msg) {
-//                        //
-//                        long time = getNTPTime();
-
                         // get package size and label
                         String sizeStr = packSizeEdit.getText().toString();
                         packageSize = Integer.parseInt(sizeStr);
@@ -126,29 +123,14 @@ public class TestActivity extends AppCompatActivity {
                             }
                         });
 
-//                        long startTime = Long.parseLong(new String(msg).trim());
-//                        Utils.appendTestInfo(fileLabel, "" + startTime, time);
-
-                        // print out
-//                        long durr = time - startTime;
-//                        UITools.writeLog(TestActivity.this, infoText, topic + ": total " + durr);
                     }
                 });
 
             }
         });
 
-//        // connect to NTP server
-//        new GetTimeServer();
-
-        //
         Utils.grandWritePermission(this);
     }
-
-    // TEST:
-//    long deltaTimeClientServer = 0;
-
-
 
 //    /**
 //     * this class is to get the NTP time to synchronize
@@ -162,22 +144,13 @@ public class TestActivity extends AppCompatActivity {
 //            try {
 //                TimeTCPClient client = new TimeTCPClient();
 //                client.setDefaultTimeout(10000);
-////                client.connect("time-nw.nist.gov");
+//                // client.connect("time-nw.nist.gov");
 //                client.connect("time.nist.gov");
-////                client.connect("time-a.timefreq.bldrdoc.gov");
+//
 //                client.setTcpNoDelay(true);
 //                long serverTime = client.getDate().getTime();
 //                deltaTimeClientServer = new Date().getTime() - serverTime;
 //                client.disconnect();
-////                TimeUDPClient client = new TimeUDPClient();
-////                client.setDefaultTimeout(5000);
-////
-////                InetAddress hostAddr = InetAddress.getByName("time-nw.nist.gov");
-////                long currentTime = client.getTime(hostAddr);
-////                client.close();
-////
-////            } catch (UnknownHostException uhEx) {
-////                uhEx.printStackTrace();
 //            }
 //            catch (Exception e) {
 //                e.printStackTrace();
@@ -188,11 +161,7 @@ public class TestActivity extends AppCompatActivity {
     // TEST:
     int packageSize = 10;
     int count = 0;
-    String fileLabel = ""; // packageSize + "k_package";
-
-//    private long getNTPTime() {
-//        return new Date().getTime() - deltaTimeClientServer;
-//    }
+    String fileLabel = "";
 
     class ExPublisher extends Publisher {
 
@@ -208,10 +177,6 @@ public class TestActivity extends AppCompatActivity {
 
         @Override
         public void send() {
-//            String time = "" + new Date().getTime();
-//            long lTime = getNTPTime();
-//            String time = "" + lTime;
-
             // get package size and label
             String sizeStr = packSizeEdit.getText().toString();
             packageSize = Integer.parseInt(sizeStr);
@@ -260,10 +225,6 @@ public class TestActivity extends AppCompatActivity {
                     if (timeListener != null) {
                         timeListener.timeReceived(time);
                     }
-
-//                    long durr = System.currentTimeMillis() - startTime;
-//                    deltaTimeClientServer = new Date().getTime() - Long.parseLong(lTime);
-//                    UITools.writeLog(TestActivity.this, infoText, "reached server. delta = " + deltaTimeClientServer);
 
                 } else {
                     UITools.writeLog(TestActivity.this, infoText, "error: server unreached");
