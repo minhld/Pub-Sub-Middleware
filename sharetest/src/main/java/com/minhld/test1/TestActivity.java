@@ -18,6 +18,16 @@ import com.minhld.pubsublib.Publisher;
 import com.minhld.pubsublib.Subscriber;
 import com.minhld.wfd.Utils;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.net.TimeTCPClient;
+import org.apache.commons.net.TimeUDPClient;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -102,26 +112,93 @@ public class TestActivity extends AppCompatActivity {
                 Subscriber subscriber = new Subscriber(UITools.GO_IP, Utils.BROKER_XPUB_PORT, new String[] { "ADFB" });
                 subscriber.setMessageListener(new Subscriber.MessageListener() {
                     @Override
-                    public void msgReceived(String topic, byte[] msg) {
-                        //
-                        Utils.appendTestInfo(fileLabel, new String(msg).trim());
+                    public void msgReceived(String topic, final byte[] msg) {
+//                        //
+//                        long time = getNTPTime();
+
+                        // get package size and label
+                        String sizeStr = packSizeEdit.getText().toString();
+                        packageSize = Integer.parseInt(sizeStr);
+                        fileLabel = packageSize + "k_package";
+
+                        new GetTimeServer(new TimeListener() {
+                            @Override
+                            public void timeReceived(long time) {
+                                long startProcessTime = Long.parseLong(new String(msg).trim());
+                                Utils.appendTestInfo(fileLabel, "" + startProcessTime, time);
+
+                                long diffTime = time - startProcessTime;
+                                UITools.writeLog(TestActivity.this, infoText, "diff: " + diffTime);
+                            }
+                        });
+
+//                        long startTime = Long.parseLong(new String(msg).trim());
+//                        Utils.appendTestInfo(fileLabel, "" + startTime, time);
 
                         // print out
-                        UITools.writeLog(TestActivity.this, infoText, topic + ": " + new String(msg));
+//                        long durr = time - startTime;
+//                        UITools.writeLog(TestActivity.this, infoText, topic + ": total " + durr);
                     }
                 });
 
             }
         });
 
+//        // connect to NTP server
+//        new GetTimeServer();
+
+        //
         Utils.grandWritePermission(this);
     }
 
     // TEST:
+//    long deltaTimeClientServer = 0;
+
+
+
+//    /**
+//     * this class is to get the NTP time to synchronize
+//     */
+//    class GetTimeServer extends Thread {
+//        public GetTimeServer() {
+//            this.start();
+//        }
+//
+//        public void run() {
+//            try {
+//                TimeTCPClient client = new TimeTCPClient();
+//                client.setDefaultTimeout(10000);
+////                client.connect("time-nw.nist.gov");
+//                client.connect("time.nist.gov");
+////                client.connect("time-a.timefreq.bldrdoc.gov");
+//                client.setTcpNoDelay(true);
+//                long serverTime = client.getDate().getTime();
+//                deltaTimeClientServer = new Date().getTime() - serverTime;
+//                client.disconnect();
+////                TimeUDPClient client = new TimeUDPClient();
+////                client.setDefaultTimeout(5000);
+////
+////                InetAddress hostAddr = InetAddress.getByName("time-nw.nist.gov");
+////                long currentTime = client.getTime(hostAddr);
+////                client.close();
+////
+////            } catch (UnknownHostException uhEx) {
+////                uhEx.printStackTrace();
+//            }
+//            catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
+    // TEST:
     int packageSize = 10;
     int count = 0;
-    String fileLabel = packageSize + "k_package";
+    String fileLabel = ""; // packageSize + "k_package";
 
+//    private long getNTPTime() {
+//        return new Date().getTime() - deltaTimeClientServer;
+//    }
 
     class ExPublisher extends Publisher {
 
@@ -137,27 +214,74 @@ public class TestActivity extends AppCompatActivity {
 
         @Override
         public void send() {
-            String time = "" + new Date().getTime();
+//            String time = "" + new Date().getTime();
+//            long lTime = getNTPTime();
+//            String time = "" + lTime;
+
+            // get package size and label
             String sizeStr = packSizeEdit.getText().toString();
             packageSize = Integer.parseInt(sizeStr);
+            fileLabel = packageSize + "k_package";
 
             // prepare data
-            StringBuffer data = new StringBuffer(time);
-            data.setLength(packageSize * 1024);
+            new GetTimeServer(new TimeListener() {
+                @Override
+                public void timeReceived(long time) {
+                    StringBuffer data = new StringBuffer(Long.toString(time));
+                    data.setLength(packageSize * 1024);
 
-//            byte[] data = new byte[packageSize * 1024];
-//            for (int i = 0; i < data.length; i++) {
-//                data[i] = (byte)(Math.random() * 255);
-//            }
+                    // start noting
+                    Utils.appendTestInfo(fileLabel, "" + time, time);
 
-            // start noting
-            Utils.appendTestInfo(fileLabel, time);
+                    // and send
+                    sendFrame("ADFB", data.toString().getBytes());
 
-            // and send
-            sendFrame("ADFB", data.toString().getBytes());
+                    UITools.writeLog(TestActivity.this, infoText, ++count + " " + data.toString().trim());
+                }
+            });
 
-            UITools.writeLog(TestActivity.this, infoText, ++count + " " + data.toString().trim());
+
         };
+    }
+
+    // TEST:
+    class GetTimeServer extends Thread {
+        TimeListener timeListener;
+
+        public GetTimeServer(TimeListener _timeListener) {
+            this.timeListener = _timeListener;
+            this.start();
+        }
+
+        public void run() {
+            try {
+                long startTime = System.currentTimeMillis();
+                String timeServer = "http://129.123.7.172:3883/sm/getTime";
+                HttpURLConnection conn = (HttpURLConnection) new URL(timeServer).openConnection();
+                int code = conn.getResponseCode();
+                if (code == 200) {
+                    String lTime = IOUtils.toString(conn.getInputStream());
+                    long time = Long.parseLong(lTime);
+
+                    if (timeListener != null) {
+                        timeListener.timeReceived(time);
+                    }
+
+//                    long durr = System.currentTimeMillis() - startTime;
+//                    deltaTimeClientServer = new Date().getTime() - Long.parseLong(lTime);
+//                    UITools.writeLog(TestActivity.this, infoText, "reached server. delta = " + deltaTimeClientServer);
+
+                } else {
+                    UITools.writeLog(TestActivity.this, infoText, "error: server unreached");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    interface TimeListener {
+        public void timeReceived(long time);
     }
 
     @Override
