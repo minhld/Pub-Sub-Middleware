@@ -32,20 +32,6 @@
             android:orientation="vertical"
             android:weightSum="1">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="package size:"/>
-
-            <EditText
-                android:id="@+id/packSizeEdit"
-                android:layout_width="175dp"
-                android:layout_height="28dp"
-                android:background="#eee"
-                android:hint="package size"
-                android:text="1"
-                android:textSize="15dp" />
-
         </LinearLayout>
     </LinearLayout>
 

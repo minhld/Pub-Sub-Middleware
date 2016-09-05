@@ -17,6 +17,7 @@ import java.util.Date;
  */
 public class UITools {
     public static final String GO_IP = "192.168.49.1";
+    public static final String SERVER_IP = "129.123.7.172";
     public static final SimpleDateFormat SDF = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
 
     /**
