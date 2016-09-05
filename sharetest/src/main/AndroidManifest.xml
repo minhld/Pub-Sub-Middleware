@@ -16,10 +16,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".VideoShareActivity"></activity>
-
-        <activity android:name="com.minhld.test1.TestActivity">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".VideoShareActivity" />
+        <activity android:name="com.minhld.test1.TestActivity" />
+        <activity android:name="com.minhld.test2.TestRemote0MQ">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

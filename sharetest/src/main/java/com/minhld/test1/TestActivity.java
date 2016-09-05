@@ -19,28 +19,22 @@ import com.minhld.pubsublib.Subscriber;
 import com.minhld.wfd.Utils;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.net.TimeTCPClient;
-import org.apache.commons.net.TimeUDPClient;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TestActivity extends AppCompatActivity {
-    @BindView(R.id.createGroupBtn)
+    @BindView(R.id.toActiveMqBtn)
     Button createGroupBtn;
 
-    @BindView(R.id.discoverBtn)
+    @BindView(R.id.to0mqBtn)
     Button discoverBtn;
 
-    @BindView(R.id.pubBtn)
+    @BindView(R.id.toRabbitMqBtn)
     Button pubBtn;
 
     @BindView(R.id.subBtn)

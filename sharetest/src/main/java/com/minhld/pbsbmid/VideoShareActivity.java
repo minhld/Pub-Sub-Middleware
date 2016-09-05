@@ -3,7 +3,6 @@ package com.minhld.pbsbmid;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -16,10 +15,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.minhld.pubsublib.Client;
 import com.minhld.pubsublib.Publisher;
 import com.minhld.pubsublib.Subscriber;
-import com.minhld.pubsublib.Worker;
 import com.minhld.wfd.Utils;
 
 import java.io.ByteArrayOutputStream;
@@ -30,13 +27,13 @@ import butterknife.ButterKnife;
 import wseemann.media.FFmpegMediaMetadataRetriever;
 
 public class VideoShareActivity extends AppCompatActivity {
-    @BindView(R.id.createGroupBtn)
+    @BindView(R.id.toActiveMqBtn)
     Button createGroupBtn;
 
-    @BindView(R.id.discoverBtn)
+    @BindView(R.id.to0mqBtn)
     Button discoverBtn;
 
-    @BindView(R.id.pubBtn)
+    @BindView(R.id.toRabbitMqBtn)
     Button pubBtn;
 
     @BindView(R.id.subBtn)

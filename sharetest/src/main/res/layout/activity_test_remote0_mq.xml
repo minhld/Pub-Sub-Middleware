@@ -10,7 +10,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="300dp"
         android:id="@+id/infoText"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
@@ -25,27 +25,43 @@
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/infoText">
 
-        <ListView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/deviceList"
-            android:layout_alignParentBottom="true"
-            android:layout_toEndOf="@+id/toActiveMqBtn"
-            android:layout_marginBottom="0dp" />
+            android:orientation="vertical"
+            android:weightSum="1">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="package size:"/>
+
+            <EditText
+                android:id="@+id/packSizeEdit"
+                android:layout_width="175dp"
+                android:layout_height="28dp"
+                android:background="#eee"
+                android:hint="package size"
+                android:text="1"
+                android:textSize="15dp" />
+
+        </LinearLayout>
+
+        <!--
         <ListView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:id="@+id/wifiList"
             android:layout_alignParentBottom="true"
-            android:layout_toEndOf="@+id/toActiveMqBtn"
+            android:layout_toEndOf="@+id/createGroupBtn"
             android:layout_marginBottom="0dp" />
+        -->
     </LinearLayout>
 
     <Button
-        android:text="Discover"
+        android:text="To 0MQ"
         android:textSize="12sp"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
@@ -54,7 +70,7 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:text="Create Group"
+        android:text="To ActiveMQ"
         android:textSize="12sp"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
@@ -63,22 +79,12 @@
         android:layout_toEndOf="@+id/to0mqBtn" />
 
     <Button
-        android:text="Pub"
+        android:text="To RabbitMQ"
         android:textSize="12sp"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="45dp"
         android:id="@+id/toRabbitMqBtn"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/toActiveMqBtn" />
-
-    <Button
-        android:text="Sub"
-        android:textSize="12sp"
-        android:layout_width="80dp"
-        android:layout_height="45dp"
-        android:id="@+id/subBtn"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/toRabbitMqBtn" />
 
 </RelativeLayout>

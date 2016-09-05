@@ -11,24 +11,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.minhld.pubsublib.Client;
-import com.minhld.pubsublib.Subscriber;
-import com.minhld.pubsublib.Publisher;
 import com.minhld.pubsublib.Worker;
 import com.minhld.wfd.Utils;
-
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
-    @BindView(R.id.createGroupBtn)
+    @BindView(R.id.toActiveMqBtn)
     Button createGroupBtn;
 
-    @BindView(R.id.discoverBtn)
+    @BindView(R.id.to0mqBtn)
     Button discoverBtn;
 
-    @BindView(R.id.pubBtn)
+    @BindView(R.id.toRabbitMqBtn)
     Button pubBtn;
 
     @BindView(R.id.subBtn)
