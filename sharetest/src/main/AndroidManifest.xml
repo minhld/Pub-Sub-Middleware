@@ -18,12 +18,13 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity" />
         <activity android:name=".VideoShareActivity">
+        </activity>
+        <activity android:name="com.minhld.test1.TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.minhld.test1.TestActivity" />
         <activity android:name="com.minhld.test2.TestRemote0MQ">
         </activity>
     </application>
