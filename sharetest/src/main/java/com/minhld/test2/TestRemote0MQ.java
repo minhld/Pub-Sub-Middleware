@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.minhld.pbsbmid.R;
 import com.minhld.pbsbmid.UITools;
 import com.minhld.pubsublib.Subscriber;
-import com.minhld.test1.TestActivity;
 import com.minhld.wfd.Utils;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -22,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,7 +91,9 @@ public class TestRemote0MQ extends AppCompatActivity {
         });
     }
 
-    // TEST:
+
+
+    // TEST: RABBIT implementation
     private final String SERVER_IP = "129.123.7.172";
     private static final String RABBIT_EXCHANGE_NAME = "logs";
 
