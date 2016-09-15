@@ -108,11 +108,19 @@ public class TestActivity extends AppCompatActivity {
                     @Override
                     public void msgReceived(String topic, final byte[] msg) {
                         // get package size and label
-                        String sizeStr = packSizeEdit.getText().toString();
-                        packageSize = Integer.parseInt(sizeStr);
-                        fileLabel = packageSize + "k_package";
+                        final String[] msgParts = new String(msg).trim().split(" ");
 
-                        long startProcessTime = Long.parseLong(new String(msg).trim());
+//                        String sizeStr = packSizeEdit.getText().toString();
+//                        packageSize = Integer.parseInt(sizeStr);
+                        fileLabel = msgParts[0] + "k_package";
+
+//                        runOnUiThread(new Runnable() {
+//                            public void run() {
+//                                packSizeEdit.setText(msgParts[0]);
+//                            }
+//                        });
+
+                        long startProcessTime = Long.parseLong(msgParts[1]);
 
                         long ntpTime = getNtpTime();
 
@@ -120,7 +128,7 @@ public class TestActivity extends AppCompatActivity {
 
                         Utils.appendTestInfo(fileLabel, "" + startProcessTime, diffTime);
 
-                        UITools.writeLog(TestActivity.this, infoText, "diff: " + diffTime);
+                        UITools.writeLog(TestActivity.this, infoText, "size: " + msgParts[0] + "; time: " + diffTime);
 
 //                        // use local NTP server
 //                        new GetTimeServer(new TimeListener() {
@@ -170,11 +178,14 @@ public class TestActivity extends AppCompatActivity {
 //    }
 
     private long getNtpTime() {
-        return NtpUtils.getTime();
+//        return NtpUtils.getTime();
+        return NtpUtils.getMinhTime();
     }
 
     // TEST:
-    int packageSize = 10;
+//    int packageSize = 1;
+    int runCount = 0;
+    int pkgSizeCount = 1;
     int count = 0;
     String fileLabel = "";
 
@@ -193,13 +204,31 @@ public class TestActivity extends AppCompatActivity {
         @Override
         public void send() {
             // get package size and label
-            String sizeStr = packSizeEdit.getText().toString();
-            packageSize = Integer.parseInt(sizeStr);
+//            String sizeStr = packSizeEdit.getText().toString();
+//            packageSize = Integer.parseInt(sizeStr);
+
+            final int packageSize = increaseNumber(pkgSizeCount);
+
+//            runOnUiThread(new Runnable() {
+//                public void run() {
+//                    packSizeEdit.setText(packageSize);
+//                }
+//            });
+
+            if (runCount < 20) {
+                runCount++;
+            } else {
+                runCount = 0;
+                pkgSizeCount++;
+            }
+
             fileLabel = packageSize + "k_package";
 
             long ntpTime = getNtpTime();
 
-            StringBuffer data = new StringBuffer(Long.toString(ntpTime));
+            String message = packageSize + " " + Long.toString(ntpTime);
+
+            StringBuffer data = new StringBuffer(message);
             data.setLength(packageSize * 1024);
 
             // start noting
@@ -208,7 +237,7 @@ public class TestActivity extends AppCompatActivity {
             // and send
             sendFrame("ADFB", data.toString().getBytes());
 
-            UITools.writeLog(TestActivity.this, infoText, ++count + " " + data.toString().trim());
+            UITools.writeLog(TestActivity.this, infoText, ++count + "; size: " + packageSize + " start: " + ntpTime);
 
 //            // use local NTP server
 //            // prepare data
@@ -265,9 +294,20 @@ public class TestActivity extends AppCompatActivity {
 //            }
 //        }
 //    }
+//
+//    interface TimeListener {
+//        public void timeReceived(long time);
+//    }
 
-    interface TimeListener {
-        public void timeReceived(long time);
+    private int increaseNumber(int input) {
+        if (input == 0) return 1;   // warming up
+        if (input == 1) return 1;
+        if (input == 2) return 10;
+        if (input == 3) return 50;
+        if (input >= 4 && input <= 13) return (input - 3) * 100;
+        if (input == 14) return 1200;
+        if (input == 15) return 1500;
+        return 0;
     }
 
     @Override
