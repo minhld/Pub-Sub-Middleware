@@ -114,21 +114,11 @@ public class TestActivity extends AppCompatActivity {
 //                        packageSize = Integer.parseInt(sizeStr);
                         fileLabel = msgParts[0] + "k_package";
 
-//                        runOnUiThread(new Runnable() {
-//                            public void run() {
-//                                packSizeEdit.setText(msgParts[0]);
-//                            }
-//                        });
-
                         long startProcessTime = Long.parseLong(msgParts[1]);
-
                         long ntpTime = getNtpTime();
-
                         long diffTime = ntpTime - startProcessTime;
-
                         Utils.appendTestInfo(fileLabel, "" + startProcessTime, diffTime);
-
-                        UITools.writeLog(TestActivity.this, infoText, "size: " + msgParts[0] + "; time: " + diffTime);
+                        UITools.writeLog(TestActivity.this, infoText, "pksize: " + msg.length + "; size: " + msgParts[0] + "; time: " + diffTime);
 
 //                        // use local NTP server
 //                        new GetTimeServer(new TimeListener() {
@@ -149,6 +139,9 @@ public class TestActivity extends AppCompatActivity {
         });
 
         Utils.grandWritePermission(this);
+
+        // calculate offset time
+        NtpUtils.computeOffset();
     }
 
 //    /**
@@ -178,14 +171,15 @@ public class TestActivity extends AppCompatActivity {
 //    }
 
     private long getNtpTime() {
+        return NtpUtils.genericOffsetTime + System.currentTimeMillis();
 //        return NtpUtils.getTime();
-        return NtpUtils.getMinhTime();
+//        return NtpUtils.getMinhTime();
     }
 
     // TEST:
 //    int packageSize = 1;
     int runCount = 0;
-    int pkgSizeCount = 1;
+    int pkgSizeCount = 0;   // warming up from zero
     int count = 0;
     String fileLabel = "";
 
@@ -215,7 +209,7 @@ public class TestActivity extends AppCompatActivity {
 //                }
 //            });
 
-            if (runCount < 20) {
+            if (runCount < 30) {
                 runCount++;
             } else {
                 runCount = 0;

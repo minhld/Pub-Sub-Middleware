@@ -20,6 +20,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class NtpUtils {
 
+    public static long genericOffsetTime;
+
+
     public static long getMinhTime() {
         AsyncTask<Void, Void, Long> getTimeTask = new AsyncTask<Void, Void, Long>() {
             @Override
@@ -77,6 +80,16 @@ public class NtpUtils {
         return 0;
     }
 
+    public static long computeOffset() {
+        int queryTimes = 5;
+        long offsetTime = 0;
+        for (int i = 0; i < queryTimes; i++) {
+            offsetTime = getOffset();
+        }
+        genericOffsetTime = offsetTime / queryTimes;
+        return genericOffsetTime;
+    }
+
     /**
      * Gets time using NTPSync
      */
@@ -132,7 +145,7 @@ public class NtpUtils {
     }
 
     private static long getOffset() {
-        String ntpHostname = "0.pool.ntp.org";
+        String ntpHostname = "0.north-america.pool.ntp.org"; // "0.pool.ntp.org";
         return contactNtpServer(ntpHostname);
     }
 
