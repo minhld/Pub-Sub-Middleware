@@ -112,16 +112,27 @@ public class TestActivity extends AppCompatActivity {
                         packageSize = Integer.parseInt(sizeStr);
                         fileLabel = packageSize + "k_package";
 
-                        new GetTimeServer(new TimeListener() {
-                            @Override
-                            public void timeReceived(long time) {
-                                long startProcessTime = Long.parseLong(new String(msg).trim());
-                                Utils.appendTestInfo(fileLabel, "" + startProcessTime, time);
+                        long startProcessTime = Long.parseLong(new String(msg).trim());
 
-                                long diffTime = time - startProcessTime;
-                                UITools.writeLog(TestActivity.this, infoText, "diff: " + diffTime);
-                            }
-                        });
+                        long ntpTime = getNtpTime();
+
+                        long diffTime = ntpTime - startProcessTime;
+
+                        Utils.appendTestInfo(fileLabel, "" + startProcessTime, diffTime);
+
+                        UITools.writeLog(TestActivity.this, infoText, "diff: " + diffTime);
+
+//                        // use local NTP server
+//                        new GetTimeServer(new TimeListener() {
+//                            @Override
+//                            public void timeReceived(long time) {
+//                                long startProcessTime = Long.parseLong(new String(msg).trim());
+//                                Utils.appendTestInfo(fileLabel, "" + startProcessTime, time);
+//
+//                                long diffTime = time - startProcessTime;
+//                                UITools.writeLog(TestActivity.this, infoText, "diff: " + diffTime);
+//                            }
+//                        });
 
                     }
                 });
@@ -158,6 +169,10 @@ public class TestActivity extends AppCompatActivity {
 //        }
 //    }
 
+    private long getNtpTime() {
+        return NtpUtils.getTime();
+    }
+
     // TEST:
     int packageSize = 10;
     int count = 0;
@@ -182,58 +197,74 @@ public class TestActivity extends AppCompatActivity {
             packageSize = Integer.parseInt(sizeStr);
             fileLabel = packageSize + "k_package";
 
-            // prepare data
-            new GetTimeServer(new TimeListener() {
-                @Override
-                public void timeReceived(long time) {
-                    StringBuffer data = new StringBuffer(Long.toString(time));
-                    data.setLength(packageSize * 1024);
+            long ntpTime = getNtpTime();
 
-                    // start noting
-                    Utils.appendTestInfo(fileLabel, "" + time, time);
+            StringBuffer data = new StringBuffer(Long.toString(ntpTime));
+            data.setLength(packageSize * 1024);
 
-                    // and send
-                    sendFrame("ADFB", data.toString().getBytes());
+            // start noting
+            Utils.appendTestInfo(fileLabel, "" + ntpTime, ntpTime);
 
-                    UITools.writeLog(TestActivity.this, infoText, ++count + " " + data.toString().trim());
-                }
-            });
+            // and send
+            sendFrame("ADFB", data.toString().getBytes());
+
+            UITools.writeLog(TestActivity.this, infoText, ++count + " " + data.toString().trim());
+
+//            // use local NTP server
+//            // prepare data
+//            new GetTimeServer(new TimeListener() {
+//                @Override
+//                public void timeReceived(long time) {
+//                    StringBuffer data = new StringBuffer(Long.toString(time));
+//                    data.setLength(packageSize * 1024);
+//
+//                    // start noting
+//                    Utils.appendTestInfo(fileLabel, "" + time, time);
+//
+//                    // and send
+//                    sendFrame("ADFB", data.toString().getBytes());
+//
+//                    UITools.writeLog(TestActivity.this, infoText, ++count + " " + data.toString().trim());
+//                }
+//            });
 
 
         };
     }
 
-    // TEST:
-    class GetTimeServer extends Thread {
-        TimeListener timeListener;
-
-        public GetTimeServer(TimeListener _timeListener) {
-            this.timeListener = _timeListener;
-            this.start();
-        }
-
-        public void run() {
-            try {
-                long startTime = System.currentTimeMillis();
-                String timeServer = "http://129.123.7.172:3883/sm/getTime";
-                HttpURLConnection conn = (HttpURLConnection) new URL(timeServer).openConnection();
-                int code = conn.getResponseCode();
-                if (code == 200) {
-                    String lTime = IOUtils.toString(conn.getInputStream());
-                    long time = Long.parseLong(lTime);
-
-                    if (timeListener != null) {
-                        timeListener.timeReceived(time);
-                    }
-
-                } else {
-                    UITools.writeLog(TestActivity.this, infoText, "error: server unreached");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    // TEST:
+//    class GetTimeServer extends Thread {
+//        TimeListener timeListener;
+//
+//        public GetTimeServer(TimeListener _timeListener) {
+//            this.timeListener = _timeListener;
+//            this.start();
+//        }
+//
+//        public void run() {
+//            try {
+//                long startTime = System.currentTimeMillis();
+//                String timeServer = "http://129.123.7.172:3883/sm/getTime";
+//                HttpURLConnection conn = (HttpURLConnection) new URL(timeServer).openConnection();
+//                int code = conn.getResponseCode();
+//                if (code == 200) {
+//                    String lTime = IOUtils.toString(conn.getInputStream());
+//                    long time = Long.parseLong(lTime);
+//
+//                    if (timeListener != null) {
+//                        long consumeTime = System.currentTimeMillis() - startTime;
+//                        long currentNTPTime = time - consumeTime;
+//                        timeListener.timeReceived(currentNTPTime);
+//                    }
+//
+//                } else {
+//                    UITools.writeLog(TestActivity.this, infoText, "error: server unreached");
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     interface TimeListener {
         public void timeReceived(long time);
