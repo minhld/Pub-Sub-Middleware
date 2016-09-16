@@ -81,13 +81,55 @@ public class NtpUtils {
     }
 
     public static long computeOffset() {
-        int queryTimes = 5;
-        long offsetTime = 0;
-        for (int i = 0; i < queryTimes; i++) {
-            offsetTime = getOffset();
+        AsyncTask<Void, Void, Long> computor = new AsyncTask<Void, Void, Long>() {
+            @Override
+            protected Long doInBackground(Void... unused) {
+                long newTime = 0;
+
+                try {
+                    int queryTimes = 5;
+                    long offsetTime = 0;
+                    for (int i = 0; i < queryTimes; i++) {
+                        offsetTime += getOffset();
+                    }
+                    genericOffsetTime = offsetTime / queryTimes;
+                    return genericOffsetTime;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(Long result) {
+                super.onPostExecute(result);
+            }
+        };
+
+        //application will stop
+        try {
+            synchronized (computor) {
+                long off = computor.execute().get(700, TimeUnit.MILLISECONDS);
+                computor = null;
+                return off;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        genericOffsetTime = offsetTime / queryTimes;
-        return genericOffsetTime;
+
+        return 0;
+
     }
 
     /**
@@ -145,7 +187,7 @@ public class NtpUtils {
     }
 
     private static long getOffset() {
-        String ntpHostname = "0.north-america.pool.ntp.org"; // "0.pool.ntp.org";
+        String ntpHostname = "1.north-america.pool.ntp.org"; // "0.pool.ntp.org";
         return contactNtpServer(ntpHostname);
     }
 
