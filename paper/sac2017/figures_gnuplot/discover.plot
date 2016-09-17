@@ -9,6 +9,10 @@ unset xtics
 set style line 1 lc rgb '#9f9f9c' pt 7
 set style line 2 lc rgb '#367e96' pt 7
 set style line 3 lc rgb '#782F3B' pt 7
-plot 'D:\android\PbSbMid\paper\sac2017\figures_gnuplot\discover.dat' using 1 with points ls 1 title "LG G4", \
+set style line 4 lc rgb '#527546' pt 7
+set style line 5 lc rgb '#5F3A6B' pt 7
+plot 'D:\android\PbSbMid\paper\sac2017\figures_gnuplot\discover_boxplot.dat' using 1 with points ls 1 title "LG G4", \
 '' using 2 with points ls 2 title "Asus ZF2", \
-'' using 3 with points ls 3 title "Galaxy S3"
+'' using 3 with points ls 3 title "Galaxy S3", \
+'' using 4 with points ls 4 title "BLU", \
+'' using 5 with points ls 5 title "Moto G4"
