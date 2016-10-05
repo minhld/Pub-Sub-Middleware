@@ -73,7 +73,7 @@ public abstract class AckServer extends Thread {
             byte[] resp;
             while (!isInterrupted()) {
                 int totalPoll = 0;
-                while (totalPoll < this.workerNumber && poller.poll() > 0) {
+                while (totalPoll < this.workerNumber && poller.poll(100) > 0) {
                     // received the response from client
                     resp = inquirer.recv();
 
