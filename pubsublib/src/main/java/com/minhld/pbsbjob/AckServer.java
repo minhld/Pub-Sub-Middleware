@@ -25,7 +25,7 @@ public abstract class AckServer extends Thread {
     protected int workerNumber;
 
     public AckServer(ZMQ.Context _parentContext, String _brokerIp, AckListener _ackListener) {
-        this.parentContext = _parentContext;
+        this.parentContext = _parentContext != null ? _parentContext : ZMQ.context(1);
         this.brokerIp = _brokerIp;
         this.ackListener = _ackListener;
         this.listenerPort = LISTENER_PORT;
@@ -71,7 +71,9 @@ public abstract class AckServer extends Thread {
             poller.register(inquirer, ZMQ.Poller.POLLIN);
 
             byte[] resp;
+
             while (!isInterrupted()) {
+
                 int totalPoll = 0;
                 while (totalPoll < this.workerNumber && poller.poll(100) > 0) {
                     // received the response from client
