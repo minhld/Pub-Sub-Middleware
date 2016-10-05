@@ -16,13 +16,7 @@ import com.minhld.pbsbmid.R;
 import com.minhld.pbsbmid.UITools;
 import com.minhld.pubsublib.Publisher;
 import com.minhld.pubsublib.Subscriber;
-import com.minhld.wfd.Utils;
-
-import org.apache.commons.io.IOUtils;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.minhld.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

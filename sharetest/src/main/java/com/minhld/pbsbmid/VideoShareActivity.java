@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.minhld.pubsublib.Publisher;
 import com.minhld.pubsublib.Subscriber;
-import com.minhld.wfd.Utils;
+import com.minhld.utils.Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

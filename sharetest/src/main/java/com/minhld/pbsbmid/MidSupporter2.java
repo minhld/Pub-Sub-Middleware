@@ -7,7 +7,7 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Handler;
 
 import com.minhld.pubsublib.Broker;
-import com.minhld.wfd.Utils;
+import com.minhld.utils.Utils;
 import com.minhld.wfd.WFDManager;
 
 import java.util.Collection;

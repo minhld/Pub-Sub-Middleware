@@ -1,4 +1,4 @@
-package com.minhld.wfd;
+package com.minhld.utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -308,5 +308,32 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String genDRL(String workerId, float cpu, float cpuUsed,
+                                float mem, float memUsed, float bat, float batUsed) {
+        String retStr = "Id=" + workerId + ";DRL=";
+        // this is out of service
+        if (batUsed >= 0.8) return retStr + "0";
+
+        float DRL = (cpu * 2f - cpuUsed * 0.5f) + (mem * 1.5f - memUsed * 0.5f);
+        return retStr + DRL;
+    }
+
+    /**
+     *
+     * @param resp
+     * @return
+     */
+    public static Object getResponse(String resp, String infoType) {
+        String[] elements = resp.split(";");
+
+        if (infoType.equals("drl")) {
+            return Float.parseFloat(elements[1].split("=")[1]);
+        } else if (infoType.equals("id")){
+            return elements[0].split("=")[1];
+        }
+
+        return null;
     }
 }

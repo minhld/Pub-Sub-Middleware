@@ -13,10 +13,10 @@ import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
-import android.widget.TextView;
+
+import com.minhld.utils.Utils;
 
 import java.util.Collection;
-import java.util.Date;
 
 /**
  * handles all WFD connection matters

@@ -1,12 +1,11 @@
 package com.minhld.pubsublib;
 
 import com.minhld.pbsbjob.AckServer;
-import com.minhld.wfd.Utils;
+import com.minhld.utils.Utils;
 
 import org.zeromq.ZMQ;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.HashMap;
 
 /**
  * Created by minhld on 8/4/2016.
@@ -19,46 +18,19 @@ import java.util.Queue;
  */
 public class Broker extends Thread {
     private String brokerIp = "*";
-    private Queue<String> workerQueue;
-    private AckServer ackServer;
+    private HashMap<String, WorkerInfo> workerList;
 
-    // default type of the broker is publish-subscribe mode
-    private Utils.PubSubType pubSubType = Utils.PubSubType.PubSub;
+    private static ZMQ.Socket backend;
+    private AckServerListener ackServer;
 
     public Broker(String _brokerIp) {
         this.brokerIp = _brokerIp;
         this.start();
     }
 
-    public Broker(Utils.PubSubType _pubSubType) {
-        this.pubSubType = _pubSubType;
-        this.start();
-    }
-
-    public Broker(String _brokerIp, Utils.PubSubType _pubSubType) {
-        this.brokerIp = _brokerIp;
-        this.pubSubType = _pubSubType;
-        this.start();
-    }
-
     public void run() {
         // this switch
-        switch (pubSubType) {
-            case PubSub: {
-                initPubSubMode();
-                break;
-            }
-
-            case Router: {
-                initRouterMode();
-                break;
-            }
-        }
-
-    }
-
-    public void setPubSubMode(Utils.PubSubType psType) {
-        this.pubSubType = psType;
+        initRouterMode();
     }
 
     /**
@@ -100,21 +72,16 @@ public class Broker extends Thread {
 
         // initiate subscribe socket
         String backendPort = "tcp://" + this.brokerIp + ":" + Utils.BROKER_XPUB_PORT;
-        ZMQ.Socket backend = context.socket(ZMQ.ROUTER);
+        this.backend = context.socket(ZMQ.ROUTER);
         backend.bind(backendPort);
 
         // Queue of available workers
-        workerQueue = new LinkedList<>();
+        workerList = new HashMap<String, WorkerInfo>();
 
-        // create ACK server
-        ackServer = new AckServer() {
-            @Override
-            public void receiveResponse(byte[] resp) {
+        // initiate ACK server
+        ackServer = new AckServerListener(context, this.brokerIp);
 
-            }
-        };
-
-        String workerAddr, clientAddr;
+        String workerId, clientId;
         byte[] empty, request, reply;
         while (!Thread.currentThread().isInterrupted()) {
             ZMQ.Poller items = new ZMQ.Poller(2);
@@ -127,18 +94,19 @@ public class Broker extends Thread {
             // handle worker activity on back-end
             if (items.pollin(0)) {
                 // queue worker address for LRU routing
-                workerAddr = backend.recvStr();
-                workerQueue.add(workerAddr);
+                workerId = backend.recvStr();
+                workerList.put(workerId, new WorkerInfo());
+                ackServer.updateWorkerNumbers(workerList.size());
 
                 // second frame is a delimiter, empty
                 empty = backend.recv();
                 assert (empty.length == 0);
 
                 // third frame is READY or else a client reply address
-                clientAddr = backend.recvStr();
+                clientId = backend.recvStr();
 
                 // if client reply, send rest back to front-end
-                if (!clientAddr.equals(Utils.WORKER_READY)) {
+                if (!clientId.equals(Utils.WORKER_READY)) {
                     // check the delimiter again
                     empty = backend.recv();
                     assert (empty.length == 0);
@@ -147,7 +115,7 @@ public class Broker extends Thread {
                     reply = backend.recv();
 
                     // flush them out to the front-end
-                    frontend.sendMore(clientAddr);
+                    frontend.sendMore(clientId);
                     frontend.sendMore(Utils.BROKER_DELIMITER);
                     frontend.send(reply);
                 }
@@ -157,7 +125,7 @@ public class Broker extends Thread {
             if (items.pollin(1)) {
                 // now get next client request, route to LRU worker
                 // client request is [address][empty][request]
-                clientAddr = frontend.recvStr();
+                clientId = frontend.recvStr();
 
                 // check 2nd frame
                 empty = frontend.recv();
@@ -166,14 +134,8 @@ public class Broker extends Thread {
                 // get 3rd frame
                 request = frontend.recv();
 
-                // get worker address from the queue
-                workerAddr = workerQueue.poll();
+                ackServer.queryDRL(clientId, request);
 
-                backend.sendMore(workerAddr);
-                backend.sendMore(Utils.BROKER_DELIMITER);
-                backend.sendMore(clientAddr);
-                backend.sendMore(Utils.BROKER_DELIMITER);
-                backend.send (request);
             }
 
         }
@@ -183,107 +145,68 @@ public class Broker extends Thread {
         context.term();
     }
 
-    class AckServerListener extends AckServer {
+    static class AckServerListener extends AckServer {
+        static String clientId;
+        static byte[] request;
+        static HashMap<String, Float> advancedWorkerList;
+
         public AckServerListener(ZMQ.Context context, String brokerIp) {
             super(context, brokerIp, new AckListener() {
                 @Override
                 public void allAcksReceived() {
+                    // when all ACKs from workers have been retrieved
+                    // this is the place to pass the request from client to worker
+
+                    // send job to worker
+                    for (String workerId : AckServerListener.advancedWorkerList.keySet()) {
+                        System.out.println("send job to worker " + workerId);
+                        backend.sendMore(workerId);
+                        backend.sendMore(Utils.BROKER_DELIMITER);
+                        backend.sendMore(AckServerListener.clientId);
+                        backend.sendMore(Utils.BROKER_DELIMITER);
+                        backend.send(AckServerListener.request);
+                    }
 
                 }
             });
+
+            advancedWorkerList = new HashMap<>();
+        }
+
+        public void queryDRL(String clientId, byte[] request) {
+            AckServerListener.clientId = clientId;
+            AckServerListener.request = request;
+
+            // query resource information from remote workers
+            this.sendAck();
         }
 
         @Override
         public void receiveResponse(byte[] resp) {
+            String respStr = new String(resp);
 
+            // remote device's resource info received
+            System.out.println("received " + respStr);
+
+            // analyze response and add it to the array of WorkerInfos
+            // to do here
+            float drl = (float) Utils.getResponse(respStr, "drl");
+            String workerId = (String) Utils.getResponse(respStr, "id");
+
+            // compare DRL with client's DRL and add to the list
+            // will not add more than 3 devices
+            if (drl > 0 && advancedWorkerList.size() < 3) {
+                advancedWorkerList.put(workerId, drl);
+            }
         }
     }
 
-//    /**
-//     * this class handles sending/receiving ACKs between
-//     * broker - workers
-//     *
-//     * @author minhld
-//     */
-//    class AckHandler extends Thread {
-//        ZMQ.Context parentContext;
-//        String brokerIp;
-//
-//        /**
-//         * socket to talk to workers
-//         */
-//        private ZMQ.Socket requester;
-//        private AckListener ackListener;
-//
-//        public AckHandler(ZMQ.Context _parentContext, String _brokerIp, AckListener _ackListener) {
-//            this.parentContext = _parentContext;
-//            this.brokerIp = _brokerIp;
-//            this.ackListener = _ackListener;
-//            this.start();
-//        }
-//
-//        public void sendAck() {
-//            requester.sendMore("request");
-//            requester.send("ack_request");
-//        }
-//
-//        public void run() {
-//            try {
-//                ZMQ.Context context = ZMQ.context(1);
-//
-//                //  Socket to talk to workers
-//                requester = context.socket(ZMQ.PUB);
-//                requester.setIdentity("broker_ack".getBytes());
-//                requester.bind("tcp://" + this.brokerIp + ":5555");
-//
-//                ZMQ.Socket inquirier = context.socket(ZMQ.REP);
-//                inquirier.bind("tcp://" + this.brokerIp + ":5556");
-//
-//                ZMQ.Poller poller = new ZMQ.Poller(1);
-//                poller.register(inquirier, ZMQ.Poller.POLLIN);
-//
-//                byte[] resp;
-//                while (!isInterrupted()) {
-//                    requester.sendMore("request");
-//                    requester.send("ack_request");
-//
-//                    int totalPoll = 0;
-//                    while (totalPoll < workerQueue.size() && poller.poll() > 0) {
-//                        // received the response from client
-//                        resp = inquirier.recv();
-//
-//                        // do something with the response
-//
-//
-//                        // and trigger back the client
-//                        inquirier.send("");
-//
-//                        totalPoll++;
-//
-////	            		if (totalPoll == workerQueue.size()) {
-////	            			// when ACKs from all workers received
-////	            			totalPoll = 0;
-////
-////	            			// dispatch signal
-////	            			// do something here
-////
-////	            			break;
-////	            		}
-//                    }
-//                }
-//
-//                requester.close();
-//                inquirier.close();
-//                context.term();
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//    }
-//
-//    public interface AckListener {
-//        public void allAcksReceived();
-//    }
+    class WorkerInfo {
+        public double cpu;
+        public double cpuUsed;
+        public double memory;
+        public double memoryUsed;
+        public double battery;
+        public double batteryUsed;
+    }
 }

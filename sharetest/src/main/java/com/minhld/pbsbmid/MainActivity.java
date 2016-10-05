@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.minhld.pubsublib.Client;
 import com.minhld.pubsublib.Worker;
-import com.minhld.wfd.Utils;
+import com.minhld.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.minhld.pbsbjob.MidClient;
 import com.minhld.pubsublib.Worker;
-import com.minhld.wfd.Utils;
+import com.minhld.utils.Utils;
 
 import butterknife.BindView;
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.minhld.pbsbmid.R;
 import com.minhld.pbsbmid.UITools;
 import com.minhld.pubsublib.Subscriber;
-import com.minhld.wfd.Utils;
+import com.minhld.utils.Utils;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
