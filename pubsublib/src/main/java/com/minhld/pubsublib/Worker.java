@@ -1,5 +1,6 @@
 package com.minhld.pubsublib;
 
+import com.minhld.pbsbjob.AckClient;
 import com.minhld.utils.Utils;
 
 import org.zeromq.ZMQ;
@@ -15,8 +16,7 @@ public abstract class Worker extends Thread {
     private String groupIp = "*";
     private int port = Utils.BROKER_XPUB_PORT;
 
-    // default type of the broker is publish-subscribe mode
-    private Utils.BrokerType brokerType = Utils.BrokerType.Broker;
+    private ExAckClient ackClient;
 
     public Worker() {
         this.start();
@@ -34,21 +34,7 @@ public abstract class Worker extends Thread {
     }
 
     public void run() {
-        switch (this.brokerType) {
-            case Broker: {
-                initWithBroker();
-                break;
-            }
-
-            case Brokerless: {
-                initWithoutBroker();
-                break;
-            }
-        }
-    }
-
-    public void setBrokerType(Utils.BrokerType _brokerType) {
-        this.brokerType = _brokerType;
+        initWithBroker();
     }
 
     /**
@@ -66,6 +52,10 @@ public abstract class Worker extends Thread {
             // inform broker that i am ready
             worker.send(Utils.WORKER_READY);
 
+            // initiate ACK client - to listen to DRL request from brokers
+            ackClient = new ExAckClient(context, this.groupIp, worker.getIdentity());
+
+            // this part is to wait for broker to send job to execute
             String clientAddr;
             byte[] request, result, empty;
             while (!Thread.currentThread().isInterrupted()) {
@@ -93,12 +83,36 @@ public abstract class Worker extends Thread {
         }
     }
 
-    /**
-     * initiate worker without broker at the middle.
-     * worker also takes the role of broker
-     */
-    private void initWithoutBroker() {
+    protected byte[] resolveRequestInner(byte[] request) {
+        return null;
+    }
 
+//    /**
+//     * initiate worker without broker at the middle.
+//     * worker also takes the role of broker
+//     */
+//    private void initWithoutBroker() {
+//
+//    }
+
+    class ExAckClient extends AckClient {
+        public ExAckClient(ZMQ.Context _context, String _ip, byte[] _id) {
+            super(_context, _ip, _id);
+        }
+
+        @Override
+        public void sendResponse(String topic, byte[] request) {
+            // this delegate function is called when client detects a DRL request
+            // from server and try responding to it with DRL info
+
+            // this is the place to send back device info
+            String reqStr = new String(request);
+            if (reqStr.equals("ack_request")) {
+                // receive device resource information, and calculate DRL value here
+                String drl = Utils.genDRL(new String(this.clientId), 1.5f, 0.6f, 1f, 0.25f, 2.5f, 0.7f);
+                this.sendMessage(drl.getBytes());
+            }
+        }
     }
 
     /**

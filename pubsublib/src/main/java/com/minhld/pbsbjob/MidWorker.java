@@ -16,16 +16,8 @@ import org.zeromq.ZMQ;
 
 public class MidWorker extends Worker {
 
-    public MidWorker() {
-        super();
-    }
-
     public MidWorker(String _groupIp) {
         super(_groupIp);
-    }
-
-    public MidWorker(String _groupIp, int _port) {
-        super(_groupIp, _port);
     }
 
     /**
@@ -35,34 +27,13 @@ public class MidWorker extends Worker {
      * @param request
      * @return
      */
+    @Override
     public byte[] resolveRequest(byte[] request) {
-        String reqStr = new String(request);
-        if (reqStr.equals(Utils.CLIENT_REQ_RES)) {
-            // request for resource information
+        // this is the place for worker to resolve request
+        // from client pass to it by broker.
 
-        } else {
-            // execute task
-
-        }
-        return null;
+        // if developer is unsure how to do, simply use the inner predefined function
+        return resolveRequestInner(request);
     }
 
-    /**
-     * this class refers to: AckClient
-     *
-     * @author minhld
-     *
-     */
-    class WorkerAckHandler extends AckClient {
-        public WorkerAckHandler(ZMQ.Context _parent, String _ip, byte[] _workerId) {
-            super(_parent, _ip, _workerId);
-        }
-
-        @Override
-        public void sendResponse(byte[] topic, byte[] request) {
-            System.out.println(this.workerId + " received " + new String(request));
-
-            sendMessage((this.workerId + " " + this.brokerIp + " report").getBytes());
-        }
-    }
 }
