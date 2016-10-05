@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.minhld.pbsbjob.MidClient;
 import com.minhld.pubsublib.Worker;
 import com.minhld.utils.Utils;
 
@@ -58,7 +57,7 @@ public class JobTestActivity extends AppCompatActivity {
         new ExMidWorker();
 
         // start clients
-        new ExMidClient();
+//        new ExMidClient();
     }
 
     class ExMidWorker extends Worker {
@@ -71,25 +70,25 @@ public class JobTestActivity extends AppCompatActivity {
         }
     }
 
-    class ExMidClient extends MidClient {
-        public ExMidClient() {
-            super(UITools.GO_IP);
-        }
-
-        @Override
-        public boolean resReqResponse(byte[] response) {
-            // whether to dispatch job package or not
-            return false;
-        }
-
-        @Override
-        public void send() {
-            // define what to send to the broker
-        }
-
-        @Override
-        public void resolveResult(byte[] result) {
-            // when result comes
-        }
-    }
+//    class ExMidClient extends MidClient {
+//        public ExMidClient() {
+//            super(UITools.GO_IP);
+//        }
+//
+//        @Override
+//        public boolean resReqResponse(byte[] response) {
+//            // whether to dispatch job package or not
+//            return false;
+//        }
+//
+//        @Override
+//        public void send() {
+//            // define what to send to the broker
+//        }
+//
+//        @Override
+//        public void resolveResult(byte[] result) {
+//            // when result comes
+//        }
+//    }
 }
