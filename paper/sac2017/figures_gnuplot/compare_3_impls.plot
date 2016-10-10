@@ -10,6 +10,9 @@ set style histogram cluster gap 1
 set style fill solid border -1
 set boxwidth 0.9
 set xtic scale 0
-plot 'D:\documents\papers\sac2017\figures_gnuplot\compare_3_impls.dat' using 2:xtic(1) ti col fc rgb "#666" fillstyle pattern 3, \
-	'' u 3 ti col fc rgb "#666" fillstyle pattern 5, \
+#plot 'D:\android\PbSbMid\paper\sac2017\figures_gnuplot\compare_3_impls.dat' using 2:xtic(1) ti col fc rgb "#666" fillstyle pattern 3, \
+#	'' u 3 ti col fc rgb "#666" fillstyle pattern 5, \
+#	'' u 4 ti col fc rgb "#666" fillstyle pattern 1
+
+plot 'D:\android\PbSbMid\paper\sac2017\figures_gnuplot\compare_3_impls.dat' using 3:xtic(1) ti col fc rgb "#666" fillstyle pattern 5, \
 	'' u 4 ti col fc rgb "#666" fillstyle pattern 1
