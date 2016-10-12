@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     public class ExWorker extends Worker {
 
         public ExWorker() {
-            super(UITools.GO_IP);
+            super(MainActivity.this, UITools.GO_IP);
         }
 
         @Override

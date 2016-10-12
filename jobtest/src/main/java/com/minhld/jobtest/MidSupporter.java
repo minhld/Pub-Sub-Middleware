@@ -1,4 +1,4 @@
-package com.minhld.pbsbmid;
+package com.minhld.jobtest;
 
 import android.app.Activity;
 import android.content.IntentFilter;
@@ -6,8 +6,6 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.os.Handler;
 
-import com.minhld.pubsublib.Broker;
-import com.minhld.utils.Utils;
 import com.minhld.wfd.WFDManager;
 
 import java.util.Collection;
@@ -16,16 +14,16 @@ import java.util.Collection;
  * Created by minhld on 8/6/2016.
  *
  * This class utilizes the pub-sub library to provide full functionality of
- * router mode application
+ * publish-subscribe to the client application
  */
-public class MidSupporter2 {
+public class MidSupporter {
     Activity context;
     WFDManager wfdManager;
     IntentFilter mIntentFilter;
     WifiPeerListAdapter deviceListAdapter;
-    Broker mBroker;
+//    Broker mBroker;
 
-    public MidSupporter2(Activity context, final Handler mainHandler) {
+    public MidSupporter(Activity context, final Handler mainHandler) {
         this.context = context;
 
         wfdManager = new WFDManager(this.context);
@@ -46,15 +44,15 @@ public class MidSupporter2 {
 
                 String brokerIp = p2pInfo.groupOwnerAddress.getHostAddress();
                 if (p2pInfo.groupFormed && p2pInfo.isGroupOwner) {
-                    if (mBroker != null) {
-                        mainHandler.obtainMessage(Utils.MESSAGE_INFO, "broker reused").sendToTarget();
-                        return;
-                    }
-
-                    // the group owner will also become a broker
-//                    mBroker = new Broker(brokerIp, Utils.PubSubType.Router);
+//                    if (mBroker != null) {
+//                        mainHandler.obtainMessage(Utils.MESSAGE_INFO, "broker reused").sendToTarget();
+//                        return;
+//                    }
+//
+//                    // the group owner will also become a broker
+//                    mBroker = new Broker(brokerIp);
                 } else if (p2pInfo.groupFormed) {
-                    // let user select to be either publisher or subscriber
+//                    // let user select to be either publisher or subscriber
 //                    new Publisher(brokerIp, mainHandler).start();
                 }
             }

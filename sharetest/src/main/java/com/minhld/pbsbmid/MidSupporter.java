@@ -13,7 +13,7 @@ import java.util.Collection;
 /**
  * Created by minhld on 8/6/2016.
  *
- * This class utilizes the pubsub library to provide full functionality of
+ * This class utilizes the pub-sub library to provide full functionality of
  * publish-subscribe to the client application
  */
 public class MidSupporter {
@@ -48,11 +48,11 @@ public class MidSupporter {
 //                        mainHandler.obtainMessage(Utils.MESSAGE_INFO, "broker reused").sendToTarget();
 //                        return;
 //                    }
-
-                    // the group owner will also become a broker
+//
+//                    // the group owner will also become a broker
 //                    mBroker = new Broker(brokerIp);
                 } else if (p2pInfo.groupFormed) {
-                    // let user select to be either publisher or subscriber
+//                    // let user select to be either publisher or subscriber
 //                    new Publisher(brokerIp, mainHandler).start();
                 }
             }

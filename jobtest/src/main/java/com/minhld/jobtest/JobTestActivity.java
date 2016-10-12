@@ -1,17 +1,24 @@
 package com.minhld.jobtest;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.minhld.pbsbjob.MidWorker;
+import com.minhld.pubsublib.Broker;
+import com.minhld.pubsublib.Client;
 import com.minhld.pubsublib.Worker;
 import com.minhld.utils.Utils;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class JobTestActivity extends AppCompatActivity {
     @BindView(R.id.createGroupBtn)
@@ -45,50 +52,62 @@ public class JobTestActivity extends AppCompatActivity {
         }
     };
 
+    MidSupporter midSupporter;
+    WifiPeerListAdapter deviceListAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jobtest);
+
+        ButterKnife.bind(this);
+        infoText.setMovementMethod(new ScrollingMovementMethod());
+
+        midSupporter = new MidSupporter(this, mainUiHandler);
+
+        deviceList.setAdapter(midSupporter.getDeviceListAdapter());
+
+        pubBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initSystem();
+            }
+        });
+
+        subBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initClient();
+            }
+        });
     }
 
     private void initSystem() {
+        String brokerIp = "*";
+        // start server (broker)
+        new Broker(brokerIp);
+
         // start workers
-        new ExMidWorker();
-        new ExMidWorker();
+        new MidWorker(this, brokerIp);
+        new MidWorker(this, brokerIp);
 
         // start clients
 //        new ExMidClient();
     }
 
-    class ExMidWorker extends Worker {
-        @Override
-        public byte[] resolveRequest(byte[] request) {
-            // 1. receive the job request
-            // 2. analyze the package -> job + data
-            // 3. execute job on data and return result
-            return new byte[0];
-        }
-    }
 
-//    class ExMidClient extends MidClient {
-//        public ExMidClient() {
-//            super(UITools.GO_IP);
-//        }
-//
-//        @Override
-//        public boolean resReqResponse(byte[] response) {
-//            // whether to dispatch job package or not
-//            return false;
-//        }
-//
-//        @Override
-//        public void send() {
-//            // define what to send to the broker
-//        }
-//
-//        @Override
-//        public void resolveResult(byte[] result) {
-//            // when result comes
-//        }
-//    }
+    private void initClient() {
+        new Client(Utils.BROKER_SPECIFIC_IP) {
+
+            @Override
+            public void send() {
+                // this.sendMessage("hello");
+            }
+
+            @Override
+            public void resolveResult(byte[] result) {
+                //
+            }
+        };
+    }
 }
