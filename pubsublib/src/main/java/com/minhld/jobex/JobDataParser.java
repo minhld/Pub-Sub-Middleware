@@ -22,7 +22,7 @@ public interface JobDataParser {
      * @return
      * @throws Exception
      */
-    public Object readFile(String path) throws Exception;
+    public Object loadObject(String path) throws Exception;
 
     /**
      * convert data object to byte array - serialize object to bytes
@@ -56,7 +56,7 @@ public interface JobDataParser {
      * @param index
      * @return
      */
-    public Object getSinglePart(Object objData, int numOfParts, int index);
+    public Object getPartFromObject(Object objData, int numOfParts, int index);
     public String getJsonMetadata(Object objData);
 
     /**
@@ -66,7 +66,7 @@ public interface JobDataParser {
      * @param jsonMetadata
      * @return
      */
-    public Object createPlaceholder(String jsonMetadata);
+    public Object createObjectHolder(String jsonMetadata);
 
     /**
      * merge the part data object into the final object.
@@ -76,15 +76,15 @@ public interface JobDataParser {
      * @param index
      * @return
      */
-    public Object copyPartToPlaceholder(Object placeholderObj, byte[] partObj, int index);
+    public Object copyPartToHolder(Object placeholderObj, byte[] partObj, int index);
 
     /**
-     * destroy the data object from the memory. If the object is input/output stream
+     * destroyObject the data object from the memory. If the object is input/output stream
      * object, then it will be closed. If it is a bitmap, it will be recycled etc...
      *
      * @param data
      */
-    public void destroy(Object data);
+    public void destroyObject(Object data);
 
     /**
      * check if the data object is really destroyed or not

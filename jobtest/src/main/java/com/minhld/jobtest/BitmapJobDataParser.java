@@ -22,7 +22,7 @@ public class BitmapJobDataParser implements JobDataParser {
     }
 
     @Override
-    public Object readFile(String path) throws Exception {
+    public Object loadObject(String path) throws Exception {
         return BitmapFactory.decodeFile(path);
     }
 
@@ -45,7 +45,7 @@ public class BitmapJobDataParser implements JobDataParser {
     }
 
     @Override
-    public Object getSinglePart(Object data, int numOfParts, int index) {
+    public Object getPartFromObject(Object data, int numOfParts, int index) {
         Bitmap bmpData = (Bitmap) data;
         int pieceWidth = bmpData.getWidth() / numOfParts;
         return Bitmap.createBitmap(bmpData, (pieceWidth * index), 0, pieceWidth, bmpData.getHeight());
@@ -58,7 +58,7 @@ public class BitmapJobDataParser implements JobDataParser {
     }
 
     @Override
-    public Object createPlaceholder(String jsonMetadata) {
+    public Object createObjectHolder(String jsonMetadata) {
         try {
             JSONObject resultObj = new JSONObject(jsonMetadata);
             int width = resultObj.getInt("width"), height = resultObj.getInt("height");
@@ -70,7 +70,7 @@ public class BitmapJobDataParser implements JobDataParser {
     }
 
     @Override
-    public Object copyPartToPlaceholder(Object placeholderObj, byte[] partObj, int index) {
+    public Object copyPartToHolder(Object placeholderObj, byte[] partObj, int index) {
         // get bitmap from original data
         Bitmap partBmp = BitmapFactory.decodeByteArray(partObj, 0, partObj.length);
 
@@ -81,7 +81,7 @@ public class BitmapJobDataParser implements JobDataParser {
     }
 
     @Override
-    public void destroy(Object data) {
+    public void destroyObject(Object data) {
         ((Bitmap) data).recycle();
     }
 

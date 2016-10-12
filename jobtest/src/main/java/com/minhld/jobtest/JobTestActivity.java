@@ -91,8 +91,6 @@ public class JobTestActivity extends AppCompatActivity {
         new MidWorker(this, brokerIp);
         new MidWorker(this, brokerIp);
 
-        // start clients
-//        new ExMidClient();
     }
 
 
@@ -101,7 +99,11 @@ public class JobTestActivity extends AppCompatActivity {
 
             @Override
             public void send() {
-                // this.sendMessage("hello");
+                // dispatch jobs to clients
+                String dataPath = Utils.getDownloadPath() + "/mars.jpg";
+                String jobPath = Utils.getDownloadPath() + "/Job.jar";
+                //jobHandler.dispatchJob(useCluster, dataPath, jobPath);
+                //this.sendMessage();
             }
 
             @Override
