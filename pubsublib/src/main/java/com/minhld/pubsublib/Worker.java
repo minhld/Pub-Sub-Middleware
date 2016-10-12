@@ -2,10 +2,13 @@ package com.minhld.pubsublib;
 
 import android.content.Context;
 
+import com.minhld.jobex.JobDataParser;
 import com.minhld.pbsbjob.AckClient;
 import com.minhld.utils.Utils;
 
 import org.zeromq.ZMQ;
+
+import java.lang.reflect.Method;
 
 /**
  * The worker serves as a servant for the broker. It receives tasks
@@ -97,17 +100,21 @@ public abstract class Worker extends Thread {
      */
     protected byte[] resolveRequestInner(byte[] jobRequest) {
         try {
-            Utils.getObject(this.context, )
+            Class dataParserClass = Utils.getObject(this.context, jobRequest);
+            Object dataParser = dataParserClass.newInstance();
             // get the original data
-            Object orgObj = dataParser.parseBytesToObject(jobData.byteData);
+            Method getBytesToObject = dataParserClass.getMethod("getBytesToObject", JobDataParser.class);
+            getBytesToObject.invoke(dataParser, jobRequest);
 
             // initiate the Job algorithm class & execute it
             // suppose that job was download to Download folder in local device
             String jobPath = Utils.getDownloadPath() + "/" + Utils.JOB_FILE_NAME;
 
-            Utils.runRemote(this.context, jobPath, orgObj, dataParser.getDataClass());
+            // Utils.runRemote(this.context, jobPath, orgObj, dataParser.getDataClass());
+            return new byte[0];
         } catch (Exception e) {
-
+            e.printStackTrace();
+            return new byte[0];
         }
     }
 

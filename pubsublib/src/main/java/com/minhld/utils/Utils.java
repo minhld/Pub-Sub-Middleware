@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 
+import org.apache.commons.io.FileUtils;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -156,20 +157,21 @@ public class Utils {
      *
      * @param c
      * @param objectBytes
-     * @param type
      * @return
      * @throws Exception
      */
-    public static Object getObject(Context c, byte[] objectBytes, Class type) throws Exception {
-        //
-        String objectPath = Utils.getDownloadPath() + "";
+    public static Class getObject(Context c, byte[] objectBytes) throws Exception {
+        // save the job data to file
+        String objectPath = Utils.getDownloadPath() + "/" + JOB_FILE_NAME;
+        FileUtils.writeByteArrayToFile(new File(objectPath), objectBytes);
 
         //
         String dexDir = c.getDir("dex", 0).getAbsolutePath();
         ClassLoader parent  = c.getClass().getClassLoader();
         DexClassLoader loader = new DexClassLoader(objectPath, dexDir, null, parent);
-        Class jobClass = loader.loadClass(JOB_CLASS_NAME);
-        return jobClass.newInstance();
+        // Class jobClass = loader.loadClass(JOB_CLASS_NAME);
+        // return jobClass.newInstance();
+        return loader.loadClass(JOB_CLASS_NAME);
     }
 
     /**
