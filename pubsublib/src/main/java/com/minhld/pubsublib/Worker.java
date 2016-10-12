@@ -1,5 +1,7 @@
 package com.minhld.pubsublib;
 
+import android.content.Context;
+
 import com.minhld.pbsbjob.AckClient;
 import com.minhld.utils.Utils;
 
@@ -16,20 +18,24 @@ public abstract class Worker extends Thread {
     private String groupIp = "*";
     private int port = Utils.BROKER_XPUB_PORT;
 
+    private Context context;
     private ExAckClient ackClient;
 
-    public Worker() {
+    public Worker(Context context) {
+        this.context = context;
         this.start();
     }
 
-    public Worker(String _groupIp) {
-        this.groupIp = _groupIp;
+    public Worker(Context context, String groupIp) {
+        this.context = context;
+        this.groupIp = groupIp;
         this.start();
     }
 
-    public Worker(String _groupIp, int _port) {
-        this.groupIp = _groupIp;
-        this.port = _port;
+    public Worker(Context context, String groupIp, int port) {
+        this.context = context;
+        this.groupIp = groupIp;
+        this.port = port;
         this.start();
     }
 
@@ -83,8 +89,26 @@ public abstract class Worker extends Thread {
         }
     }
 
-    protected byte[] resolveRequestInner(byte[] request) {
-        return null;
+    /**
+     * default
+     *
+     * @param jobRequest
+     * @return
+     */
+    protected byte[] resolveRequestInner(byte[] jobRequest) {
+        try {
+            Utils.getObject(this.context, )
+            // get the original data
+            Object orgObj = dataParser.parseBytesToObject(jobData.byteData);
+
+            // initiate the Job algorithm class & execute it
+            // suppose that job was download to Download folder in local device
+            String jobPath = Utils.getDownloadPath() + "/" + Utils.JOB_FILE_NAME;
+
+            Utils.runRemote(this.context, jobPath, orgObj, dataParser.getDataClass());
+        } catch (Exception e) {
+
+        }
     }
 
 //    /**

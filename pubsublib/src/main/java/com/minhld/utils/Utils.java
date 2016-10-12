@@ -153,6 +153,26 @@ public class Utils {
     }
 
     /**
+     *
+     * @param c
+     * @param objectBytes
+     * @param type
+     * @return
+     * @throws Exception
+     */
+    public static Object getObject(Context c, byte[] objectBytes, Class type) throws Exception {
+        //
+        String objectPath = Utils.getDownloadPath() + "";
+
+        //
+        String dexDir = c.getDir("dex", 0).getAbsolutePath();
+        ClassLoader parent  = c.getClass().getClassLoader();
+        DexClassLoader loader = new DexClassLoader(objectPath, dexDir, null, parent);
+        Class jobClass = loader.loadClass(JOB_CLASS_NAME);
+        return jobClass.newInstance();
+    }
+
+    /**
      * this function will execute a class that is stored in Download folder
      *
      * @param c
@@ -166,9 +186,9 @@ public class Utils {
         }
 
         // address the class object and its executable method
-        String dex_dir = c.getDir("dex", 0).getAbsolutePath();
+        String dexDir = c.getDir("dex", 0).getAbsolutePath();
         ClassLoader parent  = c.getClass().getClassLoader();
-        DexClassLoader loader = new DexClassLoader(jobPath, dex_dir, null, parent);
+        DexClassLoader loader = new DexClassLoader(jobPath, dexDir, null, parent);
         Class jobClass = loader.loadClass(JOB_CLASS_NAME);
         Object o = jobClass.newInstance();
         Method m = jobClass.getMethod(JOB_EXEC_METHOD, type);
