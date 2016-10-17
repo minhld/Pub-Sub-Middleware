@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PbSbMid.iml" filepath="$PROJECT_DIR$/PbSbMid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dextest/dextest.iml" filepath="$PROJECT_DIR$/dextest/dextest.iml" />
       <module fileurl="file://$PROJECT_DIR$/jobtest/jobtest.iml" filepath="$PROJECT_DIR$/jobtest/jobtest.iml" />
       <module fileurl="file://$PROJECT_DIR$/pubsublib/pubsublib.iml" filepath="$PROJECT_DIR$/pubsublib/pubsublib.iml" />
       <module fileurl="file://$PROJECT_DIR$/sharetest/sharetest.iml" filepath="$PROJECT_DIR$/sharetest/sharetest.iml" />

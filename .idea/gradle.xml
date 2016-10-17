@@ -9,6 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/dextest" />
             <option value="$PROJECT_DIR$/jobtest" />
             <option value="$PROJECT_DIR$/pubsublib" />
             <option value="$PROJECT_DIR$/sharetest" />

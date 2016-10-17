@@ -1,1 +1,1 @@
-include ':sharetest', ':pubsublib', ':jobtest'
+include ':sharetest', ':pubsublib', ':jobtest', ':dextest'
