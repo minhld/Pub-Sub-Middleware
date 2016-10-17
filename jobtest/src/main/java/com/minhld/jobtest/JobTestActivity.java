@@ -1,6 +1,5 @@
 package com.minhld.jobtest;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -82,6 +81,9 @@ public class JobTestActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * init the basic infrastructure including broker and workers
+     */
     private void initSystem() {
         String brokerIp = "*";
         // start server (broker)
@@ -93,7 +95,9 @@ public class JobTestActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * init client - on client devices
+     */
     private void initClient() {
         new Client(Utils.BROKER_SPECIFIC_IP) {
 
@@ -104,6 +108,13 @@ public class JobTestActivity extends AppCompatActivity {
                 String jobPath = Utils.getDownloadPath() + "/Job.jar";
                 //jobHandler.dispatchJob(useCluster, dataPath, jobPath);
                 //this.sendMessage();
+                try {
+                    JobSupporter.initDataParser(JobTestActivity.this, jobPath);
+                    byte[] jobData = JobSupporter.getData(dataPath);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
