@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.minhld.jobex.JobPackage;
 import com.minhld.pbsbjob.MidWorker;
 import com.minhld.pubsublib.Broker;
 import com.minhld.pubsublib.Client;
@@ -106,12 +107,15 @@ public class JobTestActivity extends AppCompatActivity {
                 // dispatch jobs to clients
                 String dataPath = Utils.getDownloadPath() + "/mars.jpg";
                 String jobPath = Utils.getDownloadPath() + "/Job.jar";
-                //jobHandler.dispatchJob(useCluster, dataPath, jobPath);
-                //this.sendMessage();
+
                 try {
                     JobSupporter.initDataParser(JobTestActivity.this, jobPath);
                     byte[] jobData = JobSupporter.getData(dataPath);
 
+                    JobPackage job = new JobPackage(0, jobData, jobPath);
+                    byte[] jobPkg = job.toByteArray();
+
+                    this.sendMessage(jobPkg);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

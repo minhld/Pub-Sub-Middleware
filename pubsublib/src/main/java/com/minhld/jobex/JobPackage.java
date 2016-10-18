@@ -16,21 +16,18 @@ public class JobPackage implements Serializable {
     public int index;
     public byte[] dataBytes;
     public byte[] jobBytes;
-    public byte[] parserBytes;
 
-    public JobPackage(int index, byte[] data, byte[] job, byte[] parser) {
+    public JobPackage(int index, byte[] data, byte[] job) {
         this.index = index;
         this.dataBytes = data;
         this.jobBytes = job;
-        this.parserBytes = parser;
     }
 
-    public JobPackage(int index, File data, byte[] job, byte[] parser) {
+    public JobPackage(int index, byte[] data, String jobPath) {
         this.index = index;
-        this.jobBytes = job;
-        this.parserBytes = parser;
+        this.dataBytes = data;
         try {
-            this.dataBytes = Utils.readFile(data);
+            this.jobBytes = Utils.readFile(new File(jobPath));
         } catch (IOException e) {
             e.printStackTrace();
         }
