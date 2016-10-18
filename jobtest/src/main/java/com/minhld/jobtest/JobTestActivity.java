@@ -95,6 +95,9 @@ public class JobTestActivity extends AppCompatActivity {
                 initClient();
             }
         });
+
+        // grant read/write permission for Android 6.x
+        Utils.grandWritePermission(this);
     }
 
     /**
