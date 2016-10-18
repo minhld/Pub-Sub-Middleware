@@ -156,21 +156,19 @@ public class Utils {
     /**
      *
      * @param c
-     * @param objectBytes
+     * @param jobBytes
      * @return
      * @throws Exception
      */
-    public static Class getObject(Context c, byte[] objectBytes) throws Exception {
+    public static Class getObject(Context c, byte[] jobBytes) throws Exception {
         // save the job data to file
         String objectPath = Utils.getDownloadPath() + "/" + JOB_FILE_NAME;
-        FileUtils.writeByteArrayToFile(new File(objectPath), objectBytes);
+        FileUtils.writeByteArrayToFile(new File(objectPath), jobBytes);
 
-        //
+        // load class from local jar file
         String dexDir = c.getDir("dex", 0).getAbsolutePath();
         ClassLoader parent  = c.getClass().getClassLoader();
         DexClassLoader loader = new DexClassLoader(objectPath, dexDir, null, parent);
-        // Class jobClass = loader.loadClass(JOB_CLASS_NAME);
-        // return jobClass.newInstance();
         return loader.loadClass(JOB_CLASS_NAME);
     }
 

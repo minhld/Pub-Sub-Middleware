@@ -13,18 +13,18 @@ import java.io.Serializable;
  */
 
 public class JobPackage implements Serializable {
-    public int index;
+    public float DRL;
     public byte[] dataBytes;
     public byte[] jobBytes;
 
-    public JobPackage(int index, byte[] data, byte[] job) {
-        this.index = index;
+    public JobPackage(float DRL, byte[] data, byte[] job) {
+        this.DRL = DRL;
         this.dataBytes = data;
         this.jobBytes = job;
     }
 
-    public JobPackage(int index, byte[] data, String jobPath) {
-        this.index = index;
+    public JobPackage(float DRL, byte[] data, String jobPath) {
+        this.DRL = DRL;
         this.dataBytes = data;
         try {
             this.jobBytes = Utils.readFile(new File(jobPath));
