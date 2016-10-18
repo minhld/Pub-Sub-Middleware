@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:id="@+id/infoText"
+        android:textSize="11sp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:gravity="bottom" />
@@ -54,7 +55,7 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:text="Create Group"
+        android:text="Crt. Group"
         android:textSize="12sp"
         android:layout_width="wrap_content"
         android:layout_height="45dp"
@@ -63,7 +64,7 @@
         android:layout_toEndOf="@+id/discoverBtn" />
 
     <Button
-        android:text="Client"
+        android:text="Server"
         android:textSize="12sp"
         android:layout_width="80dp"
         android:layout_height="45dp"
@@ -72,7 +73,7 @@
         android:layout_toEndOf="@+id/createGroupBtn" />
 
     <Button
-        android:text="Server"
+        android:text="Client"
         android:textSize="12sp"
         android:layout_width="80dp"
         android:layout_height="45dp"

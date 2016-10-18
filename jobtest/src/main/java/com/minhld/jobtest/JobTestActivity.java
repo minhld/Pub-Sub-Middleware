@@ -53,7 +53,6 @@ public class JobTestActivity extends AppCompatActivity {
     };
 
     MidSupporter midSupporter;
-    WifiPeerListAdapter deviceListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +65,22 @@ public class JobTestActivity extends AppCompatActivity {
         midSupporter = new MidSupporter(this, mainUiHandler);
 
         deviceList.setAdapter(midSupporter.getDeviceListAdapter());
+
+        // --- BUTTON EVENT HANDLERS ---
+
+        createGroupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                midSupporter.createGroup();
+            }
+        });
+
+        discoverBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                midSupporter.discoverPeers();
+            }
+        });
 
         pubBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,5 +141,17 @@ public class JobTestActivity extends AppCompatActivity {
                 //
             }
         };
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        midSupporter.actOnPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        midSupporter.actOnResume();
     }
 }
