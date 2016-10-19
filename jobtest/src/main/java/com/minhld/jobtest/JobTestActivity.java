@@ -106,7 +106,7 @@ public class JobTestActivity extends AppCompatActivity {
     private void initSystem() {
         String brokerIp = "*";
         // start server (broker)
-        new Broker(brokerIp);
+        new Broker(this, brokerIp);
 
         // start workers
         new MidWorker(this, brokerIp);
@@ -130,8 +130,11 @@ public class JobTestActivity extends AppCompatActivity {
                     JobSupporter.initDataParser(JobTestActivity.this, jobPath);
                     byte[] jobData = JobSupporter.getData(dataPath);
 
-                    JobPackage job = new JobPackage(0, jobData, jobPath);
+                    JobPackage job = new JobPackage(0, this.clientId, jobData, jobPath);
                     byte[] jobPkg = job.toByteArray();
+
+                    // print out
+                    UITools.writeLog(JobTestActivity.this, infoText, "client sent: " + jobPkg.length);
 
                     this.sendMessage(jobPkg);
                 } catch (Exception e) {

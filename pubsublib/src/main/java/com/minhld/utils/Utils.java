@@ -84,6 +84,7 @@ public class Utils {
 
     public static final SimpleDateFormat SDF = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
     public static final String JOB_FILE_NAME = "Job.jar";
+    public static final String JOB_FILE_NAME_DL = "JobDL.jar";
     public static final String JOB_CLASS_NAME = "com.minhld.jobs.Job";
     public static final String JOB_EXEC_METHOD = "exec";
 
@@ -96,6 +97,7 @@ public class Utils {
     public static final String WORKER_READY = "READY";
     public static final String CLIENT_REQ_RES = "CLIENT_REQ";
     public static final String WORKER_REP_RES = "WORKER_REP";
+    public static final int MAX_WORKERS_PER_JOB = 5;
 
     public enum SocketType {
         SERVER,
@@ -162,7 +164,7 @@ public class Utils {
      */
     public static Class getObject(Context c, byte[] jobBytes) throws Exception {
         // save the job data to file
-        String objectPath = Utils.getDownloadPath() + "/" + JOB_FILE_NAME;
+        String objectPath = Utils.getDownloadPath() + "/" + JOB_FILE_NAME_DL;
         FileUtils.writeByteArrayToFile(new File(objectPath), jobBytes);
 
         // load class from local jar file

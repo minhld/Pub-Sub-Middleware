@@ -1,5 +1,9 @@
 package com.minhld.pubsublib;
 
+import android.content.Context;
+
+import com.minhld.jobex.Job;
+import com.minhld.jobex.JobPackage;
 import com.minhld.pbsbjob.AckServer;
 import com.minhld.utils.Utils;
 
@@ -20,11 +24,13 @@ public class Broker extends Thread {
     private String brokerIp = "*";
     private HashMap<String, WorkerInfo> workerList;
 
+    private Context parentContext;
     private static ZMQ.Socket backend;
     private AckServerListener ackServer;
 
-    public Broker(String _brokerIp) {
-        this.brokerIp = _brokerIp;
+    public Broker(Context parentContext, String brokerIp) {
+        this.parentContext = parentContext;
+        this.brokerIp = brokerIp;
         this.start();
     }
 
@@ -79,7 +85,7 @@ public class Broker extends Thread {
         workerList = new HashMap<String, WorkerInfo>();
 
         // initiate ACK server
-        ackServer = new AckServerListener(context, this.brokerIp);
+        ackServer = new AckServerListener(parentContext, context, this.brokerIp);
 
         String workerId, clientId;
         byte[] empty, request, reply;
@@ -147,24 +153,38 @@ public class Broker extends Thread {
 
     static class AckServerListener extends AckServer {
         static String clientId;
-        static byte[] request;
+        // static byte[] request;
+        static JobPackage request;
+        static float totalDRL = 0;
         static HashMap<String, Float> advancedWorkerList;
 
-        public AckServerListener(ZMQ.Context context, String brokerIp) {
+        public AckServerListener(final Context parentContext, ZMQ.Context context, String brokerIp) {
             super(context, brokerIp, new AckListener() {
                 @Override
                 public void allAcksReceived() {
-                    // when all ACKs from workers have been retrieved
-                    // this is the place to pass the request from client to worker
+                    // when all returning ACKs are received, this event will
+                    // be raised to dispatch tasks (pieces) to the workers
+                    byte[] jobBytes = AckServerListener.request.jobBytes;
+
+                    // ONGOING ONGOING ONGOING ONGOING ONGOING ONGOING ONGOING
+                    try {
+                        Utils.getObject(parentContext, jobBytes);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    byte[] dataBytes = AckServerListener.request.dataBytes;
 
                     // send job to worker
+                    JobPackage taskPkg;
                     for (String workerId : AckServerListener.advancedWorkerList.keySet()) {
-                        System.out.println("send job to worker " + workerId);
+                        taskPkg = new JobPackage(0, data, jobBytes);
+
                         backend.sendMore(workerId);
                         backend.sendMore(Utils.BROKER_DELIMITER);
                         backend.sendMore(AckServerListener.clientId);
                         backend.sendMore(Utils.BROKER_DELIMITER);
-                        backend.send(AckServerListener.request);
+                        backend.send(taskPkg.toByteArray());
                     }
 
                 }
@@ -175,7 +195,11 @@ public class Broker extends Thread {
 
         public void queryDRL(String clientId, byte[] request) {
             AckServerListener.clientId = clientId;
-            AckServerListener.request = request;
+            try {
+                AckServerListener.request = (JobPackage) Utils.deserialize(request);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             // query resource information from remote workers
             this.sendAck();
@@ -195,7 +219,9 @@ public class Broker extends Thread {
 
             // compare DRL with client's DRL and add to the list
             // will not add more than 3 devices
-            if (drl > 0 && advancedWorkerList.size() < 3) {
+            // if (drl > 0 && advancedWorkerList.size() < Utils.MAX_WORKERS_PER_JOB) {
+            if (drl > AckServerListener.request.DRL && advancedWorkerList.size() < Utils.MAX_WORKERS_PER_JOB) {
+                totalDRL = (advancedWorkerList.size() == 0) ? drl : totalDRL + drl;
                 advancedWorkerList.put(workerId, drl);
             }
         }

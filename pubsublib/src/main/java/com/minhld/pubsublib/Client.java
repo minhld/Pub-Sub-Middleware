@@ -15,6 +15,7 @@ public abstract class Client extends Thread {
     private int port = Utils.BROKER_XSUB_PORT;
 
     private ZMQ.Socket requester;
+    public String clientId;
 
     public Client() {
         this.start();
@@ -38,6 +39,7 @@ public abstract class Client extends Thread {
             ZMQ.Context context = ZMQ.context(1);
             requester = context.socket(ZMQ.REQ);
             ZHelper.setId(requester);
+            this.clientId = new String(this.requester.getIdentity());
             String clientPort = "tcp://" + this.groupIp + ":" + this.port;
             requester.connect(clientPort);
 

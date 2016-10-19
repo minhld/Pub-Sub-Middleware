@@ -14,17 +14,20 @@ import java.io.Serializable;
 
 public class JobPackage implements Serializable {
     public float DRL;
+    public String clientId;
     public byte[] dataBytes;
     public byte[] jobBytes;
 
-    public JobPackage(float DRL, byte[] data, byte[] job) {
+    public JobPackage(float DRL, String clientId, byte[] data, byte[] job) {
         this.DRL = DRL;
+        this.clientId = clientId;
         this.dataBytes = data;
         this.jobBytes = job;
     }
 
-    public JobPackage(float DRL, byte[] data, String jobPath) {
+    public JobPackage(float DRL, String clientId, byte[] data, String jobPath) {
         this.DRL = DRL;
+        this.clientId = clientId;
         this.dataBytes = data;
         try {
             this.jobBytes = Utils.readFile(new File(jobPath));
@@ -42,8 +45,8 @@ public class JobPackage implements Serializable {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             byte[] packageBytes = Utils.serialize(this);
-            byte[] packageLength = Utils.intToBytes(packageBytes.length);
-            bos.write(packageLength, 0, packageLength.length);
+//            byte[] packageLength = Utils.intToBytes(packageBytes.length);
+//            bos.write(packageLength, 0, packageLength.length);
             bos.write(packageBytes, 0, packageBytes.length);
             return bos.toByteArray();
         } catch (IOException e) {
