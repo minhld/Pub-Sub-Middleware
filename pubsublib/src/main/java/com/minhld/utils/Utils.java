@@ -83,9 +83,9 @@ public class Utils {
     public static final int MAIN_INFO = -1;
 
     public static final SimpleDateFormat SDF = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
-    public static final String JOB_FILE_NAME = "Job.jar";
-    public static final String JOB_CLASS_NAME = "com.minhld.jobs.Job";
-    public static final String PARSER_CLASS_NAME = "com.minhld.jobs.DataParser";
+    public static final String JOB_FILE_NAME = "job.jar";
+    public static final String JOB_CLASS_NAME = "com.minhld.jobex.JobImpl";
+    public static final String PARSER_CLASS_NAME = "com.minhld.jobex.JobDataParserImpl";
     public static final String JOB_EXEC_METHOD = "exec";
 
     public static final String MSG_ACK = "ACK";

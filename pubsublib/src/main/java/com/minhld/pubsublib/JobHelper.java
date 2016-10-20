@@ -2,6 +2,7 @@ package com.minhld.pubsublib;
 
 import android.content.Context;
 
+import com.minhld.jobex.Job;
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
 import com.minhld.utils.Utils;
@@ -13,37 +14,80 @@ import java.io.File;
 import dalvik.system.DexClassLoader;
 
 /**
- * job helper will
+ * job helper helps loading job and data parser classes, as well as support invocation
+ * of these classes' functions.
+ *
  * Created by minhld on 10/19/2016.
  */
 
 public class JobHelper {
 
-    static JobPackage jobPackage = null;
+    static Job job = null;
     static JobDataParser dataParser = null;
 
-    public static JobPackage getJobPackage(Context c, String clientId, byte[] jobBytes) {
-        if (JobHelper.jobPackage != null) {
-            return JobHelper.jobPackage;
+    /**
+     * get job class by loading job.jar package (which is prematurely stored in local storage)
+     *
+     * @param c
+     * @param clientId
+     * @param jobBytes
+     * @return
+     */
+    public static Job getJob(Context c, String clientId, byte[] jobBytes) {
+        if (JobHelper.job != null) {
+            return JobHelper.job;
         }
 
-
-
-        return JobHelper.jobPackage;
+        // otherwise we need to store the job into
+        try {
+            Class dataParserClass = preliminaryWork(c, clientId, jobBytes, Utils.JOB_CLASS_NAME);
+            JobHelper.job = (Job) dataParserClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return JobHelper.job;
     }
 
+    /**
+     * get data parser: get data parser from the job.jar file. \n
+     * this function may return the data parser immediately since it's already loaded from the
+     * last calls. this function may also return null if the intent class could not be found
+     * in the jar.
+     *
+     * @param c
+     * @param clientId
+     * @param jobBytes
+     * @return
+     */
     public static JobDataParser getDataParser(Context c, String clientId, byte[] jobBytes) {
         // if the data parser is already available, just return it
         if (JobHelper.dataParser != null) {
             return JobHelper.dataParser;
         }
 
-        // otherwise we need to store the job into
-        //preliminaryWork(c, clientId, jobBytes, Utils.PARSER_CLASS_NAME);
-
+        //
+        try {
+            Class dataParserClass = preliminaryWork(c, clientId, jobBytes, Utils.PARSER_CLASS_NAME);
+            JobHelper.dataParser = (JobDataParser) dataParserClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return JobHelper.dataParser;
     }
 
+    /**
+     * this function will do these following works
+     *  - check if the job file has been downloaded to the local storage
+     *  - if not then download, otherwise load the job file using dex classloader
+     *  - load the class
+     *
+     * @param c
+     * @param clientId
+     * @param jobBytes
+     * @param className
+     * @return
+     * @throws Exception
+     */
     private static Class preliminaryWork(Context c, String clientId, byte[] jobBytes, String className) throws Exception {
         // save the job (jar package) to a file stored in local storage
         String dataPath = Utils.getDownloadPath() + "/" + clientId + "_" + Utils.JOB_FILE_NAME;
