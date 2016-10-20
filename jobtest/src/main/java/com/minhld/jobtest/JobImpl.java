@@ -7,7 +7,7 @@ import com.minhld.jobex.Job;
 /**
  * Created by minhld on 11/2/2015.
  */
-public class BitmapJob implements Job {
+public class JobImpl implements Job {
 
     public Bitmap exec(Bitmap orgBmp) {
         int radius = 35;

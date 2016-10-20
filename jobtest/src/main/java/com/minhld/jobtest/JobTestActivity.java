@@ -124,7 +124,7 @@ public class JobTestActivity extends AppCompatActivity {
             public void send() {
                 // dispatch jobs to clients
                 String dataPath = Utils.getDownloadPath() + "/mars.jpg";
-                String jobPath = Utils.getDownloadPath() + "/BitmapJob.jar";
+                String jobPath = Utils.getDownloadPath() + "/JobImpl.jar";
 
                 try {
                     JobSupporter.initDataParser(JobTestActivity.this, jobPath);

@@ -19,7 +19,7 @@ public class JobSupporter {
         String dexDir = c.getDir("dex", 0).getAbsolutePath();
         ClassLoader parent  = c.getClass().getClassLoader();
         DexClassLoader loader = new DexClassLoader(jarPath, dexDir, null, parent);
-        Class dataParserClass = loader.loadClass("com.minhld.jobex.BitmapJobDataParser");
+        Class dataParserClass = loader.loadClass("com.minhld.jobex.JobDataParserImpl");
         dataParser = (JobDataParser) dataParserClass.newInstance();
     }
 

@@ -14,7 +14,7 @@ import java.io.ByteArrayOutputStream;
  *
  * Created by minhld on 01/28/2016.
  */
-public class BitmapJobDataParser implements JobDataParser {
+public class JobDataParserImpl implements JobDataParser {
 
     @Override
     public Class getDataClass() {
