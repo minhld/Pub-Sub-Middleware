@@ -57,6 +57,7 @@ public interface JobDataParser {
      * @return
      */
     public Object getPartFromObject(Object objData, int numOfParts, int index);
+
     public String getJsonMetadata(Object objData);
 
     /**

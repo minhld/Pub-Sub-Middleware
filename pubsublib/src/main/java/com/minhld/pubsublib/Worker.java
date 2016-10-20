@@ -100,15 +100,15 @@ public abstract class Worker extends Thread {
      */
     protected byte[] resolveRequestInner(byte[] jobRequest) {
         try {
-            Class dataParserClass = Utils.getObject(this.context, jobRequest);
-            Object dataParser = dataParserClass.newInstance();
-            // get the original data
-            Method getBytesToObject = dataParserClass.getMethod("getBytesToObject", JobDataParser.class);
-            getBytesToObject.invoke(dataParser, jobRequest);
-
-            // initiate the Job algorithm class & execute it
-            // suppose that job was download to Download folder in local device
-            String jobPath = Utils.getDownloadPath() + "/" + Utils.JOB_FILE_NAME;
+//            Class dataParserClass = Utils.getObject(this.context, jobRequest);
+//            Object dataParser = dataParserClass.newInstance();
+//            // get the original data
+//            Method getBytesToObject = dataParserClass.getMethod("getBytesToObject", JobDataParser.class);
+//            getBytesToObject.invoke(dataParser, jobRequest);
+//
+//            // initiate the Job algorithm class & execute it
+//            // suppose that job was download to Download folder in local device
+//            String jobPath = Utils.getDownloadPath() + "/" + Utils.JOB_FILE_NAME;
 
             // Utils.runRemote(this.context, jobPath, orgObj, dataParser.getDataClass());
             return new byte[0];

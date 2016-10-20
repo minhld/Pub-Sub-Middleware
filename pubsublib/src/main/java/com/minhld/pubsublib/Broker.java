@@ -162,13 +162,14 @@ public class Broker extends Thread {
             super(context, brokerIp, new AckListener() {
                 @Override
                 public void allAcksReceived() {
-                    // when all returning ACKs are received, this event will
-                    // be raised to dispatch tasks (pieces) to the workers
+                    // when all returning ACKs are received, this event will be invoked to dispatch
+                    // tasks (pieces) to the workers
+
                     byte[] jobBytes = AckServerListener.request.jobBytes;
 
                     // ONGOING ONGOING ONGOING ONGOING ONGOING ONGOING ONGOING
                     try {
-                        Utils.getObject(parentContext, jobBytes);
+                        // Utils.getObject(parentContext, jobBytes);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -178,13 +179,13 @@ public class Broker extends Thread {
                     // send job to worker
                     JobPackage taskPkg;
                     for (String workerId : AckServerListener.advancedWorkerList.keySet()) {
-                        taskPkg = new JobPackage(0, data, jobBytes);
+                        // taskPkg = new JobPackage(0, data, jobBytes);
 
                         backend.sendMore(workerId);
                         backend.sendMore(Utils.BROKER_DELIMITER);
                         backend.sendMore(AckServerListener.clientId);
                         backend.sendMore(Utils.BROKER_DELIMITER);
-                        backend.send(taskPkg.toByteArray());
+                        //backend.send(taskPkg.toByteArray());
                     }
 
                 }

@@ -84,8 +84,8 @@ public class Utils {
 
     public static final SimpleDateFormat SDF = new SimpleDateFormat("MM-dd HH:mm:ss.SSS");
     public static final String JOB_FILE_NAME = "Job.jar";
-    public static final String JOB_FILE_NAME_DL = "JobDL.jar";
     public static final String JOB_CLASS_NAME = "com.minhld.jobs.Job";
+    public static final String PARSER_CLASS_NAME = "com.minhld.jobs.DataParser";
     public static final String JOB_EXEC_METHOD = "exec";
 
     public static final String MSG_ACK = "ACK";
@@ -155,24 +155,24 @@ public class Utils {
         return o.readObject();
     }
 
-    /**
-     *
-     * @param c
-     * @param jobBytes
-     * @return
-     * @throws Exception
-     */
-    public static Class getObject(Context c, byte[] jobBytes) throws Exception {
-        // save the job data to file
-        String objectPath = Utils.getDownloadPath() + "/" + JOB_FILE_NAME_DL;
-        FileUtils.writeByteArrayToFile(new File(objectPath), jobBytes);
-
-        // load class from local jar file
-        String dexDir = c.getDir("dex", 0).getAbsolutePath();
-        ClassLoader parent  = c.getClass().getClassLoader();
-        DexClassLoader loader = new DexClassLoader(objectPath, dexDir, null, parent);
-        return loader.loadClass(JOB_CLASS_NAME);
-    }
+//    /**
+//     *
+//     * @param c
+//     * @param jobBytes
+//     * @return
+//     * @throws Exception
+//     */
+//    public static Class getObject(Context c, byte[] jobBytes) throws Exception {
+//        // save the job data to file
+//        String objectPath = Utils.getDownloadPath() + "/" + JOB_FILE_NAME_DL;
+//        FileUtils.writeByteArrayToFile(new File(objectPath), jobBytes);
+//
+//        // load class from local jar file
+//        String dexDir = c.getDir("dex", 0).getAbsolutePath();
+//        ClassLoader parent  = c.getClass().getClassLoader();
+//        DexClassLoader loader = new DexClassLoader(objectPath, dexDir, null, parent);
+//        return loader.loadClass(JOB_CLASS_NAME);
+//    }
 
     /**
      * this function will execute a class that is stored in Download folder
