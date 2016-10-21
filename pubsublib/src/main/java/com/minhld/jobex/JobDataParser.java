@@ -45,18 +45,16 @@ public interface JobDataParser {
 
     /**
      * this function will get one small piece of a data object. the position
-     * of the split depends on its index.<br>
+     * and size of the part depends on the firstOffset and the lastOffset of
      *
-     * example: one big bitmap can be splitted into 3 parts, the part with
-     * index 2 will be the third one (the last)
      *
      *
      * @param objData
-     * @param numOfParts
-     * @param index
+     * @param firstOffset
+     * @param lastOffset
      * @return
      */
-    public Object getPartFromObject(Object objData, int numOfParts, int index);
+    public byte[] getPartFromObject(Object objData, int firstOffset, int lastOffset);
 
     public String getJsonMetadata(Object objData);
 

@@ -45,10 +45,17 @@ public class JobDataParserImpl implements JobDataParser {
     }
 
     @Override
-    public Object getPartFromObject(Object data, int numOfParts, int index) {
+    public byte[] getPartFromObject(Object data, int firstOffset, int lastOffset) {
         Bitmap bmpData = (Bitmap) data;
-        int pieceWidth = bmpData.getWidth() / numOfParts;
-        return Bitmap.createBitmap(bmpData, (pieceWidth * index), 0, pieceWidth, bmpData.getHeight());
+        int firstIndex = bmpData.getWidth() * firstOffset;
+        int pieceWidth = bmpData.getWidth() * (lastOffset - firstOffset);
+        Bitmap bmpPart = Bitmap.createBitmap(bmpData, (pieceWidth * firstIndex), 0, pieceWidth, bmpData.getHeight());
+        try {
+            return parseObjectToBytes(bmpPart);
+        } catch (Exception e) {
+            // no part return
+            return null;
+        }
     }
 
     @Override

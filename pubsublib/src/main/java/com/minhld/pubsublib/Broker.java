@@ -3,6 +3,7 @@ package com.minhld.pubsublib;
 import android.content.Context;
 
 import com.minhld.jobex.Job;
+import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
 import com.minhld.pbsbjob.AckServer;
 import com.minhld.utils.Utils;
@@ -167,25 +168,34 @@ public class Broker extends Thread {
 
                     byte[] jobBytes = AckServerListener.request.jobBytes;
 
-                    // ONGOING ONGOING ONGOING ONGOING ONGOING ONGOING ONGOING
+                    JobDataParser dataParser = JobHelper.getDataParser(parentContext, AckServerListener.clientId, jobBytes);
+
+                    // get the whole object sent from client
+                    Object dataObject = null;
                     try {
-                        // Utils.getObject(parentContext, jobBytes);
+                        dataObject = dataParser.parseBytesToObject(AckServerListener.request.dataBytes);
                     } catch (Exception e) {
+                        // this case shouldn't be happened
                         e.printStackTrace();
                     }
 
-                    byte[] dataBytes = AckServerListener.request.dataBytes;
-
                     // send job to worker
                     JobPackage taskPkg;
+                    float currCummDRL = 0, newCummDRL = 0;
+                    byte[] dataPart;
                     for (String workerId : AckServerListener.advancedWorkerList.keySet()) {
-                        // taskPkg = new JobPackage(0, data, jobBytes);
+                        // create parts
+                        newCummDRL = currCummDRL + AckServerListener.advancedWorkerList.get(workerId);
+                        dataPart = dataParser.getPartFromObject(dataObject, (int) (currCummDRL * 100 / totalDRL),
+                                                                            (int) (newCummDRL * 100 / totalDRL));
+                        currCummDRL = newCummDRL;
+                        taskPkg = new JobPackage(0, AckServerListener.clientId, dataPart, jobBytes);
 
                         backend.sendMore(workerId);
                         backend.sendMore(Utils.BROKER_DELIMITER);
                         backend.sendMore(AckServerListener.clientId);
                         backend.sendMore(Utils.BROKER_DELIMITER);
-                        //backend.send(taskPkg.toByteArray());
+                        backend.send(taskPkg.toByteArray());
                     }
 
                 }
