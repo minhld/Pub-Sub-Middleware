@@ -114,10 +114,12 @@ public class JobTestActivity extends AppCompatActivity {
         new Broker(this, brokerIp);
         UITools.writeLog(JobTestActivity.this, infoText, "server started here with workers");
 
-        // start workers
-        new MidWorker(this, brokerIp);
-        new MidWorker(this, brokerIp);
+        // start workers - this workers will be move to another part - not along with the broker
+        MidWorker worker1 = new MidWorker(this, brokerIp);
+        UITools.writeLog(JobTestActivity.this, infoText, "worker [" + worker1.workerId + "] started");
 
+        MidWorker worker2 = new MidWorker(this, brokerIp);
+        UITools.writeLog(JobTestActivity.this, infoText, "worker [" + worker2.workerId + "] started");
     }
 
     /**
@@ -155,7 +157,7 @@ public class JobTestActivity extends AppCompatActivity {
                 try {
                     Bitmap bmpRes = (Bitmap) parser.parseBytesToObject(result);
                     viewer.setImageBitmap(bmpRes);
-                    
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

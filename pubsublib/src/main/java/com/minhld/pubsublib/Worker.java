@@ -25,7 +25,8 @@ public abstract class Worker extends Thread {
 
     private Context context;
     private ExAckClient ackClient;
-    private String workerId = "";
+
+    public String workerId = "";
 
     public Worker(Context context) {
         this.context = context;
@@ -61,6 +62,9 @@ public abstract class Worker extends Thread {
             ZHelper.setId (worker);
             this.workerId = new String(worker.getIdentity());
             worker.connect("tcp://" + this.groupIp + ":" + this.port);
+
+            // // to report worker has finished the initialization
+            // workerInitDone();
 
             // inform broker that i am ready
             worker.send(Utils.WORKER_READY);
@@ -153,6 +157,8 @@ public abstract class Worker extends Thread {
             }
         }
     }
+
+    // public abstract void workerInitDone();
 
     /**
      * this abstract function needs to be filled. this is to
