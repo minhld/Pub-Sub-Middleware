@@ -102,4 +102,23 @@ public class JobHelper {
         DexClassLoader loader = new DexClassLoader(dataPath, dexDir, null, parent);
         return loader.loadClass(className);
     }
+
+    /**
+     * remove the job file out of the download folder after job has finished
+     *
+     * @param clientId
+     */
+    public static void removeJobFile(String clientId) {
+        // search for the path of [clientId]_job.jar
+        String dataPath = Utils.getDownloadPath() + "/" + clientId + "_" + Utils.JOB_FILE_NAME;
+        File jobFile = new File(dataPath);
+        try {
+            if (!jobFile.exists()) {
+                FileUtils.forceDelete(jobFile);
+            }
+        } catch (Exception e) {
+            // this shouldn't be a case
+            e.printStackTrace();
+        }
+    }
 }

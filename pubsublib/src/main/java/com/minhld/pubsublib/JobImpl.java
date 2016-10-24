@@ -1,4 +1,4 @@
-package com.minhld.jobtest;
+package com.minhld.pubsublib;
 
 import android.graphics.Bitmap;
 

@@ -2,7 +2,9 @@ package com.minhld.pubsublib;
 
 import android.content.Context;
 
+import com.minhld.jobex.Job;
 import com.minhld.jobex.JobDataParser;
+import com.minhld.jobex.JobPackage;
 import com.minhld.pbsbjob.AckClient;
 import com.minhld.utils.Utils;
 
@@ -23,6 +25,7 @@ public abstract class Worker extends Thread {
 
     private Context context;
     private ExAckClient ackClient;
+    private String workerId = "";
 
     public Worker(Context context) {
         this.context = context;
@@ -56,6 +59,7 @@ public abstract class Worker extends Thread {
             //  Socket to talk to clients and set its Id
             ZMQ.Socket worker = context.socket(ZMQ.REQ);
             ZHelper.setId (worker);
+            this.workerId = new String(worker.getIdentity());
             worker.connect("tcp://" + this.groupIp + ":" + this.port);
 
             // inform broker that i am ready
@@ -99,23 +103,23 @@ public abstract class Worker extends Thread {
     /**
      * default
      *
-     * @param jobRequest
+     * @param packageBytes
      * @return
      */
-    protected byte[] defaultResolveRequest(byte[] jobRequest) {
+    protected byte[] defaultResolveRequest(byte[] packageBytes) {
         try {
-//            Class dataParserClass = Utils.getObject(this.context, jobRequest);
-//            Object dataParser = dataParserClass.newInstance();
-//            // get the original data
-//            Method getBytesToObject = dataParserClass.getMethod("getBytesToObject", JobDataParser.class);
-//            getBytesToObject.invoke(dataParser, jobRequest);
-//
-//            // initiate the Job algorithm class & execute it
-//            // suppose that job was download to Download folder in local device
-//            String jobPath = Utils.getDownloadPath() + "/" + Utils.JOB_FILE_NAME;
+            // get back the job package sent by broker
+            JobPackage request = (JobPackage) Utils.deserialize(packageBytes);
 
-            // Utils.runRemote(this.context, jobPath, orgObj, dataParser.getDataClass());
-            return new byte[0];
+            // initiate data parser and job objects from the request package
+            JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(this.context, this.workerId, request.jobBytes);
+            Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
+
+            // execute the job
+            Object dataObject = dataParser.parseBytesToObject(request.dataBytes);
+            Object result = job.exec(dataObject);
+
+            return dataParser.parseObjectToBytes(result);
         } catch (Exception e) {
             e.printStackTrace();
             return new byte[0];
@@ -154,8 +158,8 @@ public abstract class Worker extends Thread {
      * this abstract function needs to be filled. this is to
      * define how worker will complete the work
      *
-     * @param request
+     * @param packageBytes
      * @return
      */
-    public abstract byte[] resolveRequest(byte[] request);
+    public abstract byte[] resolveRequest(byte[] packageBytes);
 }

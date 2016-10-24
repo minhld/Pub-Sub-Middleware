@@ -23,16 +23,16 @@ public class MidWorker extends Worker {
      * this abstract function needs to be filled. this is to
      * define how worker will complete the work
      *
-     * @param jobRequest
+     * @param packageBytes
      * @return
      */
     @Override
-    public byte[] resolveRequest(byte[] jobRequest) {
+    public byte[] resolveRequest(byte[] packageBytes) {
         // this is the place for worker to resolve request
         // from client pass to it by broker.
 
         // if developer is unsure how to do, simply use the inner predefined function
-        return defaultResolveRequest(jobRequest);
+        return defaultResolveRequest(packageBytes);
     }
 
 }
