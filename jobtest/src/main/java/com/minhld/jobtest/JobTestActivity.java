@@ -155,9 +155,13 @@ public class JobTestActivity extends AppCompatActivity {
                 UITools.writeLog(JobTestActivity.this, infoText, "client received result: " + result.length + " bytes");
                 JobDataParserImpl parser = new JobDataParserImpl();
                 try {
-                    Bitmap bmpRes = (Bitmap) parser.parseBytesToObject(result);
-                    viewer.setImageBitmap(bmpRes);
-
+                    final Bitmap bmpRes = (Bitmap) parser.parseBytesToObject(result);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            viewer.setImageBitmap(bmpRes);
+                        }
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
