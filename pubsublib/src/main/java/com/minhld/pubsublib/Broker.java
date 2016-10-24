@@ -166,43 +166,50 @@ public class Broker extends Thread {
                     // when all returning ACKs are received, this event will be invoked to dispatch
                     // tasks (pieces) to the workers
 
-                    // get job classes from the JAR (in binary format)
-                    byte[] jobBytes = AckServerListener.request.jobBytes;
-
-                    // initiate the data parser from the JAR
-                    JobDataParser dataParser = JobHelper.getDataParser(parentContext, AckServerListener.clientId, jobBytes);
-
-                    // get the whole object sent from client
-                    Object dataObject = null;
                     try {
-                        dataObject = dataParser.parseBytesToObject(AckServerListener.request.dataBytes);
+                        // get job classes from the JAR (in binary format)
+                        byte[] jobBytes = AckServerListener.request.jobBytes;
+
+                        // initiate the data parser from the JAR
+                        JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(parentContext, AckServerListener.clientId, jobBytes);
+
+                        // get the whole object sent from client
+                        Object dataObject = null;
+                        try {
+                            dataObject = dataParser.parseBytesToObject(AckServerListener.request.dataBytes);
+                        } catch (Exception e) {
+                            // this case shouldn't be happened
+                            e.printStackTrace();
+                        }
+
+                        // send job to worker
+                        JobPackage taskPkg;
+                        float currCummDRL = 0, newCummDRL = 0;
+                        byte[] dataPart;
+                        for (String workerId : AckServerListener.advancedWorkerList.keySet()) {
+                            // create parts with size proportional to the DRL value of each worker
+                            newCummDRL = currCummDRL + AckServerListener.advancedWorkerList.get(workerId).floatValue();
+                            dataPart = dataParser.getPartFromObject(dataObject, (int) (currCummDRL * 100 / totalDRL),
+                                    (int) (newCummDRL * 100 / totalDRL));
+                            // reassign the cumulative DRL
+                            currCummDRL = newCummDRL;
+                            // and wrap up as a task
+                            taskPkg = new JobPackage(0, AckServerListener.clientId, dataPart, jobBytes);
+
+                            // wrap up and send to the appropriate worker
+                            backend.sendMore(workerId);
+                            backend.sendMore(Utils.BROKER_DELIMITER);
+                            backend.sendMore(AckServerListener.clientId);
+                            backend.sendMore(Utils.BROKER_DELIMITER);
+                            backend.send(taskPkg.toByteArray());
+                        }
+
                     } catch (Exception e) {
-                        // this case shouldn't be happened
                         e.printStackTrace();
+                    } finally {
+                        // remove all existences from current work - to prepare serving form the new work
+                        AckServerListener.advancedWorkerList.clear();
                     }
-
-                    // send job to worker
-                    JobPackage taskPkg;
-                    float currCummDRL = 0, newCummDRL = 0;
-                    byte[] dataPart;
-                    for (String workerId : AckServerListener.advancedWorkerList.keySet()) {
-                        // create parts with size proportional to the DRL value of each worker
-                        newCummDRL = currCummDRL + AckServerListener.advancedWorkerList.get(workerId);
-                        dataPart = dataParser.getPartFromObject(dataObject, (int) (currCummDRL * 100 / totalDRL),
-                                                                            (int) (newCummDRL * 100 / totalDRL));
-                        // reassign the cumulative DRL
-                        currCummDRL = newCummDRL;
-                        // and wrap up as a task
-                        taskPkg = new JobPackage(0, AckServerListener.clientId, dataPart, jobBytes);
-
-                        // wrap up and send to the appropriate worker
-                        backend.sendMore(workerId);
-                        backend.sendMore(Utils.BROKER_DELIMITER);
-                        backend.sendMore(AckServerListener.clientId);
-                        backend.sendMore(Utils.BROKER_DELIMITER);
-                        backend.send(taskPkg.toByteArray());
-                    }
-
                 }
             });
 

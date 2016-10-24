@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         String dexDir = getDir("dex", 0).getAbsolutePath();
         ClassLoader parent  = getClass().getClassLoader();
         DexClassLoader loader = new DexClassLoader(objectPath, dexDir, null, parent);
-        Class dataParserClass = loader.loadClass("com.minhld.jobex.BitmapJobDataParser");
+        Class dataParserClass = loader.loadClass(Utils.PARSER_CLASS_NAME);
         JobDataParser dataParser = (JobDataParser) dataParserClass.newInstance();
 
         String imagePath = Utils.getDownloadPath() + "/mars.jpg";

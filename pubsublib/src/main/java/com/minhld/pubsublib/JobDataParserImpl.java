@@ -1,4 +1,4 @@
-package com.minhld.dextest;
+package com.minhld.pubsublib;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -47,9 +47,9 @@ public class JobDataParserImpl implements JobDataParser {
     @Override
     public byte[] getPartFromObject(Object data, int firstOffset, int lastOffset) {
         Bitmap bmpData = (Bitmap) data;
-        int firstIndex = bmpData.getWidth() * firstOffset;
-        int pieceWidth = bmpData.getWidth() * (lastOffset - firstOffset);
-        Bitmap bmpPart = Bitmap.createBitmap(bmpData, (pieceWidth * firstIndex), 0, pieceWidth, bmpData.getHeight());
+        int firstIndex = (bmpData.getWidth() * firstOffset) / 100;
+        int pieceWidth = (bmpData.getWidth() * (lastOffset - firstOffset)) / 100;
+        Bitmap bmpPart = Bitmap.createBitmap(bmpData, firstIndex, 0, pieceWidth, bmpData.getHeight());
         try {
             return parseObjectToBytes(bmpPart);
         } catch (Exception e) {

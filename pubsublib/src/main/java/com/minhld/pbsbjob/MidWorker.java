@@ -3,9 +3,6 @@ package com.minhld.pbsbjob;
 import android.content.Context;
 
 import com.minhld.pubsublib.Worker;
-import com.minhld.utils.Utils;
-
-import org.zeromq.ZMQ;
 
 /**
  * The worker receives job from broker and execute it. The worker
@@ -35,7 +32,7 @@ public class MidWorker extends Worker {
         // from client pass to it by broker.
 
         // if developer is unsure how to do, simply use the inner predefined function
-        return resolveRequestInner(jobRequest);
+        return defaultResolveRequest(jobRequest);
     }
 
 }

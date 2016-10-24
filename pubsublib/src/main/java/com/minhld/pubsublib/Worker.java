@@ -68,21 +68,25 @@ public abstract class Worker extends Thread {
             String clientAddr;
             byte[] request, result, empty;
             while (!Thread.currentThread().isInterrupted()) {
-                // get client address
-                clientAddr = worker.recvStr();
+                try {
+                    // get client address
+                    clientAddr = worker.recvStr();
 
-                // delimiter
-                empty = worker.recv();
-                assert (empty.length == 0);
+                    // delimiter
+                    empty = worker.recv();
+                    assert (empty.length == 0);
 
-                // get request, send reply
-                request = worker.recv();
-                result = resolveRequest(request);
+                    // get request, send reply
+                    request = worker.recv();
+                    result = resolveRequest(request);
 
-                // return result back to front-end
-                worker.sendMore(clientAddr);
-                worker.sendMore(Utils.BROKER_DELIMITER);
-                worker.send(result);
+                    // return result back to front-end
+                    worker.sendMore(clientAddr);
+                    worker.sendMore(Utils.BROKER_DELIMITER);
+                    worker.send(result);
+                } catch (Exception d) {
+                    d.printStackTrace();
+                }
             }
             worker.close();
             context.term();
@@ -98,7 +102,7 @@ public abstract class Worker extends Thread {
      * @param jobRequest
      * @return
      */
-    protected byte[] resolveRequestInner(byte[] jobRequest) {
+    protected byte[] defaultResolveRequest(byte[] jobRequest) {
         try {
 //            Class dataParserClass = Utils.getObject(this.context, jobRequest);
 //            Object dataParser = dataParserClass.newInstance();

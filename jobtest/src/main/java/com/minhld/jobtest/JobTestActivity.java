@@ -107,6 +107,7 @@ public class JobTestActivity extends AppCompatActivity {
         String brokerIp = "*";
         // start server (broker)
         new Broker(this, brokerIp);
+        UITools.writeLog(JobTestActivity.this, infoText, "server started here with workers");
 
         // start workers
         new MidWorker(this, brokerIp);
@@ -124,7 +125,7 @@ public class JobTestActivity extends AppCompatActivity {
             public void send() {
                 // dispatch jobs to clients
                 String dataPath = Utils.getDownloadPath() + "/mars.jpg";
-                String jobPath = Utils.getDownloadPath() + "/JobImpl.jar";
+                String jobPath = Utils.getDownloadPath() + "/job.jar";
 
                 try {
                     JobSupporter.initDataParser(JobTestActivity.this, jobPath);
@@ -144,9 +145,11 @@ public class JobTestActivity extends AppCompatActivity {
 
             @Override
             public void resolveResult(byte[] result) {
-                //
+                UITools.writeLog(JobTestActivity.this, infoText, "client received result: " + result.length + " bytes");
             }
         };
+
+        UITools.writeLog(JobTestActivity.this, infoText, "client started here");
     }
 
     @Override
