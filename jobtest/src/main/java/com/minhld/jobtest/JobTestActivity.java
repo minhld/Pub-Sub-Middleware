@@ -1,5 +1,6 @@
 package com.minhld.jobtest;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,6 +40,9 @@ public class JobTestActivity extends AppCompatActivity {
 
     @BindView(R.id.infoText)
     TextView infoText;
+
+    @BindView(R.id.imageView)
+    ImageView viewer;
 
     Handler mainUiHandler = new Handler() {
         @Override
@@ -119,7 +124,7 @@ public class JobTestActivity extends AppCompatActivity {
      * init client - on client devices
      */
     private void initClient() {
-        new Client(Utils.BROKER_SPECIFIC_IP) {
+        Client client = new Client(Utils.BROKER_SPECIFIC_IP) {
 
             @Override
             public void send() {
@@ -146,10 +151,18 @@ public class JobTestActivity extends AppCompatActivity {
             @Override
             public void resolveResult(byte[] result) {
                 UITools.writeLog(JobTestActivity.this, infoText, "client received result: " + result.length + " bytes");
+                JobDataParserImpl parser = new JobDataParserImpl();
+                try {
+                    Bitmap bmpRes = (Bitmap) parser.parseBytesToObject(result);
+                    viewer.setImageBitmap(bmpRes);
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
 
-        UITools.writeLog(JobTestActivity.this, infoText, "client started here");
+        UITools.writeLog(JobTestActivity.this, infoText, "client [" + client.clientId + "] started");
     }
 
     @Override
