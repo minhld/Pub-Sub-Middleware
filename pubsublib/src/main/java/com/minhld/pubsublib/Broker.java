@@ -87,7 +87,7 @@ public class Broker extends Thread {
         // Queue of available workers
         workerList = new HashMap<String, WorkerInfo>();
 
-        // Map of job results - hold the placeholders of all the current executing jobs
+        // Map of job placeholders - hold the placeholders of all the current executing jobs
         Broker.jobMergeList = new HashMap<String, JobMergeInfo>();
 
         // initiate ACK server
@@ -213,6 +213,10 @@ public class Broker extends Thread {
                         // must be created and stored into the map
                         Object emptyPlaceholder = dataParser.createPlaceHolder(dataObject);
                         JobMergeInfo jobMergeInfo = new JobMergeInfo(AckServerListener.request.clientId, emptyPlaceholder, dataParser);
+
+                        // the total number of parts is equal to the total number of accepted workers
+                        jobMergeInfo.totalPartNum = AckServerListener.advancedWorkerList.size();
+
                         Broker.jobMergeList.put(AckServerListener.request.clientId, jobMergeInfo);
 
                         // send job to worker
@@ -226,7 +230,7 @@ public class Broker extends Thread {
                             // create parts with size proportional to the DRL value of each worker
                             newCummDRL = currCummDRL + AckServerListener.advancedWorkerList.get(workerId).floatValue();
 
-                            // convert to integer number
+                            // convert to the actual number of percentage
                             currCummDRLNum = (int) (currCummDRL * 100 / totalDRL);
                             newCummDRLNum = (int) (newCummDRL * 100 / totalDRL);
 
@@ -292,9 +296,9 @@ public class Broker extends Thread {
             String workerId = (String) Utils.getResponse(respStr, "id");
 
             // compare DRL with client's DRL and add to the list
-            // will not add more than 3 devices
+            // will not add more than MAX_WORKERS_PER_JOB devices (default is 3)
             // if (drl > 0 && advancedWorkerList.size() < Utils.MAX_WORKERS_PER_JOB) {
-            if (drl > AckServerListener.request.DRL && advancedWorkerList.size() < Utils.MAX_WORKERS_PER_JOB) {
+            if (drl >= AckServerListener.request.DRL && advancedWorkerList.size() < Utils.MAX_WORKERS_PER_JOB) {
                 totalDRL = (advancedWorkerList.size() == 0) ? drl : totalDRL + drl;
                 advancedWorkerList.put(workerId, drl);
             }
