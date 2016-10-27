@@ -112,6 +112,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        public void clientStarted(String clientId) {
+            // TODO: 10/27/2016
+        }
+
+        @Override
         public void send() {
             sendMessage("HELLO THERE!");
         }
@@ -126,6 +131,16 @@ public class MainActivity extends AppCompatActivity {
 
         public ExWorker() {
             super(MainActivity.this, UITools.GO_IP);
+        }
+
+        @Override
+        public void workerStarted(String workerId) {
+            // TODO: 10/27/2016  
+        }
+
+        @Override
+        public void receivedTask(String clientId, int dataSize) {
+            // TODO: 10/27/2016
         }
 
         @Override

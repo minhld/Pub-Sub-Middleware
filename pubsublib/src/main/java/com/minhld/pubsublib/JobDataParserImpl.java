@@ -74,9 +74,9 @@ public class JobDataParserImpl implements JobDataParser {
         // get bitmap from original data
         Bitmap partBmp = BitmapFactory.decodeByteArray(partObj, 0, partObj.length);
         int firstIndex = (pHolderBmp.getWidth() * firstOffset) / 100;
-        int pieceWidth = (pHolderBmp.getWidth() * (lastOffset - firstOffset)) / 100;
+        // int pieceWidth = (pHolderBmp.getWidth() * (lastOffset - firstOffset)) / 100;
         Canvas canvas = new Canvas(pHolderBmp);
-        canvas.drawBitmap(partBmp, firstIndex * pieceWidth, 0, null);
+        canvas.drawBitmap(partBmp, firstIndex, 0, null);
         return null;
     }
 

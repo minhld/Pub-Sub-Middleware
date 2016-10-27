@@ -145,7 +145,7 @@ public class Broker extends Thread {
                         // flush them out to the front-end
                         frontend.sendMore(jobMergeInfo.clientId);
                         frontend.sendMore(Utils.BROKER_DELIMITER);
-                        frontend.send(reply);
+                        frontend.send(jobMergeInfo.getPlaceholder());
 
                         // remove the job result out of the result map
                         Broker.jobMergeList.remove(jobMergeInfo.clientId);
@@ -392,6 +392,15 @@ public class Broker extends Thread {
         public boolean isPlaceholderFilled() {
             // by checking if the cumulative part number is equal to the total part number
             return this.cummPartNum == this.totalPartNum;
+        }
+
+        public byte[] getPlaceholder() {
+            try {
+                return dataParser.parseObjectToBytes(this.placeholder);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new byte[0];
+            }
         }
     }
 }
