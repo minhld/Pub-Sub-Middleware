@@ -56,16 +56,14 @@ public interface JobDataParser {
      */
     public byte[] getPartFromObject(Object objData, int firstOffset, int lastOffset);
 
-    public String getJsonMetadata(Object objData);
-
     /**
      * create the placeholder to cumulate the results from other devices
      * sending back to requester
      *
-     * @param jsonMetadata
+     * @param dataObject
      * @return
      */
-    public Object createObjectHolder(String jsonMetadata);
+    public Object createPlaceHolder(Object dataObject);
 
     /**
      * merge the part data object into the final object.

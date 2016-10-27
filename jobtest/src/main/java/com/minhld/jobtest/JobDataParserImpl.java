@@ -59,18 +59,10 @@ public class JobDataParserImpl implements JobDataParser {
     }
 
     @Override
-    public String getJsonMetadata(Object objData) {
-        Bitmap bmp = (Bitmap) objData;
-        return "{ 'width': " + bmp.getWidth() + ", 'height': " + bmp.getHeight() + " }";
-    }
-
-    @Override
-    public Object createObjectHolder(String jsonMetadata) {
+    public Object createPlaceHolder(Object dataObject) {
         try {
-            JSONObject resultObj = new JSONObject(jsonMetadata);
-            int width = resultObj.getInt("width"), height = resultObj.getInt("height");
-            Bitmap finalBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            return finalBitmap;
+            Bitmap bmp = (Bitmap) dataObject;
+            return Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), Bitmap.Config.ARGB_8888);
         } catch (Exception e) {
             return null;
         }

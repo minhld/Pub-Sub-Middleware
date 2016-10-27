@@ -23,7 +23,9 @@ import java.util.HashMap;
  */
 public class Broker extends Thread {
     private String brokerIp = "*";
+
     private HashMap<String, WorkerInfo> workerList;
+    HashMap<String, JobMergeInfo> jobMergeList;
 
     private Context parentContext;
     private static ZMQ.Socket backend;
@@ -85,6 +87,9 @@ public class Broker extends Thread {
         // Queue of available workers
         workerList = new HashMap<String, WorkerInfo>();
 
+        // Map of job results
+        jobMergeList = new HashMap<String, JobMergeInfo>();
+
         // initiate ACK server
         ackServer = new AckServerListener(parentContext, context, this.brokerIp);
 
@@ -116,11 +121,10 @@ public class Broker extends Thread {
                 if (clientId.equals(Utils.WORKER_READY)) {
                     // WORKER has finished loading, returned DRL value
                     // update worker list
-                    workerList.put(workerId, new WorkerInfo());
+                    workerList.put(workerId, new WorkerInfo(workerId));
                     ackServer.updateWorkerNumbers(workerList.size());
 
                 } else {
-                // if (!clientId.equals(Utils.WORKER_READY)) {
                     // WORKER has completed the task, returned the results
 
                     // get FORTH FRAME, should be EMPTY - check the delimiter again
@@ -191,24 +195,41 @@ public class Broker extends Thread {
                             e.printStackTrace();
                         }
 
+                        // before dividing job into parts, a placeholder to hold cumulative results
+                        // must be created
+                        Object emptyPlaceholder = dataParser.createPlaceHolder(dataObject);
+                        JobMergeInfo jobMergeInfo = new JobMergeInfo(AckServerListener.request.clientId, emptyPlaceholder);
+
+
                         // send job to worker
                         JobPackage taskPkg;
                         float currCummDRL = 0, newCummDRL = 0;
+                        int currCummDRLNum = 0, newCummDRLNum = 0;
                         byte[] dataPart;
+                        String useClientId;
+
                         for (String workerId : AckServerListener.advancedWorkerList.keySet()) {
                             // create parts with size proportional to the DRL value of each worker
                             newCummDRL = currCummDRL + AckServerListener.advancedWorkerList.get(workerId).floatValue();
-                            dataPart = dataParser.getPartFromObject(dataObject, (int) (currCummDRL * 100 / totalDRL),
-                                    (int) (newCummDRL * 100 / totalDRL));
+
+                            // convert to integer number
+                            currCummDRLNum = (int) (currCummDRL * 100 / totalDRL);
+                            newCummDRLNum = (int) (newCummDRL * 100 / totalDRL);
+
+                            dataPart = dataParser.getPartFromObject(dataObject, currCummDRLNum, newCummDRLNum);
+
                             // reassign the cumulative DRL
                             currCummDRL = newCummDRL;
+
                             // and wrap up as a task
                             taskPkg = new JobPackage(0, AckServerListener.clientId, dataPart, jobBytes);
 
                             // wrap up and send to the appropriate worker
+                            useClientId = AckServerListener.clientId + Utils.ID_DELIMITER + currCummDRLNum + Utils.ID_DELIMITER + newCummDRLNum;
+
                             backend.sendMore(workerId);
                             backend.sendMore(Utils.BROKER_DELIMITER);
-                            backend.sendMore(AckServerListener.clientId);
+                            backend.sendMore(useClientId); // backend.sendMore(AckServerListener.clientId);
                             backend.sendMore(Utils.BROKER_DELIMITER);
                             backend.send(taskPkg.toByteArray());
                         }
@@ -259,12 +280,61 @@ public class Broker extends Thread {
         }
     }
 
+    /**
+     *
+     *
+     * @param useClientId
+     * @param taskBytes
+     * @param currPos
+     * @param newPos
+     */
+    private JobMergeInfo mergeTaskResults(String useClientId, byte[] taskBytes, int currPos, int newPos) {
+        String[] idParts = useClientId.split(Utils.ID_DELIMITER);
+        String clientId = idParts[0];
+
+        JobMergeInfo jobInfo = jobMergeList.get(clientId);
+
+        return jobInfo;
+    }
+
     class WorkerInfo {
-        public double cpu;
-        public double cpuUsed;
-        public double memory;
-        public double memoryUsed;
-        public double battery;
-        public double batteryUsed;
+        public String workerId;
+        public float DRL;
+
+        public WorkerInfo(String workerId) {
+            this.workerId = workerId;
+            this.DRL = 0;
+        }
+
+        public WorkerInfo(String workerId, float drl) {
+            this.workerId = workerId;
+            this.DRL = drl;
+        }
+    }
+
+    class JobMergeInfo {
+        public String clientId;
+        public int partCummNum;
+        public int partNum;
+        public Object placeholder;
+
+        public JobMergeInfo(String clientId) {
+            this.clientId = clientId;
+            this.partCummNum = 0;
+            this.partNum = 0;
+        }
+
+        public JobMergeInfo(String clientId, int partCummNum, int partNum) {
+            this.clientId = clientId;
+            this.partCummNum = partCummNum;
+            this.partNum = partNum;
+        }
+
+        public JobMergeInfo(String clientId, Object emptyPlaceholder) {
+            this.clientId = clientId;
+            this.partCummNum = 0;
+            this.partNum = 0;
+            this.placeholder = emptyPlaceholder;
+        }
     }
 }
