@@ -115,6 +115,9 @@ public abstract class Worker extends Thread {
             // get back the job package sent by broker
             JobPackage request = (JobPackage) Utils.deserialize(packageBytes);
 
+            // report out that worker receives a request
+            receivedTask(request.clientId, request.dataBytes.length);
+
             // initiate data parser and job objects from the request package
             JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(this.context, this.workerId, request.jobBytes);
             Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
@@ -130,13 +133,11 @@ public abstract class Worker extends Thread {
         }
     }
 
-//    /**
-//     * initiate worker without broker at the middle.
-//     * worker also takes the role of broker
-//     */
-//    private void initWithoutBroker() {
-//
-//    }
+    /**
+     * initiate worker without broker at the middle.
+     * worker also takes the role of broker
+     */
+    private void initWithoutBroker() { }
 
     class ExAckClient extends AckClient {
         public ExAckClient(ZMQ.Context _context, String _ip, byte[] _id) {
@@ -161,9 +162,18 @@ public abstract class Worker extends Thread {
     /**
      * similar to the <i>clientStarted</i> event in client, this event will be happened
      * when worker completes the initiation.
+     *
      * @param workerId
      */
     public abstract void workerStarted(String workerId);
+
+    /**
+     * this event occurs when worker has completed receiving a task from client
+     *
+     * @param clientId
+     * @param dataSize
+     */
+    public abstract void receivedTask(String clientId, int dataSize);
 
     /**
      * this abstract function needs to be filled. this is to

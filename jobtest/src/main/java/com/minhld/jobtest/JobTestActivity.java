@@ -120,12 +120,22 @@ public class JobTestActivity extends AppCompatActivity {
             public void workerStarted(String workerId) {
                 UITools.writeLog(JobTestActivity.this, infoText, "worker [" + workerId + "] started.");
             }
+
+            @Override
+            public void receivedTask(String clientId, int dataSize) {
+                UITools.writeLog(JobTestActivity.this, infoText, "worker [" + this.workerId + "] received " + dataSize + " bytes from client [" + workerId + "].");
+            }
         };
 
         new MidWorker(this, brokerIp){
             @Override
             public void workerStarted(String workerId) {
                 UITools.writeLog(JobTestActivity.this, infoText, "worker [" + workerId + "] started.");
+            }
+
+            @Override
+            public void receivedTask(String clientId, int dataSize) {
+                UITools.writeLog(JobTestActivity.this, infoText, "worker [" + this.workerId + "] received " + dataSize + " bytes from client [" + workerId + "].");
             }
         };
     }
