@@ -50,7 +50,7 @@ public abstract class Client extends Thread {
             send();
 
             // get the response from broker/worker
-            while (!Thread.interrupted()) {
+            while (!Thread.currentThread().isInterrupted()) {
                 byte[] response = requester.recv();
                 resolveResult(response);
             }

@@ -98,27 +98,36 @@ public class Broker extends Thread {
             if (items.poll() < 0)
                 break;
 
-            // handle worker activity on back-end
+            // HANDLE WORKER'S ACTIVITY ON BACK-END
             if (items.pollin(0)) {
                 // queue worker address for LRU routing
+                // FIRST FRAME is WORKER ID
                 workerId = backend.recvStr();
-                workerList.put(workerId, new WorkerInfo());
-                ackServer.updateWorkerNumbers(workerList.size());
 
-                // second frame is a delimiter, empty
+                // SECOND FRAME is a DELIMITER, empty
                 empty = backend.recv();
                 assert (empty.length == 0);
 
-                // third frame is READY or else a client reply address
+                // get THIRD FRAME
+                //  - is READY (worker reports with DRL)
+                //  - or CLIENT ID (worker returns results)
                 clientId = backend.recvStr();
 
-                // if client reply, send rest back to front-end
-                if (!clientId.equals(Utils.WORKER_READY)) {
-                    // check the delimiter again
+                if (clientId.equals(Utils.WORKER_READY)) {
+                    // WORKER has finished loading, returned DRL value
+                    // update worker list
+                    workerList.put(workerId, new WorkerInfo());
+                    ackServer.updateWorkerNumbers(workerList.size());
+
+                } else {
+                // if (!clientId.equals(Utils.WORKER_READY)) {
+                    // WORKER has completed the task, returned the results
+
+                    // get FORTH FRAME, should be EMPTY - check the delimiter again
                     empty = backend.recv();
                     assert (empty.length == 0);
 
-                    // collect the main data frame
+                    // get LAST FRAME - main result from worker
                     reply = backend.recv();
 
                     // flush them out to the front-end
@@ -128,7 +137,7 @@ public class Broker extends Thread {
                 }
             }
 
-            // handle client activity at front-end
+            // HANDLE CLIENT'S ACTIVITIES AT FRONT-END
             if (items.pollin(1)) {
                 // now get next client request, route to LRU worker
                 // client request is [address][empty][request]

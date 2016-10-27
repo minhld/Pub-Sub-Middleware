@@ -87,6 +87,7 @@ public class Utils {
     public static final String JOB_CLASS_NAME = "com.minhld.jobex.JobImpl";
     public static final String PARSER_CLASS_NAME = "com.minhld.jobex.JobDataParserImpl";
     public static final String JOB_EXEC_METHOD = "exec";
+    public static final String ID_DELIMITER = "@@@";
 
     public static final String MSG_ACK = "ACK";
     public static final int MAX_ACK_SIZE = 1024;

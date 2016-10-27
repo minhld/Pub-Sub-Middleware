@@ -191,7 +191,6 @@ public class JobTestActivity extends AppCompatActivity {
             }
         };
 
-        UITools.writeLog(JobTestActivity.this, infoText, "client [" + client.clientId + "] started");
     }
 
     @Override
