@@ -115,7 +115,15 @@ public abstract class AckServer extends Thread {
      */
     public abstract void receiveResponse(byte[] resp);
 
+    /**
+     * this class listens to the updates relevant to ACK messages
+     */
     public interface AckListener {
+        /**
+         * this event occurs when all the ACKs from workers are received
+         * broker will consider the DRL values and divide job to the tasks
+         * that match with DRL values
+         */
         public void allAcksReceived();
     }
 }

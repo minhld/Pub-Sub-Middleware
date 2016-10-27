@@ -25,7 +25,7 @@ public class Broker extends Thread {
     private String brokerIp = "*";
 
     private HashMap<String, WorkerInfo> workerList;
-    HashMap<String, JobMergeInfo> jobMergeList;
+    private static HashMap<String, JobMergeInfo> jobMergeList;
 
     private Context parentContext;
     private static ZMQ.Socket backend;
@@ -87,8 +87,8 @@ public class Broker extends Thread {
         // Queue of available workers
         workerList = new HashMap<String, WorkerInfo>();
 
-        // Map of job results
-        jobMergeList = new HashMap<String, JobMergeInfo>();
+        // Map of job results - hold the placeholders of all the current executing jobs
+        Broker.jobMergeList = new HashMap<String, JobMergeInfo>();
 
         // initiate ACK server
         ackServer = new AckServerListener(parentContext, context, this.brokerIp);
@@ -100,6 +100,7 @@ public class Broker extends Thread {
             items.register(backend, ZMQ.Poller.POLLIN);
             items.register(frontend, ZMQ.Poller.POLLIN);
 
+            // hold until there is any messages from workers or clients
             if (items.poll() < 0)
                 break;
 
@@ -134,10 +135,19 @@ public class Broker extends Thread {
                     // get LAST FRAME - main result from worker
                     reply = backend.recv();
 
-                    // flush them out to the front-end
-                    frontend.sendMore(clientId);
-                    frontend.sendMore(Utils.BROKER_DELIMITER);
-                    frontend.send(reply);
+                    //
+                    JobMergeInfo jobMergeInfo = mergeTaskResults(clientId, reply);
+
+                    //
+                    if (jobMergeInfo.partCummNum == jobMergeInfo.partNum) {
+                        // flush them out to the front-end
+                        frontend.sendMore(jobMergeInfo.clientId);
+                        frontend.sendMore(Utils.BROKER_DELIMITER);
+                        frontend.send(reply);
+
+                        // remove the job result out of the result map
+                        Broker.jobMergeList.remove(jobMergeInfo.clientId);
+                    }
                 }
             }
 
@@ -154,6 +164,9 @@ public class Broker extends Thread {
                 // get 3rd frame
                 request = frontend.recv();
 
+                // send the requests to all the nearby workers for DRL values. After receiving
+                // all DRL values, it will consider DRLs and divide job into tasks with
+                // proportional data amounts to the DRL values.
                 ackServer.queryDRL(clientId, request);
 
             }
@@ -196,10 +209,10 @@ public class Broker extends Thread {
                         }
 
                         // before dividing job into parts, a placeholder to hold cumulative results
-                        // must be created
+                        // must be created and stored into the map
                         Object emptyPlaceholder = dataParser.createPlaceHolder(dataObject);
                         JobMergeInfo jobMergeInfo = new JobMergeInfo(AckServerListener.request.clientId, emptyPlaceholder);
-
+                        Broker.jobMergeList.put(AckServerListener.request.clientId, jobMergeInfo);
 
                         // send job to worker
                         JobPackage taskPkg;
@@ -246,6 +259,13 @@ public class Broker extends Thread {
             advancedWorkerList = new HashMap<>();
         }
 
+        /**
+         * this function deserialize the request into Job Package object
+         * and send ACKs to the nearby workers.
+         *
+         * @param clientId
+         * @param request
+         */
         public void queryDRL(String clientId, byte[] request) {
             AckServerListener.clientId = clientId;
             try {
@@ -285,10 +305,8 @@ public class Broker extends Thread {
      *
      * @param useClientId
      * @param taskBytes
-     * @param currPos
-     * @param newPos
      */
-    private JobMergeInfo mergeTaskResults(String useClientId, byte[] taskBytes, int currPos, int newPos) {
+    private JobMergeInfo mergeTaskResults(String useClientId, byte[] taskBytes) {
         String[] idParts = useClientId.split(Utils.ID_DELIMITER);
         String clientId = idParts[0];
 
@@ -312,7 +330,7 @@ public class Broker extends Thread {
         }
     }
 
-    class JobMergeInfo {
+    static class JobMergeInfo {
         public String clientId;
         public int partCummNum;
         public int partNum;
