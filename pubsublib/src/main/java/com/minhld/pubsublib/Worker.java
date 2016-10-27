@@ -63,8 +63,8 @@ public abstract class Worker extends Thread {
             this.workerId = new String(worker.getIdentity());
             worker.connect("tcp://" + this.groupIp + ":" + this.port);
 
-            // // to report worker has finished the initialization
-            // workerInitDone();
+            // to report worker has finished the initialization
+            workerStarted(this.workerId);
 
             // inform broker that i am ready
             worker.send(Utils.WORKER_READY);
@@ -158,7 +158,12 @@ public abstract class Worker extends Thread {
         }
     }
 
-    // public abstract void workerInitDone();
+    /**
+     * similar to the <i>clientStarted</i> event in client, this event will be happened
+     * when worker completes the initiation.
+     * @param workerId
+     */
+    public abstract void workerStarted(String workerId);
 
     /**
      * this abstract function needs to be filled. this is to

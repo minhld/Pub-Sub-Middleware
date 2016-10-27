@@ -13,7 +13,7 @@ import com.minhld.pubsublib.Worker;
  * Created by minhld on 8/24/2016.
  */
 
-public class MidWorker extends Worker {
+public abstract class MidWorker extends Worker {
 
     public MidWorker(Context context, String groupIp) {
         super(context, groupIp);

@@ -115,11 +115,19 @@ public class JobTestActivity extends AppCompatActivity {
         UITools.writeLog(JobTestActivity.this, infoText, "server started here with workers");
 
         // start workers - this workers will be move to another part - not along with the broker
-        MidWorker worker1 = new MidWorker(this, brokerIp);
-        UITools.writeLog(JobTestActivity.this, infoText, "worker [" + worker1.workerId + "] started");
+        new MidWorker(this, brokerIp) {
+            @Override
+            public void workerStarted(String workerId) {
+                UITools.writeLog(JobTestActivity.this, infoText, "worker [" + workerId + "] started.");
+            }
+        };
 
-        MidWorker worker2 = new MidWorker(this, brokerIp);
-        UITools.writeLog(JobTestActivity.this, infoText, "worker [" + worker2.workerId + "] started");
+        new MidWorker(this, brokerIp){
+            @Override
+            public void workerStarted(String workerId) {
+                UITools.writeLog(JobTestActivity.this, infoText, "worker [" + workerId + "] started.");
+            }
+        };
     }
 
     /**
@@ -127,6 +135,11 @@ public class JobTestActivity extends AppCompatActivity {
      */
     private void initClient() {
         Client client = new Client(Utils.BROKER_SPECIFIC_IP) {
+            @Override
+            public void clientStarted(String clientId) {
+                // print out
+                UITools.writeLog(JobTestActivity.this, infoText, "client [" + clientId + "] started");
+            }
 
             @Override
             public void send() {

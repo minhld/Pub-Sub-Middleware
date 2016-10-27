@@ -5,7 +5,7 @@ import com.minhld.utils.Utils;
 import org.zeromq.ZMQ;
 
 /**
- * this Client is used in Router mode
+ * this Client is used to send jobs to server (broker)
  * Created by minhld on 8/18/2016.
  */
 
@@ -43,6 +43,9 @@ public abstract class Client extends Thread {
             String clientPort = "tcp://" + this.groupIp + ":" + this.port;
             requester.connect(clientPort);
 
+            // client has been started, throwing an event to the holder
+            clientStarted(this.clientId);
+
             // send a request to the broker/worker
             send();
 
@@ -65,6 +68,12 @@ public abstract class Client extends Thread {
     protected void sendMessage(String msg) {
         requester.send(msg);
     }
+
+    /**
+     * this event occurs when client finished starting
+     * @param clientId
+     */
+    public abstract void clientStarted(String clientId);
 
     /**
      * this function defines what task to send to the broker/worker
