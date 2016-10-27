@@ -45,19 +45,17 @@ public interface JobDataParser {
 
     /**
      * this function will get one small piece of a data object. the position
-     * and size of the part depends on the firstOffset and the lastOffset of
-     *
-     *
+     * and size of the part depends on the firstOffset and the lastOffset.
      *
      * @param objData
-     * @param firstOffset
-     * @param lastOffset
+     * @param firstOffset (percentage - integer) the first offset of the data piece (0 -> 100)
+     * @param lastOffset (percentage - integer) the last offset of the data piece (0 -> 100)
      * @return
      */
     public byte[] getPartFromObject(Object objData, int firstOffset, int lastOffset);
 
     /**
-     * create the placeholder to cumulate the results from other devices
+     * create the placeholder to accumulate the results from other devices
      * sending back to requester
      *
      * @param dataObject
@@ -66,14 +64,15 @@ public interface JobDataParser {
     public Object createPlaceHolder(Object dataObject);
 
     /**
-     * merge the part data object into the final object.
+     * merge the partial data object to the placeholder, in other words, final result.
      *
      * @param placeholderObj
      * @param partObj
-     * @param index
+     * @param firstOffset (percentage - integer) the first offset of the piece (0 -> 100)
+     * @param lastOffset (percentage - integer) the last offset of the piece (0 -> 100)
      * @return
      */
-    public Object copyPartToHolder(Object placeholderObj, byte[] partObj, int index);
+    public Object copyPartToHolder(Object placeholderObj, byte[] partObj, int firstOffset, int lastOffset);
 
     /**
      * destroyObject the data object from the memory. If the object is input/output stream

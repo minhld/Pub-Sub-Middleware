@@ -135,11 +135,13 @@ public class Broker extends Thread {
                     // get LAST FRAME - main result from worker
                     reply = backend.recv();
 
-                    //
+                    // retrieve the job's placeholder
                     JobMergeInfo jobMergeInfo = mergeTaskResults(clientId, reply);
 
-                    //
-                    if (jobMergeInfo.partCummNum == jobMergeInfo.partNum) {
+                    // check if the job's placeholder is fully filled
+                    // if so, return the placeholder back to the client
+                    // otherwise, skip this one and wait for more parts to come
+                    if (jobMergeInfo.isPlaceholderFilled()) {
                         // flush them out to the front-end
                         frontend.sendMore(jobMergeInfo.clientId);
                         frontend.sendMore(Utils.BROKER_DELIMITER);
@@ -180,7 +182,6 @@ public class Broker extends Thread {
 
     static class AckServerListener extends AckServer {
         static String clientId;
-        // static byte[] request;
         static JobPackage request;
         static float totalDRL = 0;
         static HashMap<String, Float> advancedWorkerList;
@@ -211,7 +212,7 @@ public class Broker extends Thread {
                         // before dividing job into parts, a placeholder to hold cumulative results
                         // must be created and stored into the map
                         Object emptyPlaceholder = dataParser.createPlaceHolder(dataObject);
-                        JobMergeInfo jobMergeInfo = new JobMergeInfo(AckServerListener.request.clientId, emptyPlaceholder);
+                        JobMergeInfo jobMergeInfo = new JobMergeInfo(AckServerListener.request.clientId, emptyPlaceholder, dataParser);
                         Broker.jobMergeList.put(AckServerListener.request.clientId, jobMergeInfo);
 
                         // send job to worker
@@ -301,7 +302,7 @@ public class Broker extends Thread {
     }
 
     /**
-     *
+     * this function merge
      *
      * @param useClientId
      * @param taskBytes
@@ -309,12 +310,27 @@ public class Broker extends Thread {
     private JobMergeInfo mergeTaskResults(String useClientId, byte[] taskBytes) {
         String[] idParts = useClientId.split(Utils.ID_DELIMITER);
         String clientId = idParts[0];
+        int firstPercent = Integer.parseInt(idParts[1]);
+        int lastPercent = Integer.parseInt(idParts[2]);
 
-        JobMergeInfo jobInfo = jobMergeList.get(clientId);
+        JobMergeInfo jobInfo = Broker.jobMergeList.get(clientId);
+
+        // add part to the client job's placeholder
+        jobInfo.addPart(taskBytes, firstPercent, lastPercent);
+
+        if (!jobInfo.isPlaceholderFilled()) {
+            // if the placeholder of this job has not been fully filled,
+            // it will still be open for adding more parts
+            Broker.jobMergeList.put(clientId, jobInfo);
+        }
 
         return jobInfo;
     }
 
+    /**
+     * this class contains information about status of a worker
+     * at the moment worker is requested for DRL
+     */
     class WorkerInfo {
         public String workerId;
         public float DRL;
@@ -330,29 +346,48 @@ public class Broker extends Thread {
         }
     }
 
+    /**
+     * this class contains information of job combination
+     */
     static class JobMergeInfo {
         public String clientId;
-        public int partCummNum;
-        public int partNum;
+        public int cummPartNum;
+        public int totalPartNum;
         public Object placeholder;
+        private JobDataParser dataParser;
 
-        public JobMergeInfo(String clientId) {
+        public JobMergeInfo(String clientId, Object emptyPlaceholder, JobDataParser dataParser) {
             this.clientId = clientId;
-            this.partCummNum = 0;
-            this.partNum = 0;
-        }
-
-        public JobMergeInfo(String clientId, int partCummNum, int partNum) {
-            this.clientId = clientId;
-            this.partCummNum = partCummNum;
-            this.partNum = partNum;
-        }
-
-        public JobMergeInfo(String clientId, Object emptyPlaceholder) {
-            this.clientId = clientId;
-            this.partCummNum = 0;
-            this.partNum = 0;
+            this.cummPartNum = 0;
+            this.totalPartNum = 0;
             this.placeholder = emptyPlaceholder;
+            this.dataParser = dataParser;
+        }
+
+        /**
+         * copy the data part to the placeholder
+         *
+         * @param partBytes
+         * @param firstPercent
+         * @param lastPercent
+         */
+        public void addPart(byte[] partBytes, int firstPercent, int lastPercent) {
+            // copy the data part to the placeholder, the position of the part
+            // is defined by the firstPercent and lastPercent
+            dataParser.copyPartToHolder(this.placeholder, partBytes, firstPercent, lastPercent);
+
+            // and increase the number of parts that have been received.
+            this.cummPartNum++;
+        }
+
+        /**
+         * check if the placeholder is fully filled by all the parts
+         *
+         * @return
+         */
+        public boolean isPlaceholderFilled() {
+            // by checking if the cumulative part number is equal to the total part number
+            return this.cummPartNum == this.totalPartNum;
         }
     }
 }

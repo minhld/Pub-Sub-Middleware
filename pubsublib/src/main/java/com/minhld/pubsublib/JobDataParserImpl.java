@@ -69,13 +69,14 @@ public class JobDataParserImpl implements JobDataParser {
     }
 
     @Override
-    public Object copyPartToHolder(Object placeholderObj, byte[] partObj, int index) {
+    public Object copyPartToHolder(Object placeholderObj, byte[] partObj, int firstOffset, int lastOffset) {
+        Bitmap pHolderBmp = (Bitmap) placeholderObj;
         // get bitmap from original data
         Bitmap partBmp = BitmapFactory.decodeByteArray(partObj, 0, partObj.length);
-
-        int pieceWidth = partBmp.getWidth();
-        Canvas canvas = new Canvas((Bitmap) placeholderObj);
-        canvas.drawBitmap(partBmp, index * pieceWidth, 0, null);
+        int firstIndex = (pHolderBmp.getWidth() * firstOffset) / 100;
+        int pieceWidth = (pHolderBmp.getWidth() * (lastOffset - firstOffset)) / 100;
+        Canvas canvas = new Canvas(pHolderBmp);
+        canvas.drawBitmap(partBmp, firstIndex * pieceWidth, 0, null);
         return null;
     }
 
