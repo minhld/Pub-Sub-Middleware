@@ -71,7 +71,6 @@ public class PeerSpecs {
     public static String getMyJSONSpecs(Context c, String deviceName) {
         PeerSpecs ps = getMySpecs(c);
         JsonObject jsonSpecs = new JsonObject();
-//        JSONObject jsonSpecs = new JSONObject();
         try {
             // general information
             if (deviceName.equals("")) {

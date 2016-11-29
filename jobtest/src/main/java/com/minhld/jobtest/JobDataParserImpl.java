@@ -25,6 +25,7 @@ public class JobDataParserImpl implements JobDataParser {
     public Object loadObject(String path) throws Exception {
         return BitmapFactory.decodeFile(path);
     }
+    
 
     @Override
     public Object parseBytesToObject(byte[] byteData) throws Exception {
