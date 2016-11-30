@@ -57,8 +57,8 @@
 
     <Button
         android:text="Discover"
-        android:textSize="12sp"
-        android:layout_width="wrap_content"
+        android:textSize="11sp"
+        android:layout_width="75dp"
         android:layout_height="45dp"
         android:id="@+id/discoverBtn"
         android:layout_alignParentTop="true"
@@ -66,8 +66,8 @@
 
     <Button
         android:text="Crt. Group"
-        android:textSize="12sp"
-        android:layout_width="wrap_content"
+        android:textSize="11sp"
+        android:layout_width="70dp"
         android:layout_height="45dp"
         android:id="@+id/createGroupBtn"
         android:layout_alignParentTop="true"
@@ -75,8 +75,8 @@
 
     <Button
         android:text="Server"
-        android:textSize="12sp"
-        android:layout_width="80dp"
+        android:textSize="11sp"
+        android:layout_width="65dp"
         android:layout_height="45dp"
         android:id="@+id/pubBtn"
         android:layout_alignParentTop="true"
@@ -84,12 +84,21 @@
 
     <Button
         android:text="Client"
-        android:textSize="12sp"
-        android:layout_width="80dp"
+        android:textSize="11sp"
+        android:layout_width="70dp"
         android:layout_height="45dp"
         android:id="@+id/subBtn"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/pubBtn" />
+
+    <Button
+        android:text="Worker"
+        android:textSize="11sp"
+        android:layout_width="60dp"
+        android:layout_height="45dp"
+        android:id="@+id/workerBtn"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/subBtn" />
 
 </RelativeLayout>

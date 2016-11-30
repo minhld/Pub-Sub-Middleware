@@ -35,6 +35,9 @@ public class JobTestActivity extends AppCompatActivity {
     @BindView(R.id.subBtn)
     Button subBtn;
 
+    @BindView(R.id.workerBtn)
+    Button workerBtn;
+
     @BindView(R.id.deviceList)
     ListView deviceList;
 
@@ -101,6 +104,13 @@ public class JobTestActivity extends AppCompatActivity {
             }
         });
 
+        workerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initWorker();
+            }
+        });
+
         // grant read/write permission for Android 6.x
         Utils.grandWritePermission(this);
     }
@@ -113,8 +123,15 @@ public class JobTestActivity extends AppCompatActivity {
         // start server (broker)
         new Broker(this, brokerIp);
         UITools.writeLog(JobTestActivity.this, infoText, "server started here with workers");
+    }
 
+    /**
+     * start worker
+     */
+    private void initWorker() {
         // start workers - this workers will be move to another part - not along with the broker
+
+        String brokerIp = UITools.GO_IP;
         new MidWorker(this, brokerIp) {
             @Override
             public void workerStarted(String workerId) {
@@ -127,17 +144,6 @@ public class JobTestActivity extends AppCompatActivity {
             }
         };
 
-        new MidWorker(this, brokerIp){
-            @Override
-            public void workerStarted(String workerId) {
-                UITools.writeLog(JobTestActivity.this, infoText, "worker [" + workerId + "] started.");
-            }
-
-            @Override
-            public void receivedTask(String clientId, int dataSize) {
-                UITools.writeLog(JobTestActivity.this, infoText, "worker [" + this.workerId + "] received " + dataSize + " bytes from client [" + workerId + "].");
-            }
-        };
     }
 
     /**
