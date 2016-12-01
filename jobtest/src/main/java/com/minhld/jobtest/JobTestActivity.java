@@ -125,7 +125,7 @@ public class JobTestActivity extends AppCompatActivity {
         UITools.writeLog(JobTestActivity.this, infoText, "server started");
     }
 
-    
+
     /**
      * start worker
      */
