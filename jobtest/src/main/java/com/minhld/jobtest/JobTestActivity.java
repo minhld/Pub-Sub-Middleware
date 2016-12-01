@@ -122,7 +122,7 @@ public class JobTestActivity extends AppCompatActivity {
         String brokerIp = "*";
         // start server (broker)
         new Broker(this, brokerIp);
-        UITools.writeLog(JobTestActivity.this, infoText, "server started here with workers");
+        UITools.writeLog(JobTestActivity.this, infoText, "server started");
     }
 
     /**
