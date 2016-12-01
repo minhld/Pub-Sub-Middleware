@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/dextest" />
             <option value="$PROJECT_DIR$/jobtest" />
             <option value="$PROJECT_DIR$/pubsublib" />
+            <option value="$PROJECT_DIR$/servertest" />
             <option value="$PROJECT_DIR$/sharetest" />
           </set>
         </option>
