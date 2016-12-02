@@ -82,6 +82,9 @@ public abstract class Worker extends Thread {
                     // get client address
                     clientAddr = worker.recvStr();
 
+                    // set start job clock
+                    long startTime = System.currentTimeMillis();
+
                     // delimiter
                     empty = worker.recv();
                     assert (empty.length == 0);
@@ -94,6 +97,13 @@ public abstract class Worker extends Thread {
                     worker.sendMore(clientAddr);
                     worker.sendMore(Utils.BROKER_DELIMITER);
                     worker.send(result);
+
+                    // end the job execution clock
+                    long durr = System.currentTimeMillis() - startTime;
+                    TaskDone taskInfo = new TaskDone();
+                    taskInfo.durration = durr;
+                    workerFinished(workerId, taskInfo);
+
                 } catch (Exception d) {
                     d.printStackTrace();
                 }
@@ -186,6 +196,8 @@ public abstract class Worker extends Thread {
      */
     public abstract void receivedTask(String clientId, int dataSize);
 
+    public abstract void workerFinished(String workerId, TaskDone taskDone);
+
     /**
      * this abstract function needs to be filled. this is to
      * define how worker will complete the work
@@ -194,4 +206,13 @@ public abstract class Worker extends Thread {
      * @return
      */
     public abstract byte[] resolveRequest(byte[] packageBytes);
+
+    /**
+     * this class contains information of the task of which has just been
+     * executed by the worker
+     */
+    public class TaskDone {
+        public long durration;
+
+    }
 }

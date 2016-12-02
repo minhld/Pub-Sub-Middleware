@@ -67,6 +67,8 @@ public class WordCountActivity extends AppCompatActivity {
 
     MidSupporter midSupporter;
 
+    long startTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +150,12 @@ public class WordCountActivity extends AppCompatActivity {
             public void receivedTask(String clientId, int dataSize) {
                 UITools.writeLog(WordCountActivity.this, infoText, "worker [" + this.workerId + "] received " + dataSize + " bytes from client [" + workerId + "].");
             }
+
+            @Override
+            public void workerFinished(String workerId, TaskDone taskDone) {
+                UITools.writeLog(WordCountActivity.this, infoText, "worker [" + this.workerId + "] finished job. time: " + taskDone.durration);
+            }
+
         };
 
     }
@@ -169,6 +177,8 @@ public class WordCountActivity extends AppCompatActivity {
                 String dataPath = Utils.getDownloadPath() + "/mars.jpg";
                 String jobPath = Utils.getDownloadPath() + "/job.jar";
 
+                startTime = System.currentTimeMillis();
+
                 try {
                     JobSupporter.initDataParser(WordCountActivity.this, jobPath);
                     byte[] jobData = JobSupporter.getData(dataPath);
@@ -187,14 +197,17 @@ public class WordCountActivity extends AppCompatActivity {
 
             @Override
             public void resolveResult(byte[] result) {
+                final long durr = System.currentTimeMillis() - startTime;
+
                 UITools.writeLog(WordCountActivity.this, infoText, "client received result: " + result.length + " bytes");
                 JobDataParser parser = new WordDataParserImpl();
                 try {
-                    final Bitmap bmpRes = (Bitmap) parser.parseBytesToObject(result);
+                    final String resultStr = (String) parser.parseBytesToObject(result);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            viewer.setImageBitmap(bmpRes);
+                            UITools.writeLog(WordCountActivity.this, infoText, resultStr);
+                            UITools.writeLog(WordCountActivity.this, infoText, "total time: " + durr + "ms");
                         }
                     });
                 } catch (Exception e) {

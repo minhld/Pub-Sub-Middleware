@@ -12,48 +12,37 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
-
 /**
  *
  * Created by minhld on 01/28/2016.
  */
 public class WordDataParserImpl implements JobDataParser {
 
-	@Override
+    @Override
     public Class getDataClass() {
         return String.class;
     }
 
     @Override
     public Object loadObject(String path) throws Exception {
-        String url = "http://129.123.7.172:3883/sm/html/b8.html";
+        String url = "http://129.123.7.172:3883/sm/html/b19.html";
         return getTextFromHttps(url);
     }
 
     @Override
     public Object parseBytesToObject(byte[] byteData) throws Exception {
-    	return new String(byteData);
+        return new String(byteData);
     }
 
     @Override
     public byte[] parseObjectToBytes(Object objData) throws Exception {
-    	if (objData instanceof String) {
-    		return ((String) objData).getBytes();
-    	} else if (objData instanceof TopWords) {
-    		return ((TopWords) objData).words.toString().getBytes();
-    	}
-    	return new byte[0];
+        return ((String) objData).getBytes();
     }
 
     @Override
     public byte[] getPartFromObject(Object data, int firstOffset, int lastOffset) {
         String dataStr = (String) data;
-        int dataLen = dataStr.length();
-        double firstIdx = dataLen * ((double) firstOffset / 100);
-        double lastIdx = dataLen * ((double) lastOffset / 100);
-        if (firstIdx < 0) firstIdx = 0;
-        if (lastIdx >= dataLen) lastIdx = dataLen - 1;
-        String subData = dataStr.substring((int) firstIdx, (int) lastIdx);
+        String subData = dataStr.substring(firstOffset, lastOffset);
         return subData.getBytes();
 
     }
@@ -118,6 +107,7 @@ public class WordDataParserImpl implements JobDataParser {
             }
             br.close();
 
+            return buffer.toString();
             //
             // return Jsoup.parse(buffer.toString()).text();
             // return android.text.Html.fromHtml(buffer.toString()).toString();

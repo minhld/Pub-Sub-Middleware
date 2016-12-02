@@ -143,6 +143,11 @@ public class JobTestActivity extends AppCompatActivity {
             public void receivedTask(String clientId, int dataSize) {
                 UITools.writeLog(JobTestActivity.this, infoText, "worker [" + this.workerId + "] received " + dataSize + " bytes from client [" + workerId + "].");
             }
+
+            @Override
+            public void workerFinished(String workerId, TaskDone taskDone) {
+                UITools.writeLog(JobTestActivity.this, infoText, "worker [" + this.workerId + "] finished job. time: " + taskDone.durration);
+            }
         };
 
     }
