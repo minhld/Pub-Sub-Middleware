@@ -1,17 +1,17 @@
 package com.minhld.jobimpls;
 
+import com.minhld.jobex.JobDataParser;
+import com.minhld.utils.Utils;
+
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.minhld.jobex.JobDataParser;
-import com.minhld.utils.Utils;
-
-import org.json.JSONObject;
 
 /**
  *
@@ -19,7 +19,7 @@ import org.json.JSONObject;
  */
 public class WordDataParserImpl implements JobDataParser {
 
-    @Override
+	@Override
     public Class getDataClass() {
         return String.class;
     }
@@ -32,18 +32,28 @@ public class WordDataParserImpl implements JobDataParser {
 
     @Override
     public Object parseBytesToObject(byte[] byteData) throws Exception {
-        return (String) Utils.deserialize(byteData);
+    	return new String(byteData);
     }
 
     @Override
     public byte[] parseObjectToBytes(Object objData) throws Exception {
-        return ((String) objData).getBytes();
+    	if (objData instanceof String) {
+    		return ((String) objData).getBytes();
+    	} else if (objData instanceof TopWords) {
+    		return ((TopWords) objData).words.toString().getBytes();
+    	}
+    	return new byte[0];
     }
 
     @Override
     public byte[] getPartFromObject(Object data, int firstOffset, int lastOffset) {
         String dataStr = (String) data;
-        String subData = dataStr.substring(firstOffset, lastOffset);
+        int dataLen = dataStr.length();
+        double firstIdx = dataLen * ((double) firstOffset / 100);
+        double lastIdx = dataLen * ((double) lastOffset / 100);
+        if (firstIdx < 0) firstIdx = 0;
+        if (lastIdx >= dataLen) lastIdx = dataLen - 1;
+        String subData = dataStr.substring((int) firstIdx, (int) lastIdx);
         return subData.getBytes();
 
     }
@@ -109,8 +119,8 @@ public class WordDataParserImpl implements JobDataParser {
             br.close();
 
             //
-            //return Jsoup.parse(buffer.toString()).text();
-            return android.text.Html.fromHtml(buffer.toString()).toString();
+            // return Jsoup.parse(buffer.toString()).text();
+            // return android.text.Html.fromHtml(buffer.toString()).toString();
         } catch (Exception e) {
             e.printStackTrace();
         }

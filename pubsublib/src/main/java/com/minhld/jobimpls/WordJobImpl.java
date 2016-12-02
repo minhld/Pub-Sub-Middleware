@@ -1,12 +1,5 @@
 package com.minhld.jobimpls;
 
-import android.graphics.Bitmap;
-
-import com.minhld.jobex.Job;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -14,13 +7,21 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
+
+import com.minhld.jobex.Job;
+
 /**
  * Created by minhld on 11/2/2015.
  */
 public class WordJobImpl implements Job {
 
-    public String exec(Object htmlContents) {
+	public String exec(Object htmlContents) {
         String pageText = (String) htmlContents;// getTextFromUrl((String) urls);
+        pageText = Jsoup.parse(pageText).text();
+        pageText = pageText + pageText + pageText;
         return findTopWords(pageText, 50);
     }
 
@@ -104,8 +105,8 @@ public class WordJobImpl implements Job {
             br.close();
 
             //
-            //return Jsoup.parse(buffer.toString()).text();
-            return android.text.Html.fromHtml(buffer.toString()).toString();
+            // return Jsoup.parse(buffer.toString()).text();
+            // return android.text.Html.fromHtml(buffer.toString()).toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
