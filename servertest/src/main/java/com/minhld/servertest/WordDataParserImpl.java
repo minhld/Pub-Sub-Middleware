@@ -31,7 +31,7 @@ public class WordDataParserImpl implements JobDataParser {
 
     @Override
     public Object parseBytesToObject(byte[] byteData) throws Exception {
-        return (String) Utils.deserialize(byteData);
+        return new String(byteData);
     }
 
     @Override
