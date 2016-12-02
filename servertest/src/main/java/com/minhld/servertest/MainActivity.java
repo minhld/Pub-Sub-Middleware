@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
 import com.minhld.pbsbjob.MidWorker;
 import com.minhld.pubsublib.Broker;
@@ -34,13 +35,13 @@ public class MainActivity extends AppCompatActivity {
         sendJobBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                initClient();
             }
         });
     }
 
     private void initClient() {
-        Client client = new Client(Utils.BROKER_SPECIFIC_IP) {
+        Client client = new Client("129.123.7.172") {
             @Override
             public void clientStarted(String clientId) {
                 // print out
@@ -72,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void resolveResult(byte[] result) {
                 UITools.writeLog(MainActivity.this, infoText, "client received result: " + result.length + " bytes");
-                JobDataParserImpl parser = new JobDataParserImpl();
+                JobDataParser parser = new WordDataParserImpl();
                 try {
-                    final Bitmap bmpRes = (Bitmap) parser.parseBytesToObject(result);
+                    final String resultStr = (String) parser.parseBytesToObject(result);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            imageView.setImageBitmap(bmpRes);
+                            UITools.writeLog(MainActivity.this, infoText, resultStr);
                         }
                     });
                 } catch (Exception e) {

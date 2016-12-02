@@ -5,12 +5,12 @@ import android.content.Context;
 import com.minhld.jobex.Job;
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
+import com.minhld.jobimpls.JobDataParserImpl;
+import com.minhld.jobimpls.JobImpl;
 import com.minhld.pbsbjob.AckClient;
 import com.minhld.utils.Utils;
 
 import org.zeromq.ZMQ;
-
-import java.lang.reflect.Method;
 
 /**
  * The worker serves as a servant for the broker. It receives tasks

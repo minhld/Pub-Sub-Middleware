@@ -1,4 +1,4 @@
-package com.minhld.pubsublib;
+package com.minhld.jobimpls;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

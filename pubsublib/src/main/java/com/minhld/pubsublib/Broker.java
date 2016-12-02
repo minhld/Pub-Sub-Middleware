@@ -2,9 +2,10 @@ package com.minhld.pubsublib;
 
 import android.content.Context;
 
-import com.minhld.jobex.Job;
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
+import com.minhld.jobimpls.JobDataParserImpl;
+import com.minhld.jobimpls.WordDataParserImpl;
 import com.minhld.pbsbjob.AckServer;
 import com.minhld.utils.Utils;
 
@@ -198,7 +199,16 @@ public class Broker extends Thread {
                         byte[] jobBytes = AckServerListener.request.jobBytes;
 
                         // initiate the data parser from the JAR
-                        JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(parentContext, AckServerListener.clientId, jobBytes);
+
+                        // ====== ====== ====== EXAMPLE SECTION ====== ====== ======
+
+                        // ====== image-processing example ======
+                        //JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(parentContext, AckServerListener.clientId, jobBytes);
+
+                        // ====== word-count example ======
+                        JobDataParser dataParser = new WordDataParserImpl();
+
+                        // ====== ====== ====== ====== ====== ======
 
                         // get the whole object sent from client
                         Object dataObject = null;

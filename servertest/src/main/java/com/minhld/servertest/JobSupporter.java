@@ -15,15 +15,11 @@ public class JobSupporter {
     static JobDataParser dataParser;
 
     public static void initDataParser(Context c, String jarPath) throws Exception {
-        String dexDir = c.getDir("dex", 0).getAbsolutePath();
-        ClassLoader parent  = c.getClass().getClassLoader();
-        DexClassLoader loader = new DexClassLoader(jarPath, dexDir, null, parent);
-        Class dataParserClass = loader.loadClass("com.minhld.jobex.JobDataParserImpl");
-        dataParser = (JobDataParser) dataParserClass.newInstance();
+        dataParser = new WordDataParserImpl();
     }
 
     public static byte[] getData(String filePath) throws Exception {
-        Bitmap bmp = (Bitmap) dataParser.loadObject(filePath);
-        return dataParser.parseObjectToBytes(bmp);
+        Object dataObj = dataParser.loadObject(filePath);
+        return dataParser.parseObjectToBytes(dataObj);
     }
 }
