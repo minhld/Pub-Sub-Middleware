@@ -3,6 +3,7 @@ package com.minhld.servertest;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     TextView infoText;
 
+    long startTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         infoText = (TextView) findViewById(R.id.infoText);
+        infoText.setMovementMethod(new ScrollingMovementMethod());
+
         imageView = (ImageView) findViewById(R.id.imageView);
 
         sendJobBtn = (Button) findViewById(R.id.sendJobBtn);
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
                 String dataPath = Utils.getDownloadPath() + "/mars.jpg";
                 String jobPath = Utils.getDownloadPath() + "/job.jar";
 
+                startTime = System.currentTimeMillis();
+
                 try {
                     JobSupporter.initDataParser(MainActivity.this, jobPath);
                     byte[] jobData = JobSupporter.getData(dataPath);
@@ -72,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void resolveResult(byte[] result) {
+                final long durr = System.currentTimeMillis() - startTime;
+
                 UITools.writeLog(MainActivity.this, infoText, "client received result: " + result.length + " bytes");
                 JobDataParser parser = new WordDataParserImpl();
                 try {
@@ -80,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             UITools.writeLog(MainActivity.this, infoText, resultStr);
+                            UITools.writeLog(MainActivity.this, infoText, "total time: " + durr + "ms");
                         }
                     });
                 } catch (Exception e) {

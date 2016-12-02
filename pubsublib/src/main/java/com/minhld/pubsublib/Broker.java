@@ -32,6 +32,10 @@ public class Broker extends Thread {
     private static ZMQ.Socket backend;
     private AckServerListener ackServer;
 
+    long startTime = 0;
+    static long startRLRequestTime = 0;
+
+
     public Broker(Context parentContext, String brokerIp) {
         this.parentContext = parentContext;
         this.brokerIp = brokerIp;
@@ -150,6 +154,10 @@ public class Broker extends Thread {
 
                         // remove the job result out of the result map
                         Broker.jobMergeList.remove(jobMergeInfo.clientId);
+
+                        // end the clock of total job
+                        long jobDurr = System.currentTimeMillis() - startTime;
+                        System.out.println("[broker] total time doing job is: " + jobDurr + "ms");
                     }
                 }
             }
@@ -191,6 +199,10 @@ public class Broker extends Thread {
             super(context, brokerIp, new AckListener() {
                 @Override
                 public void allAcksReceived() {
+                    // end the RL request clock
+                    long requestRLDurr = System.currentTimeMillis() - startRLRequestTime;
+                    System.out.println("total RL request time: " + requestRLDurr + "ms");
+
                     // when all returning ACKs are received, this event will be invoked to dispatch
                     // tasks (pieces) to the workers
 
@@ -289,6 +301,9 @@ public class Broker extends Thread {
                 e.printStackTrace();
             }
 
+            // start the RL request clock
+            startRLRequestTime = System.currentTimeMillis();
+
             // query resource information from remote workers
             this.sendAck();
         }
@@ -298,7 +313,7 @@ public class Broker extends Thread {
             String respStr = new String(resp);
 
             // remote device's resource info received
-            System.out.println("received " + respStr);
+            System.out.println("[broker] received " + respStr);
 
             // analyze response and add it to the array of WorkerInfos
             // to do here
