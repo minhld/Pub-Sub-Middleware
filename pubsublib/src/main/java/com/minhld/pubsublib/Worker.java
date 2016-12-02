@@ -7,6 +7,8 @@ import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
 import com.minhld.jobimpls.JobDataParserImpl;
 import com.minhld.jobimpls.JobImpl;
+import com.minhld.jobimpls.WordDataParserImpl;
+import com.minhld.jobimpls.WordJobImpl;
 import com.minhld.pbsbjob.AckClient;
 import com.minhld.utils.Utils;
 
@@ -118,9 +120,18 @@ public abstract class Worker extends Thread {
             // report out that worker receives a request
             receivedTask(request.clientId, request.dataBytes.length);
 
+            // ====== ====== ====== EXAMPLE SECTION ====== ====== ======
+
+            // ====== image-processing example ======
             // initiate data parser and job objects from the request package
-            JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(this.context, this.workerId, request.jobBytes);
-            Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
+            // JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(this.context, this.workerId, request.jobBytes);
+            // Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
+
+            // ====== word-count example ======
+            JobDataParser dataParser = new WordDataParserImpl();
+            Job job = new WordJobImpl();
+
+            // ====== ====== ====== END EXAMPLE ====== ====== ======
 
             // execute the job
             Object dataObject = dataParser.parseBytesToObject(request.dataBytes);
