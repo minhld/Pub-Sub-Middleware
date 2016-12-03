@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,15 +19,20 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import dalvik.system.DexClassLoader;
 
@@ -357,5 +363,44 @@ public class Utils {
         }
 
         return null;
+    }
+
+    /**
+     * write out (string) data to a zip entry
+     *
+     * @param zipOut
+     * @param name
+     * @param data
+     * @throws IOException
+     */
+    public static void writeZip(ZipOutputStream zipOut, String name, String data) throws IOException {
+        ZipEntry entry = new ZipEntry(name);
+        zipOut.putNextEntry(entry);
+        BufferedWriter zipWriter = new BufferedWriter(new OutputStreamWriter(
+                zipOut, Charset.forName("utf-8")));
+        zipWriter.write(data);
+        zipWriter.flush();
+
+        zipOut.closeEntry();
+    }
+
+    /**
+     * write out binary data to a zip entry
+     * @param zipOut
+     * @param name
+     * @param in
+     * @throws IOException
+     */
+    public static void writeZip(ZipOutputStream zipOut, String name, InputStream in) throws IOException {
+        ZipEntry entry = new ZipEntry(name);
+        zipOut.putNextEntry(entry);
+
+        byte[] buffer = new byte[2048];
+        int length = 0;
+        while((length = in.read(buffer)) > 0) {
+            zipOut.write(buffer, 0, length);
+        }
+
+        zipOut.closeEntry();
     }
 }
