@@ -7,7 +7,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 
+import org.apache.commons.io.IOUtils;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -402,5 +404,45 @@ public class Utils {
         }
 
         zipOut.closeEntry();
+    }
+
+    /**
+     * this function will save a file stored in assets folder to local storage
+     * the location will be specified by <b>outPath</b> input parameter
+     *
+     * @param activity
+     * @param assetPath
+     * @param outPath
+     * @return
+     */
+    public static String copyAssets2Storage(Activity activity, String assetPath, String outPath) {
+        // confirm for permission
+        grandWritePermission(activity);
+        try {
+            int lastOffs = assetPath.lastIndexOf("/") + 1;
+            String assetFileName = assetPath.substring(lastOffs);
+            outPath = outPath + "/" + assetFileName;
+            FileOutputStream fos = new FileOutputStream(outPath);
+            InputStream assetsStream = activity.getAssets().open(assetPath);
+            IOUtils.copy(assetsStream, fos);
+            fos.flush();
+            fos.close();
+            assetsStream.close();
+
+            return outPath;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * get base-64 string from a binary array
+     *
+     * @param data
+     * @return
+     */
+    public static String getBase64(byte[] data) {
+        return Base64.encodeToString(data, Base64.DEFAULT);
     }
 }

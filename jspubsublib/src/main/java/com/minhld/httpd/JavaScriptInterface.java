@@ -4,8 +4,7 @@ import android.util.Base64;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
-import com.minhld.job2p.supports.Utils;
-
+import com.minhld.utils.Utils;
 
 /**
  * Created by minhld on 2/22/2016.
@@ -39,15 +38,15 @@ public class JavaScriptInterface {
         return "";
     }
 
-    /**
-     * this function will return GPS information
-     *
-     * @return
-     */
-    @JavascriptInterface
-    public String getGPSLocation() {
-        return JSInterfaceSupport.getGPSLocation(webView.getContext());
-    }
+//    /**
+//     * this function will return GPS information
+//     *
+//     * @return
+//     */
+//    @JavascriptInterface
+//    public String getGPSLocation() {
+//        return JSInterfaceSupport.getGPSLocation(webView.getContext());
+//    }
 
     @JavascriptInterface
     public String getTextFromUrl(String urls) {

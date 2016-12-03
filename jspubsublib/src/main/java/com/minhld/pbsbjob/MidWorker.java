@@ -2,7 +2,7 @@ package com.minhld.pbsbjob;
 
 import android.content.Context;
 
-import com.minhld.pubsublib.Worker;
+import com.minhld.jspubsub.Worker;
 
 /**
  * The worker receives job from broker and execute it. The worker

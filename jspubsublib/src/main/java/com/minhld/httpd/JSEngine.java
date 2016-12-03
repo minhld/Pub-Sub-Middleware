@@ -9,7 +9,8 @@ import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
-import com.minhld.job2p.supports.Utils;
+import com.minhld.utils.Utils;
+
 
 /**
  * Created by minhld on 3/28/2016.
