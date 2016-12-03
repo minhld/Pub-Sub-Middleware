@@ -1,1 +1,1 @@
-include ':sharetest', ':pubsublib', ':jobtest', ':dextest', ':servertest', ':wordcounttest'
+include ':sharetest', ':pubsublib', ':jobtest', ':dextest', ':servertest', ':wordcounttest', ':jspubsublib'

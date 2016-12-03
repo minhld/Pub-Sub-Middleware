@@ -144,6 +144,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        public void workerFinished(String workerId, TaskDone taskDone) {
+            // TODO:
+        }
+
+        @Override
         public byte[] resolveRequest(byte[] request) {
             return "FROM WORKER ".getBytes();
         }

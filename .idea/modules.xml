@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/PbSbMid.iml" filepath="$PROJECT_DIR$/PbSbMid.iml" />
       <module fileurl="file://$PROJECT_DIR$/dextest/dextest.iml" filepath="$PROJECT_DIR$/dextest/dextest.iml" />
       <module fileurl="file://$PROJECT_DIR$/jobtest/jobtest.iml" filepath="$PROJECT_DIR$/jobtest/jobtest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jspubsublib/jspubsublib.iml" filepath="$PROJECT_DIR$/jspubsublib/jspubsublib.iml" />
       <module fileurl="file://$PROJECT_DIR$/pubsublib/pubsublib.iml" filepath="$PROJECT_DIR$/pubsublib/pubsublib.iml" />
       <module fileurl="file://$PROJECT_DIR$/servertest/servertest.iml" filepath="$PROJECT_DIR$/servertest/servertest.iml" />
       <module fileurl="file://$PROJECT_DIR$/sharetest/sharetest.iml" filepath="$PROJECT_DIR$/sharetest/sharetest.iml" />
