@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/pubsublib" />
             <option value="$PROJECT_DIR$/servertest" />
             <option value="$PROJECT_DIR$/sharetest" />
+            <option value="$PROJECT_DIR$/wordcountjs" />
             <option value="$PROJECT_DIR$/wordcounttest" />
           </set>
         </option>

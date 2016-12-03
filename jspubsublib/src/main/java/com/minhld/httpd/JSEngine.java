@@ -70,7 +70,7 @@ public class JSEngine {
         });
         hiddenWeb.getSettings().setJavaScriptEnabled(true);
         hiddenWeb.getSettings().setDomStorageEnabled(true);
-        hiddenWeb.setWebContentsDebuggingEnabled(true);
+//        hiddenWeb.setWebContentsDebuggingEnabled(true);
     }
 
     /**

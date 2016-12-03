@@ -1,7 +1,10 @@
 package com.minhld.jspubsub;
 
+import android.app.Activity;
 import android.content.Context;
 
+import com.minhld.httpd.JSEngine;
+import com.minhld.httpd.JavaScriptInterface;
 import com.minhld.jobex.Job;
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
@@ -68,6 +71,12 @@ public abstract class Worker extends Thread {
 
             // inform broker that i am ready
             worker.send(Utils.WORKER_READY);
+
+            // init local server here
+            // initiate pre-existing files the local web server
+            JSEngine.initJs((Activity) this.context);
+            JSEngine.startServer(this.context);
+
 
             // initiate ACK client - to listen to DRL request from brokers
             ackClient = new ExAckClient(context, this.groupIp, worker.getIdentity());
@@ -137,13 +146,32 @@ public abstract class Worker extends Thread {
 
             // ====== word-count example ======
             JobDataParser dataParser = new WordDataParserImpl();
-            Job job = new WordJobImpl();
+//            Job job = new WordJobImpl();
 
             // ====== ====== ====== END EXAMPLE ====== ====== ======
 
             // execute the job
             Object dataObject = dataParser.parseBytesToObject(request.dataBytes);
-            Object result = job.exec(dataObject);
+//            Object result = job.exec(dataObject);
+
+            // download job file
+            String containerPath = Utils.getDownloadPath();
+            String jobPath = Utils.copyAssets2Storage((Activity) context, "job.js", containerPath);
+
+            JSEngine.setJobDoneListener(new JavaScriptInterface.JobDoneListener() {
+                @Override
+                public void jobDone(Object resObj) {
+                    try {
+                        // release the original data
+                        JSEngine.data = null;
+                        System.gc();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            JSEngine.execJob();
+
 
             return dataParser.parseObjectToBytes(result);
         } catch (Exception e) {
