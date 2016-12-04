@@ -30,7 +30,7 @@ public class JavaScriptInterface {
             if (type.equals(DTYPE_BASE64)) {
                 return Utils.getBase64((byte[]) JSEngine.data);
             } else {
-                return new String((byte[]) JSEngine.data);
+                return (String) JSEngine.data;
             }
         } catch (Exception e) {
             e.printStackTrace();

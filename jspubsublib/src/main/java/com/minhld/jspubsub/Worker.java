@@ -26,7 +26,7 @@ public abstract class Worker extends Thread {
     private String groupIp = "*";
     private int port = Utils.BROKER_XPUB_PORT;
 
-    private Context context;
+    Context context;
     private ExAckClient ackClient;
 
     public String workerId = "";
@@ -58,10 +58,10 @@ public abstract class Worker extends Thread {
      */
     private void initWithBroker() {
         try {
-            ZMQ.Context context = ZMQ.context(1);
+            ZMQ.Context zmqCtx = ZMQ.context(1);
 
             //  Socket to talk to clients and set its Id
-            ZMQ.Socket worker = context.socket(ZMQ.REQ);
+            ZMQ.Socket worker = zmqCtx.socket(ZMQ.REQ);
             ZHelper.setId (worker);
             this.workerId = new String(worker.getIdentity());
             worker.connect("tcp://" + this.groupIp + ":" + this.port);
@@ -72,14 +72,18 @@ public abstract class Worker extends Thread {
             // inform broker that i am ready
             worker.send(Utils.WORKER_READY);
 
-            // init local server here
-            // initiate pre-existing files the local web server
-            JSEngine.initJs((Activity) this.context);
-            JSEngine.startServer(this.context);
-
+            ((Activity) this.context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // init local server here
+                    // initiate pre-existing files the local web server
+                    JSEngine.initJs((Activity) context);
+                    JSEngine.startServer(context);
+                }
+            });
 
             // initiate ACK client - to listen to DRL request from brokers
-            ackClient = new ExAckClient(context, this.groupIp, worker.getIdentity());
+            ackClient = new ExAckClient(zmqCtx, this.groupIp, worker.getIdentity());
 
             // this part is to wait for broker to send job to execute
             String clientAddr;
@@ -116,7 +120,7 @@ public abstract class Worker extends Thread {
                 }
             }
             worker.close();
-            context.term();
+            zmqCtx.term();
         } catch (Exception e) {
             // exception there - leave it for now
             e.printStackTrace();
