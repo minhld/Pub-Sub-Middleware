@@ -28,6 +28,7 @@ public abstract class Worker extends Thread {
 
     Context context;
     private ExAckClient ackClient;
+    private Object resultObject;
 
     public String workerId = "";
 
@@ -135,6 +136,9 @@ public abstract class Worker extends Thread {
      */
     protected byte[] defaultResolveRequest(byte[] packageBytes) {
         try {
+            // clear the result
+            resultObject = null;
+
             // get back the job package sent by broker
             JobPackage request = (JobPackage) Utils.deserialize(packageBytes);
 
@@ -147,14 +151,14 @@ public abstract class Worker extends Thread {
 
             // ====== word-count example ======
             JobDataParser dataParser = new WordDataParserImpl();
-//            Job job = new WordJobImpl();
+            // Job job = new WordJobImpl();
 
             // ====== ====== ====== END EXAMPLE ====== ====== ======
 
             // execute the job
             Object dataObject = dataParser.parseBytesToObject(request.dataBytes);
             JSEngine.data = dataObject;
-//            Object result = job.exec(dataObject);
+            // Object result = job.exec(dataObject);
 
             // download job file
             String containerPath = Utils.getDownloadPath();
@@ -167,6 +171,8 @@ public abstract class Worker extends Thread {
                         // release the original data
                         JSEngine.data = null;
                         System.gc();
+
+                        resultObject = resObj;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -174,8 +180,11 @@ public abstract class Worker extends Thread {
             });
             JSEngine.execJob();
 
+            while (resultObject == null) {
+                Thread.sleep(50);
+            }
 
-            return null; // dataParser.parseObjectToBytes(result);
+            return dataParser.parseObjectToBytes(resultObject);
         } catch (Exception e) {
             e.printStackTrace();
             return new byte[0];

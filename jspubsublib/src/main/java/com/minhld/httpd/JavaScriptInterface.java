@@ -74,10 +74,11 @@ public class JavaScriptInterface {
     /**
      * this function helps returning data from JS interface to Java interface
      *
-     * @param base64
+     * @param resultStr
      */
     @JavascriptInterface
-    public void returnResult(String base64) {
+    public void returnResult(String resultStr/* base64 */) {
+        /*
         String modBase64 = base64;
         String b64Data = modBase64.substring(modBase64.indexOf(",") + 1);
         byte[] binData = Base64.decode(b64Data, Base64.DEFAULT);
@@ -85,6 +86,11 @@ public class JavaScriptInterface {
         // bubble up to the parent
         if (jobDoneListener != null) {
             jobDoneListener.jobDone(binData);
+        }
+        */
+
+        if (jobDoneListener != null) {
+            jobDoneListener.jobDone(resultStr);
         }
     }
 

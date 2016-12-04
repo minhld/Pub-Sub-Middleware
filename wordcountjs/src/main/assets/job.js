@@ -8,7 +8,7 @@ function entry() {
         var json5Words = JSON.stringify(topWords);
 
         // return results
-        window.jsInterface.returnResult(btoa(json5Words));
+        window.jsInterface.returnResult(json5Words); // returnResult(btoa(json5Words));
 
 		$('body').append('<div>' + json5Words + '</div>');
     } else {

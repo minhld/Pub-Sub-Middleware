@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
@@ -70,7 +71,10 @@ public class JSEngine {
         });
         hiddenWeb.getSettings().setJavaScriptEnabled(true);
         hiddenWeb.getSettings().setDomStorageEnabled(true);
-//        hiddenWeb.setWebContentsDebuggingEnabled(true);
+
+        if (Build.VERSION.SDK_INT >= 19) {
+            hiddenWeb.setWebContentsDebuggingEnabled(true);
+        }
     }
 
     /**
