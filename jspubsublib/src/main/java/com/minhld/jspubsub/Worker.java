@@ -5,11 +5,9 @@ import android.content.Context;
 
 import com.minhld.httpd.JSEngine;
 import com.minhld.httpd.JavaScriptInterface;
-import com.minhld.jobex.Job;
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
 import com.minhld.jobimpls.WordDataParserImpl;
-import com.minhld.jobimpls.WordJobImpl;
 import com.minhld.pbsbjob.AckClient;
 import com.minhld.utils.Utils;
 
@@ -113,7 +111,7 @@ public abstract class Worker extends Thread {
                     // end the job execution clock
                     long durr = System.currentTimeMillis() - startTime;
                     TaskDone taskInfo = new TaskDone();
-                    taskInfo.durration = durr;
+                    taskInfo.duration = durr;
                     workerFinished(workerId, taskInfo);
 
                 } catch (Exception d) {
@@ -249,7 +247,7 @@ public abstract class Worker extends Thread {
      * executed by the worker
      */
     public class TaskDone {
-        public long durration;
+        public long duration;
 
     }
 }

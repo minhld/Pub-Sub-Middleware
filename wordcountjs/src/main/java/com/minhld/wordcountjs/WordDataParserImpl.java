@@ -107,7 +107,7 @@ public class WordDataParserImpl implements JobDataParser {
             br.close();
 
             return buffer.toString();
-            //
+
             // return Jsoup.parse(buffer.toString()).text();
             // return android.text.Html.fromHtml(buffer.toString()).toString();
         } catch (Exception e) {

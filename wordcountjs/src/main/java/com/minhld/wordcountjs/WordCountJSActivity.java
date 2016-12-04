@@ -1,6 +1,5 @@
 package com.minhld.wordcountjs;
 
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -14,17 +13,11 @@ import android.widget.TextView;
 
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
-import com.minhld.jobimpls.*;
 import com.minhld.jobimpls.WordDataParserImpl;
 import com.minhld.jspubsub.Broker;
 import com.minhld.jspubsub.Client;
 import com.minhld.pbsbjob.MidWorker;
-import com.minhld.jspubsub.Broker;
-import com.minhld.jspubsub.Client;
-import com.minhld.jspubsub.Worker;
 import com.minhld.utils.Utils;
-
-import com.minhld.wordcountjs.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -155,7 +148,7 @@ public class WordCountJSActivity extends AppCompatActivity {
 
             @Override
             public void workerFinished(String workerId, TaskDone taskDone) {
-                UITools.writeLog(WordCountJSActivity.this, infoText, "worker [" + this.workerId + "] finished job. time: " + taskDone.durration);
+                UITools.writeLog(WordCountJSActivity.this, infoText, "worker [" + this.workerId + "] finished job. time: " + taskDone.duration);
             }
 
         };
