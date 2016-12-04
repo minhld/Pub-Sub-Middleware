@@ -1,11 +1,7 @@
 function entry() {
     if (window.jsInterface) {
         // get JSON string describes request from server (url, number of parts, index)
-        var jsonData = window.jsInterface.getFile('string');
-        var json = JSON.parse(jsonData);
-
-        // get page's text
-        var pageText = window.jsInterface.getTextFromUrl(json.url);
+        var pageText = window.jsInterface.getFile('string');
 
         var topWords = findTopWords(pageText, 50);
 

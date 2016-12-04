@@ -149,6 +149,7 @@ public abstract class Worker extends Thread {
 
             // execute the job
             Object dataObject = dataParser.parseBytesToObject(request.dataBytes);
+            JSEngine.data = dataObject;
 //            Object result = job.exec(dataObject);
 
             // download job file
