@@ -30,9 +30,12 @@ function findTopWords(pageText, nTop) {
     var wordCounts = { };
 
     for (var i = 0; i < words.length; i++) {
+        wordCounts["_" + words[i]] = (wordCounts["_" + words[i]] || 0) + 1;
+        /*
         if (!checkMinorWords(words[i])) {
             wordCounts["_" + words[i]] = (wordCounts["_" + words[i]] || 0) + 1;
         }
+        */
     }
 
     var keys = Object.keys(wordCounts);

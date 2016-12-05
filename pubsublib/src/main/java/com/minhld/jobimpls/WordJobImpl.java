@@ -34,11 +34,17 @@ public class WordJobImpl implements Job {
         String newKey = "";
         int count = 0;
         for (int i = 0; i < words.length; i++) {
+            newKey = "_" + words[i];
+            count = wordCounts.containsKey(newKey) ? wordCounts.get(newKey) + 1 : 1;
+            wordCounts.put(newKey, count);
+
+            /*
             if (!checkMinorWords(words[i])) {
                 newKey = "_" + words[i];
                 count = wordCounts.containsKey(newKey) ? wordCounts.get(newKey) + 1 : 1;
                 wordCounts.put(newKey, count);
             }
+            */
         }
 
         String[] keys = wordCounts.keySet().toArray(new String[] {});
