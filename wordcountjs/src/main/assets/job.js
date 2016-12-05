@@ -2,6 +2,7 @@ function entry() {
     if (window.jsInterface) {
         // get JSON string describes request from server (url, number of parts, index)
         var pageText = window.jsInterface.getFile('string');
+        pageText = window.jsInterface.normalizeHtml(pageText);
         pageText = pageText + pageText + pageText;
 
         var topWords = findTopWords(pageText, 50);

@@ -6,6 +6,8 @@ import android.webkit.WebView;
 
 import com.minhld.utils.Utils;
 
+import org.jsoup.Jsoup;
+
 /**
  * Created by minhld on 2/22/2016.
  */
@@ -36,6 +38,11 @@ public class JavaScriptInterface {
             e.printStackTrace();
         }
         return "";
+    }
+
+    @JavascriptInterface
+    public String normalizeHtml(String htmlContents) {
+        return Jsoup.parse(htmlContents).text();
     }
 
 //    /**
