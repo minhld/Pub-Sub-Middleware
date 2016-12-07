@@ -215,10 +215,10 @@ public class Broker extends Thread {
                         // ====== ====== ====== EXAMPLE SECTION ====== ====== ======
 
                         // ====== image-processing example ======
-                        //JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(parentContext, AckServerListener.clientId, jobBytes);
+                        JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(parentContext, AckServerListener.clientId, jobBytes);
 
-                        // ====== word-count example ======
-                        JobDataParser dataParser = new WordDataParserImpl();
+                        // // ====== word-count example ======
+                        // JobDataParser dataParser = new WordDataParserImpl();
 
                         // ====== ====== ====== ====== ====== ======
 

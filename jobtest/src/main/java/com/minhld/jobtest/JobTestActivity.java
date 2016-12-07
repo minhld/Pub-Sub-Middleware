@@ -62,6 +62,8 @@ public class JobTestActivity extends AppCompatActivity {
 
     MidSupporter midSupporter;
 
+    long startTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,6 +171,8 @@ public class JobTestActivity extends AppCompatActivity {
                 String dataPath = Utils.getDownloadPath() + "/mars.jpg";
                 String jobPath = Utils.getDownloadPath() + "/job.jar";
 
+                startTime = System.currentTimeMillis();
+
                 try {
                     JobSupporter.initDataParser(JobTestActivity.this, jobPath);
                     byte[] jobData = JobSupporter.getData(dataPath);
@@ -187,6 +191,8 @@ public class JobTestActivity extends AppCompatActivity {
 
             @Override
             public void resolveResult(byte[] result) {
+                final long durr = System.currentTimeMillis() - startTime;
+
                 UITools.writeLog(JobTestActivity.this, infoText, "client received result: " + result.length + " bytes");
                 JobDataParserImpl parser = new JobDataParserImpl();
                 try {
@@ -195,6 +201,7 @@ public class JobTestActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             viewer.setImageBitmap(bmpRes);
+                            UITools.writeLog(JobTestActivity.this, infoText, "total time: " + durr + "ms");
                         }
                     });
                 } catch (Exception e) {
