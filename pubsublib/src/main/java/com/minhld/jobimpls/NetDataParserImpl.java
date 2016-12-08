@@ -23,7 +23,9 @@ public class NetDataParserImpl implements JobDataParser {
 
     @Override
     public Object loadObject(String path) throws Exception {
-        return "http://giaitri.vnexpress.net/photo/trong-nuoc/buoi-toi-dam-am-cua-gia-dinh-my-linh-3339639.html";
+        WebPart webPart = new WebPart();
+        webPart.url = "http://giaitri.vnexpress.net/photo/trong-nuoc/buoi-toi-dam-am-cua-gia-dinh-my-linh-3339639.html";
+        return webPart;
     }
 
     @Override
@@ -43,8 +45,7 @@ public class NetDataParserImpl implements JobDataParser {
 
     @Override
     public byte[] getPartFromObject(Object data, int firstOffset, int lastOffset) {
-        WebPart webPart = new WebPart();
-        webPart.url = (String) data;
+        WebPart webPart = (WebPart) data;
         webPart.firstOffset = firstOffset;
         webPart.lastOffset = lastOffset;
         try {

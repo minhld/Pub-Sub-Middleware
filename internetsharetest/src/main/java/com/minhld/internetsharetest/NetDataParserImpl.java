@@ -23,7 +23,9 @@ public class NetDataParserImpl implements JobDataParser {
 
     @Override
     public Object loadObject(String path) throws Exception {
-        return "http://giaitri.vnexpress.net/photo/trong-nuoc/buoi-toi-dam-am-cua-gia-dinh-my-linh-3339639.html";
+        com.minhld.jobimpls.NetJobImpl.WebPart webPart = new com.minhld.jobimpls.NetJobImpl.WebPart();
+        webPart.url = "http://giaitri.vnexpress.net/photo/trong-nuoc/buoi-toi-dam-am-cua-gia-dinh-my-linh-3339639.html";
+        return webPart;
     }
 
     @Override
