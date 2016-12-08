@@ -15,7 +15,8 @@ public class JobSupporter {
     static JobDataParser dataParser;
 
     public static void initDataParser(Context c, String jarPath) throws Exception {
-        dataParser = new WordDataParserImpl();
+        // dataParser = new WordDataParserImpl();
+        dataParser = new NetDataParserImpl();
     }
 
     public static byte[] getData(String filePath) throws Exception {
