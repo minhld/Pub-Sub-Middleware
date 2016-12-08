@@ -28,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import dalvik.system.DexClassLoader;
 
@@ -358,5 +360,76 @@ public class Utils {
         }
 
         return null;
+    }
+
+    /**
+     * delete file/folder and the whole inner files
+     *
+     * @param file
+     * @throws IOException
+     */
+    public static void delete(File file)
+            throws IOException{
+        if(file.isDirectory()){
+            if(file.list().length==0){
+                file.delete();
+            }else{
+                String files[]=file.list();
+                for (String temp:files){
+                    File fileDelete=new File(file,temp);
+                    delete(fileDelete);
+                }
+
+                if(file.list().length==0){
+                    file.delete();
+                }
+            }
+        }else{
+            file.delete();
+        }
+    }
+
+    public static String unzipFile(String zipFilePath, String outputFolder, boolean overwrite) throws Exception{
+        byte[] buffer = new byte[1024];
+
+        try{
+            if (overwrite) {
+                File folder = new File(outputFolder);
+                if (folder.exists()) {
+                    delete(folder);
+                }
+                folder.mkdir();
+            }
+
+            File zipFile = new File(zipFilePath);
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
+            ZipEntry ze = zis.getNextEntry();
+            String outputFile = "";
+            while(ze != null) {
+                // only process file - skip folder
+                if (ze.isDirectory()) {
+                    ze = zis.getNextEntry();
+                    continue;
+                }
+                String fileName = ze.getName();
+                outputFile = outputFolder + File.separator + fileName;
+                File newFile = new File(outputFile);
+                new File(newFile.getParent()).mkdirs();
+                FileOutputStream fos = new FileOutputStream(newFile);
+
+                int len;
+                while ((len = zis.read(buffer)) > 0){
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+                ze = zis.getNextEntry();
+            }
+            zis.closeEntry();
+            zis.close();
+
+            return outputFolder;
+        }catch(IOException e){
+            throw e;
+        }
     }
 }
