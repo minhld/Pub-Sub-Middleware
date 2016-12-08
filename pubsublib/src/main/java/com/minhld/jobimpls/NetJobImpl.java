@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.UUID;
@@ -48,8 +49,8 @@ public class NetJobImpl implements Job {
 
             int linksSize = links.size();
             // int step = webPart.numOfParts == 1 ? linksSize : linksSize / webPart.numOfParts + 1;
-            int step = linksSize * ((webPart.lastOffset - webPart.firstOffset) / 100);
-            int offs = linksSize * (webPart.firstOffset / 100);
+            int step = (int) ((float) linksSize * ((float) (webPart.lastOffset - webPart.firstOffset) / 100));
+            int offs = (int) ((float) linksSize * ((float) webPart.firstOffset / 100));
 
             // write a small piece of metadata
             writeZip(zipOut, linksSize + "_" + step + "_" + offs, "link: " + webPart.url + "\nstep: " + step + ", offset: " + offs);
@@ -64,7 +65,8 @@ public class NetJobImpl implements Job {
                 if (cnt < offs + step) {
                     // download the link
                     try {
-                        writeZip(zipOut, lnkKey, new URL(links.get(lnkKey)).openStream());
+                        // writeZip(zipOut, lnkKey, new URL(links.get(lnkKey)).openStream());
+                        writeZip(zipOut, lnkKey, readUrl(links.get(lnkKey)));
                     } catch(Exception e) {
                         // skip one resource, no problem
                         e.printStackTrace();
@@ -175,6 +177,13 @@ public class NetJobImpl implements Job {
      */
     private String getFilename(String src) {
         return new File(src).getName();
+    }
+
+    private InputStream readUrl(String url) throws Exception {
+        URLConnection urlConn = new URL(url).openConnection();
+        urlConn.setReadTimeout(3000);   // no more than 3s of tryout
+        urlConn.setConnectTimeout(3000);
+        return urlConn.getInputStream();
     }
 
     /**
