@@ -7,6 +7,8 @@ import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
 import com.minhld.jobimpls.JobDataParserImpl;
 import com.minhld.jobimpls.JobImpl;
+import com.minhld.jobimpls.NetDataParserImpl;
+import com.minhld.jobimpls.NetJobImpl;
 import com.minhld.jobimpls.WordDataParserImpl;
 import com.minhld.jobimpls.WordJobImpl;
 import com.minhld.pbsbjob.AckClient;
@@ -132,14 +134,19 @@ public abstract class Worker extends Thread {
 
             // ====== ====== ====== EXAMPLE SECTION ====== ====== ======
 
-            // ====== image-processing example ======
-            // initiate data parser and job objects from the request package
-            JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(this.context, this.workerId, request.jobBytes);
-            Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
+            // // ====== image-processing example ======
+            // // initiate data parser and job objects from the request package
+            // JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(this.context, this.workerId, request.jobBytes);
+            // Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
 
             // // ====== word-count example ======
             // JobDataParser dataParser = new WordDataParserImpl();
             // Job job = new WordJobImpl();
+
+            // // ====== internet-share example ======
+            JobDataParser dataParser = new NetDataParserImpl();
+            Job job = new NetJobImpl();
+
 
             // ====== ====== ====== END EXAMPLE ====== ====== ======
 
