@@ -1,6 +1,5 @@
 package com.minhld.jobimpls;
 
-import com.minhld.internetsharetest.NetJobImpl.WebPart;
 import com.minhld.jobex.JobDataParser;
 import com.minhld.utils.Utils;
 
@@ -8,6 +7,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
+
+import com.minhld.jobimpls.NetJobImpl.WebPart;
 
 /**
  *
