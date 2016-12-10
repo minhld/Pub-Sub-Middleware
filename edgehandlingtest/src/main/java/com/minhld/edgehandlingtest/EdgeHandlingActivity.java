@@ -20,6 +20,7 @@ import com.minhld.pbsbjob.MidWorker;
 import com.minhld.pubsublib.Broker;
 import com.minhld.pubsublib.Client;
 import com.minhld.pubsublib.Worker;
+import com.minhld.pubsublibex.Client2;
 import com.minhld.utils.Utils;
 
 import com.minhld.edgehandlingtest.R;
@@ -178,7 +179,7 @@ public class EdgeHandlingActivity extends AppCompatActivity {
      * init client - on client devices
      */
     private void initClient() {
-        Client client = new Client(Utils.BROKER_SPECIFIC_IP) {
+        Client2 client = new Client2(this, Utils.BROKER_SPECIFIC_IP) {
             @Override
             public void clientStarted(String clientId) {
                 // print out

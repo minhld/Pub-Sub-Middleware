@@ -5,7 +5,9 @@ import android.content.Context;
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
 import com.minhld.jobimpls.NetDataParserImpl;
+import com.minhld.pbsbjob.AckClient;
 import com.minhld.pbsbjob.AckServer;
+import com.minhld.pubsublib.ZHelper;
 import com.minhld.utils.Utils;
 
 import org.zeromq.ZMQ;
@@ -29,7 +31,10 @@ public class Broker2 extends Thread {
 
     private Context parentContext;
     private static ZMQ.Socket backend;
+
     private AckServerListener ackServer;
+    private ExAckClient2 ackClient2;
+    private static String brokerId;
 
     long startTime = 0;
     static long startRLRequestTime = 0;
@@ -88,6 +93,9 @@ public class Broker2 extends Thread {
         this.backend = context.socket(ZMQ.ROUTER);
         backend.bind(backendPort);
 
+        ZHelper.setId(frontend);
+        Broker2.brokerId = new String(frontend.getIdentity());
+
         // Queue of available workers
         workerList = new HashMap<String, WorkerInfo>();
 
@@ -96,6 +104,9 @@ public class Broker2 extends Thread {
 
         // initiate ACK server
         ackServer = new AckServerListener(parentContext, context, this.brokerIp);
+
+        // initiate ACK client - to listen to DRL request from brokers
+        ackClient2 = new ExAckClient2(context, this.brokerIp, brokerId.getBytes());
 
         String workerId, clientId;
         byte[] empty, request, reply;
@@ -186,6 +197,29 @@ public class Broker2 extends Thread {
         frontend.close();
         backend.close();
         context.term();
+    }
+
+    /**
+     * this class is added to the broker to answer the status request of clients (and workers)
+     */
+    static class ExAckClient2 extends AckClient {
+        public ExAckClient2(ZMQ.Context _context, String _ip, byte[] _id) {
+            super(_context, _ip, _id, Utils.LIST_PORT, Utils.RESP_PORT);
+        }
+
+        @Override
+        public void sendResponse(String topic, byte[] request) {
+            // this delegate function is called when client detects a DRL request
+            // from server and try responding to it with DRL info
+
+            // this is the place to send back device info
+            String reqStr = new String(request);
+            if (reqStr.equals("net_request")) {
+                // just say i'm fine!
+                String response = Broker2.brokerId + ",OK";
+                this.sendMessage(response.getBytes());
+            }
+        }
     }
 
     static class AckServerListener extends AckServer {

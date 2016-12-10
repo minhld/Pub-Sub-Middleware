@@ -33,6 +33,15 @@ public abstract class AckServer extends Thread {
         this.start();
     }
 
+    public AckServer(ZMQ.Context _parentContext, String _brokerIp, int _listPort, int _respPort, AckListener _ackListener) {
+        this.parentContext = _parentContext != null ? _parentContext : ZMQ.context(1);
+        this.brokerIp = _brokerIp;
+        this.ackListener = _ackListener;
+        this.listenerPort = _listPort;
+        this.responderPort = _respPort;
+        this.start();
+    }
+
     /**
      * when server receive a request from a client, it will quickly
      * contact with its nearby workers to find out capability. this

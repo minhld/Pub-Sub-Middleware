@@ -27,6 +27,14 @@ public abstract class AckClient extends Thread {
         this.start();
     }
 
+    public AckClient(ZMQ.Context _parentContext, String _ip, byte[] _clientId, int listPort, int respPort) {
+        this.context = _parentContext != null ? _parentContext : ZMQ.context(1);
+        this.brokerIp = _ip;
+        this.clientId = new String(_clientId);
+        setPorts(listPort, respPort);
+        this.start();
+    }
+
     public void setPorts(int listPort, int respPort) {
         this.listenerPort = listPort;
         this.responderPort = respPort;
