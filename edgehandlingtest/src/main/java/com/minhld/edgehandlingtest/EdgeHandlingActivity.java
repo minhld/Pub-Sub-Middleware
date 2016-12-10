@@ -43,6 +43,9 @@ public class EdgeHandlingActivity extends AppCompatActivity {
     @BindView(R.id.workerBtn)
     Button workerBtn;
 
+    @BindView(R.id.connectServerBtn)
+    Button connectServerBtn;
+
     @BindView(R.id.deviceList)
     ListView deviceList;
 
@@ -118,8 +121,19 @@ public class EdgeHandlingActivity extends AppCompatActivity {
             }
         });
 
+        connectServerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initEdgeConnect();
+            }
+        });
+
         // grant read/write permission for Android 6.x
         Utils.grandWritePermission(this);
+    }
+
+    private void initEdgeConnect() {
+        final String EDGE_IP = "129.123.7.172";
     }
 
     /**

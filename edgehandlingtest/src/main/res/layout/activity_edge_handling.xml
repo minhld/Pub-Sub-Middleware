@@ -35,14 +35,29 @@
             android:layout_toEndOf="@+id/createGroupBtn"
             android:layout_marginBottom="0dp" />
 
-        <ImageView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/imageView"
             android:layout_alignParentBottom="true"
             android:layout_toEndOf="@+id/createGroupBtn"
-            android:layout_marginBottom="0dp" />
+            android:layout_marginBottom="0dp"
+            android:orientation="vertical">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/connectServerBtn"
+                android:text="Connect Edge"
+                android:textSize="11sp"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imageView"
+                android:layout_toEndOf="@+id/connectServerBtn"/>
+
+        </LinearLayout>
         <!--
         <ListView
             android:layout_width="0dp"
@@ -85,20 +100,20 @@
     <Button
         android:text="Client"
         android:textSize="11sp"
-        android:layout_width="70dp"
         android:layout_height="45dp"
         android:id="@+id/subBtn"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/pubBtn" />
+        android:layout_toEndOf="@+id/pubBtn"
+        android:layout_width="65dp" />
 
     <Button
         android:text="Worker"
         android:textSize="11sp"
-        android:layout_width="60dp"
         android:layout_height="45dp"
         android:id="@+id/workerBtn"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/subBtn" />
+        android:layout_toEndOf="@+id/subBtn"
+        android:layout_width="70dp" />
 
 </RelativeLayout>
