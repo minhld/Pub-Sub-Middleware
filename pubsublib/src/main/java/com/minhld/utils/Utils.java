@@ -47,8 +47,8 @@ public class Utils {
     public static final int MESSAGE_READ_NO_FILE = 0x500 + 5;
     public static final int MESSAGE_INFO = 0x500 + 6;
 
-    public static final int LIST_PORT = 5558;
-    public static final int RESP_PORT = 5559;
+    public static final int STATUS_LIST_PORT = 5558;
+    public static final int STATUS_RESP_PORT = 5559;
 
     public static enum PubSubType {
         PubSub,

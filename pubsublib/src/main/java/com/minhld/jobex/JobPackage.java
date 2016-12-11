@@ -30,7 +30,8 @@ public class JobPackage implements Serializable {
         this.clientId = clientId;
         this.dataBytes = data;
         try {
-            this.jobBytes = Utils.readFile(new File(jobPath));
+            File jobFile = new File(jobPath);
+            this.jobBytes = jobFile.exists() ? Utils.readFile(jobFile) : new byte[0];
         } catch (IOException e) {
             e.printStackTrace();
         }

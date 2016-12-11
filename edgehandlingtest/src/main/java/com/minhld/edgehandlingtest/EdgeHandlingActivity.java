@@ -1,6 +1,5 @@
 package com.minhld.edgehandlingtest;
 
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -14,16 +13,13 @@ import android.widget.TextView;
 
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
-import com.minhld.jobimpls.*;
 import com.minhld.jobimpls.WordDataParserImpl;
 import com.minhld.pbsbjob.MidWorker;
 import com.minhld.pubsublib.Broker;
 import com.minhld.pubsublib.Client;
-import com.minhld.pubsublib.Worker;
+import com.minhld.pubsublibex.Broker2;
 import com.minhld.pubsublibex.Client2;
 import com.minhld.utils.Utils;
-
-import com.minhld.edgehandlingtest.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -144,6 +140,9 @@ public class EdgeHandlingActivity extends AppCompatActivity {
         String brokerIp = "*";
         // start server (broker)
         new Broker(this, brokerIp);
+        // start signal listener
+        new Broker2(brokerIp, Utils.STATUS_LIST_PORT);
+
         UITools.writeLog(EdgeHandlingActivity.this, infoText, "server started");
     }
 
@@ -179,7 +178,7 @@ public class EdgeHandlingActivity extends AppCompatActivity {
      * init client - on client devices
      */
     private void initClient() {
-        Client2 client = new Client2(this, Utils.BROKER_SPECIFIC_IP) {
+        Client client = new Client(Utils.BROKER_SPECIFIC_IP) {
             @Override
             public void clientStarted(String clientId) {
                 // print out
@@ -189,16 +188,13 @@ public class EdgeHandlingActivity extends AppCompatActivity {
             @Override
             public void send() {
                 // dispatch jobs to clients
-                String dataPath = Utils.getDownloadPath() + "/mars.jpg";
-                String jobPath = Utils.getDownloadPath() + "/job.jar";
-
                 startTime = System.currentTimeMillis();
 
                 try {
-                    JobSupporter.initDataParser(EdgeHandlingActivity.this, jobPath);
-                    byte[] jobData = JobSupporter.getData(dataPath);
+                    JobSupporter.initDataParser(EdgeHandlingActivity.this, "");
+                    byte[] jobData = JobSupporter.getData("");
 
-                    JobPackage job = new JobPackage(0, this.clientId, jobData, jobPath);
+                    JobPackage job = new JobPackage(0, this.clientId, jobData, "");
                     byte[] jobPkg = job.toByteArray();
 
                     // print out
@@ -231,6 +227,13 @@ public class EdgeHandlingActivity extends AppCompatActivity {
             }
         };
 
+        // start the signal client
+        Client2 client2 = new Client2(Utils.BROKER_SPECIFIC_IP, Utils.STATUS_LIST_PORT) {
+            @Override
+            public void resolveResult(byte[] result) {
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] received: " + new String(result));
+            }
+        };
     }
 
     @Override
