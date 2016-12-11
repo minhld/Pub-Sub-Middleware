@@ -5,6 +5,8 @@ import android.content.Context;
 import com.minhld.jobex.Job;
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
+import com.minhld.jobimpls.EmptyDataParserImpl;
+import com.minhld.jobimpls.EmptyJobImpl;
 import com.minhld.jobimpls.JobDataParserImpl;
 import com.minhld.jobimpls.JobImpl;
 import com.minhld.jobimpls.NetDataParserImpl;
@@ -144,9 +146,12 @@ public abstract class Worker extends Thread {
             // Job job = new WordJobImpl();
 
             // // ====== internet-share example ======
-            JobDataParser dataParser = new NetDataParserImpl();
-            Job job = new NetJobImpl();
+            // JobDataParser dataParser = new NetDataParserImpl();
+            // Job job = new NetJobImpl();
 
+            // ====== internet-share example ======
+            JobDataParser dataParser = new EmptyDataParserImpl();
+            Job job = new EmptyJobImpl();
 
             // ====== ====== ====== END EXAMPLE ====== ====== ======
 

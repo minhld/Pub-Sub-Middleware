@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
+import com.minhld.jobimpls.EmptyDataParserImpl;
 import com.minhld.jobimpls.JobDataParserImpl;
 import com.minhld.jobimpls.NetDataParserImpl;
 import com.minhld.jobimpls.WordDataParserImpl;
@@ -221,8 +222,11 @@ public class Broker extends Thread {
                         // // ====== word-count example ======
                         // JobDataParser dataParser = new WordDataParserImpl();
 
-                        // ====== internet-share example ======
-                        JobDataParser dataParser = new NetDataParserImpl();
+                        // // ====== internet-share example ======
+                        // JobDataParser dataParser = new NetDataParserImpl();
+
+                        // // ====== empty-job example ======
+                        JobDataParser dataParser = new EmptyDataParserImpl();
 
                         // ====== ====== ====== ====== ====== ======
 
