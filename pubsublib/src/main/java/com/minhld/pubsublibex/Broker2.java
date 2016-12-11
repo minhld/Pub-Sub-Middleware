@@ -53,7 +53,7 @@ public class Broker2 extends Thread {
             // get 3rd frame
             request = frontend.recv();
 
-            System.out.println("client [" + clientId + "] said [" + request + "]");
+            System.out.println("client [" + clientId + "] said [" + new String(request) + "]");
 
             frontend.sendMore(clientId);
             frontend.sendMore(Utils.BROKER_DELIMITER);

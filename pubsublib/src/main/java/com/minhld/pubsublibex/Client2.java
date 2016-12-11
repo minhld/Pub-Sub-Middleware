@@ -11,8 +11,6 @@ import org.zeromq.ZMQ;
  */
 
 public abstract class Client2 extends Thread {
-    private final int WAIT_TIME = 3000;
-    private final int BROKER_TIMEOUT = 2000;
 
     private String groupIp = "*";
     private int port = Utils.BROKER_XSUB_PORT;
@@ -45,17 +43,22 @@ public abstract class Client2 extends Thread {
             this.clientId = new String(this.requester.getIdentity());
             String clientPort = "tcp://" + this.groupIp + ":" + this.port;
             requester.connect(clientPort);
-            requester.setReceiveTimeOut(BROKER_TIMEOUT);
+            requester.setReceiveTimeOut(Utils.BROKER_TIMEOUT);
 
             // get the response from broker/worker
             while (!Thread.currentThread().isInterrupted()) {
                 sendMessage("hello!");
                 byte[] response = requester.recv();
-                resolveResult(response);
+
+                if (response != null) {
+                    resolveResult(response);
+                } else {
+                    networkDisconnected();
+                }
 
                 // wait for WAIT_TIME seconds
                 try {
-                    Thread.sleep(WAIT_TIME);
+                    Thread.sleep(Utils.CLIENT_WAIT_TIME);
                 } catch (Exception e) {}
             }
 
@@ -83,4 +86,6 @@ public abstract class Client2 extends Thread {
      * @param result
      */
     public abstract void resolveResult(byte[] result);
+
+    public abstract void networkDisconnected();
 }

@@ -131,6 +131,72 @@ public class EdgeHandlingActivity extends AppCompatActivity {
 
     private void initEdgeConnect() {
         final String EDGE_IP = "129.123.7.172";
+        Client client = new Client(EDGE_IP) {
+            @Override
+            public void clientStarted(String clientId) {
+                // print out
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "client [" + clientId + "] started");
+            }
+
+            @Override
+            public void send() {
+                // dispatch jobs to clients
+                startTime = System.currentTimeMillis();
+
+                try {
+                    JobSupporter.initDataParser(EdgeHandlingActivity.this, "");
+                    byte[] jobData = JobSupporter.getData("");
+
+                    JobPackage job = new JobPackage(0, this.clientId, jobData, "");
+                    byte[] jobPkg = job.toByteArray();
+
+                    // print out
+                    UITools.writeLog(EdgeHandlingActivity.this, infoText, "client sent: " + jobPkg.length);
+
+                    this.sendMessage(jobPkg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void resolveResult(byte[] result) {
+                final long durr = System.currentTimeMillis() - startTime;
+
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "client received result: " + result.length + " bytes");
+                JobDataParser parser = new WordDataParserImpl();
+                try {
+                    final String resultStr = (String) parser.parseBytesToObject(result);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            UITools.writeLog(EdgeHandlingActivity.this, infoText, resultStr);
+                            UITools.writeLog(EdgeHandlingActivity.this, infoText, "total time: " + durr + "ms");
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        // start the signal client
+        Client2 client2 = new Client2(EDGE_IP, Utils.STATUS_LIST_PORT) {
+            @Override
+            public void resolveResult(byte[] result) {
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from edge: " + new String(result));
+            }
+
+            @Override
+            public void networkDisconnected() {
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from edge: failed!");
+
+                // start p2p connection
+                initClient();
+            }
+        };
+
+        UITools.writeLog(EdgeHandlingActivity.this, infoText, "started connect to edge server");
     }
 
     /**
@@ -231,7 +297,14 @@ public class EdgeHandlingActivity extends AppCompatActivity {
         Client2 client2 = new Client2(Utils.BROKER_SPECIFIC_IP, Utils.STATUS_LIST_PORT) {
             @Override
             public void resolveResult(byte[] result) {
-                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] received: " + new String(result));
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from p2p: " + new String(result));
+            }
+
+            @Override
+            public void networkDisconnected() {
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from edge: failed!");
+                /// change to the other
+
             }
         };
     }
