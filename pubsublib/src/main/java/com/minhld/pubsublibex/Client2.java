@@ -47,19 +47,38 @@ public abstract class Client2 extends Thread {
 
             // get the response from broker/worker
             while (!Thread.currentThread().isInterrupted()) {
-                sendMessage("hello!");
-                byte[] response = requester.recv();
-
-                if (response != null) {
-                    resolveResult(response);
-                } else {
-                    networkDisconnected();
-                }
-
-                // wait for WAIT_TIME seconds
                 try {
+                    sendMessage("hello!");
+                    byte[] response = requester.recv();
+
+                    if (response != null) {
+                        resolveResult(response);
+                    } else {
+                        networkDisconnected();
+                    }
+
+                    // wait for WAIT_TIME seconds
                     Thread.sleep(Utils.CLIENT_WAIT_TIME);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    // when server is down
+                    e.printStackTrace();
+                    try {
+                        // wait a bit more and reconnect
+                        Thread.sleep(Utils.CLIENT_WAIT_REESTABLISH);
+
+                        // close the previous connection
+                        requester.close();
+
+                        // and start the new one
+                        requester = context.socket(ZMQ.REQ);
+                        ZHelper.setId(requester);
+                        this.clientId = new String(this.requester.getIdentity());
+                        requester.connect(clientPort);
+                        requester.setReceiveTimeOut(Utils.BROKER_TIMEOUT);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
             }
 
             requester.close();
@@ -87,5 +106,13 @@ public abstract class Client2 extends Thread {
      */
     public abstract void resolveResult(byte[] result);
 
+    /**
+     * announce when the connection to the peer is disconnected
+     */
     public abstract void networkDisconnected();
+
+    /**
+     * announce when the connection to the peer/edge is restored
+     */
+    public abstract void networkRestored();
 }

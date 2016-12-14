@@ -51,6 +51,7 @@ public class Utils {
     public static final int STATUS_RESP_PORT = 5559;
     public static final int WAITING_TIME = 15000;
     public static final int CLIENT_WAIT_TIME = 3000;
+    public static final int CLIENT_WAIT_REESTABLISH = 3000;
     public static final int BROKER_TIMEOUT = 2000;
 
     public static enum PubSubType {

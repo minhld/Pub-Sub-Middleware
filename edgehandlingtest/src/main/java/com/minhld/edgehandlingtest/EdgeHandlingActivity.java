@@ -189,10 +189,17 @@ public class EdgeHandlingActivity extends AppCompatActivity {
 
             @Override
             public void networkDisconnected() {
-                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from edge: failed!");
-
+                long durr = System.currentTimeMillis() - startTime;
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from edge: failed at time [" + durr + "] !");
                 // start p2p connection
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] offload to p2p now");
                 initClient();
+            }
+
+            @Override
+            public void networkRestored() {
+                long durr = System.currentTimeMillis() - startTime;
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from edge: restored at time [" + durr + "] !");
             }
         };
 
@@ -253,8 +260,10 @@ public class EdgeHandlingActivity extends AppCompatActivity {
 
             @Override
             public void send() {
-                // dispatch jobs to clients
-                startTime = System.currentTimeMillis();
+//                // dispatch jobs to clients
+//                startTime = System.currentTimeMillis();
+                long durr = System.currentTimeMillis() - startTime;
+                UITools.writeLog(EdgeHandlingActivity.this, infoText, "p2p client start at: " + durr);
 
                 try {
                     JobSupporter.initDataParser(EdgeHandlingActivity.this, "");
@@ -293,20 +302,21 @@ public class EdgeHandlingActivity extends AppCompatActivity {
             }
         };
 
-        // start the signal client
-        Client2 client2 = new Client2(Utils.BROKER_SPECIFIC_IP, Utils.STATUS_LIST_PORT) {
-            @Override
-            public void resolveResult(byte[] result) {
-                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from p2p: " + new String(result));
-            }
-
-            @Override
-            public void networkDisconnected() {
-                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from edge: failed!");
-                /// change to the other
-
-            }
-        };
+//        // start the signal client
+//        Client2 client2 = new Client2(Utils.BROKER_SPECIFIC_IP, Utils.STATUS_LIST_PORT) {
+//            @Override
+//            public void resolveResult(byte[] result) {
+//                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from p2p: " + new String(result));
+//            }
+//
+//            @Override
+//            public void networkDisconnected() {
+//                long durr = System.currentTimeMillis() - startTime;
+//                UITools.writeLog(EdgeHandlingActivity.this, infoText, "[status client] from p2p: failed at time [" + durr + "] !");
+//                // run locally here
+//
+//            }
+//        };
     }
 
     @Override
