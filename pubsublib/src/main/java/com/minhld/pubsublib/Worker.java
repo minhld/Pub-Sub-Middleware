@@ -142,16 +142,16 @@ public abstract class Worker extends Thread {
             // Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
 
             // // ====== word-count example ======
-            // JobDataParser dataParser = new WordDataParserImpl();
-            // Job job = new WordJobImpl();
+            JobDataParser dataParser = new WordDataParserImpl();
+            Job job = new WordJobImpl();
 
             // // ====== internet-share example ======
             // JobDataParser dataParser = new NetDataParserImpl();
             // Job job = new NetJobImpl();
 
-            // ====== internet-share example ======
-            JobDataParser dataParser = new EmptyDataParserImpl();
-            Job job = new EmptyJobImpl();
+            // // ====== internet-share example ======
+            // JobDataParser dataParser = new EmptyDataParserImpl();
+            // Job job = new EmptyJobImpl();
 
             // ====== ====== ====== END EXAMPLE ====== ====== ======
 
