@@ -3,6 +3,7 @@ package com.minhld.edgehandlingtest;
 import android.content.Context;
 
 import com.minhld.jobex.JobDataParser;
+import com.minhld.jobimpls.NetDataParserImpl;
 
 /**
  * Created by minhld on 10/17/2016.
@@ -13,7 +14,8 @@ public class JobSupporter {
 
     public static void initDataParser(Context c, String jarPath) throws Exception {
         // dataParser = new EmptyDataParserImpl();
-        dataParser = new WordDataParserImpl();
+        // dataParser = new WordDataParserImpl();
+        dataParser = new NetDataParserImpl();
     }
 
     public static byte[] getData(String filePath) throws Exception {
