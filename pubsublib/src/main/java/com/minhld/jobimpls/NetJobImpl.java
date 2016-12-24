@@ -66,7 +66,10 @@ public class NetJobImpl implements Job {
                     // download the link
                     try {
                         // writeZip(zipOut, lnkKey, new URL(links.get(lnkKey)).openStream());
-                        writeZip(zipOut, lnkKey, readUrl(links.get(lnkKey)));
+                        InputStream linkStream = readUrl(links.get(lnkKey));
+                        if (linkStream != null) {
+                            writeZip(zipOut, lnkKey, linkStream);
+                        }
                     } catch(Exception e) {
                         // skip one resource, no problem
                         e.printStackTrace();
@@ -180,10 +183,15 @@ public class NetJobImpl implements Job {
     }
 
     private InputStream readUrl(String url) throws Exception {
+        try {
         URLConnection urlConn = new URL(url).openConnection();
         urlConn.setReadTimeout(3000);   // no more than 3s of tryout
         urlConn.setConnectTimeout(3000);
         return urlConn.getInputStream();
+        } catch (Exception e) {
+            System.err.println(url + ": " + e.getMessage());
+            return null;
+        }
     }
 
     /**

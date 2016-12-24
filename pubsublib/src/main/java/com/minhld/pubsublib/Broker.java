@@ -220,10 +220,10 @@ public class Broker extends Thread {
                         // JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(parentContext, AckServerListener.clientId, jobBytes);
 
                         // // ====== word-count example ======
-                        JobDataParser dataParser = new WordDataParserImpl();
+                        // JobDataParser dataParser = new WordDataParserImpl();
 
                         // // ====== internet-share example ======
-                        // JobDataParser dataParser = new NetDataParserImpl();
+                        JobDataParser dataParser = new NetDataParserImpl();
 
                         // // ====== empty-job example ======
                         // JobDataParser dataParser = new EmptyDataParserImpl();
