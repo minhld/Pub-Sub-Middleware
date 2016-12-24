@@ -1,7 +1,10 @@
 package com.minhld.jobimpls;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -12,31 +15,57 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 
 import com.minhld.jobex.Job;
+import com.minhld.utils.Utils;
 
 /**
  * Created by minhld on 11/2/2015.
  */
 public class WordJobImpl implements Job {
+    long startJob = 0;
+    int prevPerc = 0;
+    String outputFile = Utils.getDownloadPath() + "/" + System.currentTimeMillis() + ".txt";
+    PrintWriter writer = null;
 
 	public String exec(Object htmlContents) {
+        startJob = System.currentTimeMillis();
+        // create the text output file
+        try {
+            writer = new PrintWriter(new FileOutputStream(outputFile));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         String pageText = (String) htmlContents;// getTextFromUrl((String) urls);
         pageText = Jsoup.parse(pageText).text();
-        pageText = pageText + pageText + pageText;
+
+        writeTime(writer, 0);
+
+        // pageText = pageText + pageText + pageText;
+        for (int i = 0; i < 5; i++) {
+            pageText = pageText + pageText;
+        }
+
+        writeTime(writer, 1);
+
         return findTopWords(pageText, 50);
     }
 
     private String findTopWords(String pageText, int nTop) {
+        writeTime(writer, 2);
         pageText = cleanText(pageText);
         String[] words = pageText.split(" ");
 
-        Map<String, Integer> wordCounts = new HashMap<>();
+        try {
+            double perc = 0;
+            Map<String, Integer> wordCounts = new HashMap<>();
 
-        String newKey = "";
-        int count = 0;
-        for (int i = 0; i < words.length; i++) {
-            newKey = "_" + words[i];
-            count = wordCounts.containsKey(newKey) ? wordCounts.get(newKey) + 1 : 1;
-            wordCounts.put(newKey, count);
+            // 50% of work happens here
+            String newKey = "";
+            int count = 0;
+            for (int i = 0; i < words.length; i++) {
+                newKey = "_" + words[i];
+                count = wordCounts.containsKey(newKey) ? wordCounts.get(newKey) + 1 : 1;
+                wordCounts.put(newKey, count);
 
             /*
             if (!checkMinorWords(words[i])) {
@@ -45,35 +74,60 @@ public class WordJobImpl implements Job {
                 wordCounts.put(newKey, count);
             }
             */
-        }
 
-        String[] keys = wordCounts.keySet().toArray(new String[] {});
-        Map<String, Integer> topWords = new HashMap<>();
-
-        for (int i = 0; i < nTop; i++) {
-            int maxPos = 0;
-            for (int j = i + 1; j < wordCounts.size(); j++) {
-                if (wordCounts.get(keys[j]) > wordCounts.get(keys[maxPos])) {
-                    maxPos = j;
-                }
+                // calculate percentage
+                perc = 0.5 * ((double) i / (double) words.length);
+                writeTime(writer, (int) Math.ceil(perc * 100));
             }
 
-            String key = keys[maxPos];
-            topWords.put(key, wordCounts.get(key));
+            String[] keys = wordCounts.keySet().toArray(new String[]{});
+            Map<String, Integer> topWords = new HashMap<>();
 
-            // this will be out of the loop
-            wordCounts.put(key, 0);
-        }
+            for (int i = 0; i < nTop; i++) {
+                int maxPos = 0;
+                for (int j = i + 1; j < wordCounts.size(); j++) {
+                    if (wordCounts.get(keys[j]) > wordCounts.get(keys[maxPos])) {
+                        maxPos = j;
+                    }
+                }
 
-        JSONObject json = new JSONObject();
-        try {
+                String key = keys[maxPos];
+                topWords.put(key, wordCounts.get(key));
+
+                // this will be out of the loop
+                wordCounts.put(key, 0);
+
+                // calculate percentage
+                perc = 0.5 + 0.5 * ((double)i / (double)nTop);
+                writeTime(writer, (int) Math.ceil(perc * 100));
+            }
+
+            JSONObject json = new JSONObject();
             for (String key : topWords.keySet()) {
                 json.put(key, topWords.get(key));
             }
+
+            // last one
+            writeTime(writer, 100);
+            writer.flush();
+            writer.close();
+
+            return json.toString();
+
         } catch (JSONException jsonEx) {
             jsonEx.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return json.toString();
+        return "";
+    }
+
+    private void writeTime(PrintWriter writer, int perc) {
+        long dur = System.currentTimeMillis() - startJob;
+        if (perc > prevPerc) {
+            writer.println("" + perc + "," + dur);
+            prevPerc = perc;
+        }
     }
 
     private String getTextFromUrl(String urls) {
