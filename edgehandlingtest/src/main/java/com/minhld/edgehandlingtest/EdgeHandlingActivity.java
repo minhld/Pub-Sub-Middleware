@@ -263,6 +263,9 @@ public class EdgeHandlingActivity extends AppCompatActivity {
 //                // dispatch jobs to clients
 //                startTime = System.currentTimeMillis();
                 long durr = System.currentTimeMillis() - startTime;
+                if (durr > 500000) {
+                    startTime = System.currentTimeMillis();
+                }
                 UITools.writeLog(EdgeHandlingActivity.this, infoText, "p2p client start at: " + durr);
 
                 try {
