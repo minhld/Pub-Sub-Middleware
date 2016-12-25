@@ -263,6 +263,7 @@ public class EdgeHandlingActivity extends AppCompatActivity {
 //                // dispatch jobs to clients
 //                startTime = System.currentTimeMillis();
                 long durr = System.currentTimeMillis() - startTime;
+                // just to make sure this call should start from the beginning
                 if (durr > 500000) {
                     startTime = System.currentTimeMillis();
                 }
