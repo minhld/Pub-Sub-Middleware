@@ -2,8 +2,8 @@ package com.minhld.g2glib;
 
 import android.os.Handler;
 
-import com.minhld.multihop.supports.ChatManager;
-import com.minhld.multihop.supports.Utils;
+import com.minhld.supports.ChatManager;
+import com.minhld.supports.Utils;
 
 import java.io.IOException;
 import java.net.InetAddress;

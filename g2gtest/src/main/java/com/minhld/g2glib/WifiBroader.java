@@ -15,8 +15,8 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.widget.TextView;
 
-import com.minhld.multihop.supports.Utils;
-import com.minhld.multihop.supports.WifiP2pConnectionListener;
+import com.minhld.supports.Utils;
+import com.minhld.supports.WifiP2pConnectionListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

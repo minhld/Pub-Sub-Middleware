@@ -2,7 +2,7 @@ package com.minhld.g2glib;
 
 import android.os.Handler;
 
-import com.minhld.multihop.supports.Utils;
+import com.minhld.supports.Utils;
 
 /**
  * Created by minhld on 11/1/2015.
