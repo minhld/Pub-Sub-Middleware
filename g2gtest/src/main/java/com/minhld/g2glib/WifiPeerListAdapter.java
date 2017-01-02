@@ -12,7 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.minhld.multihop.R;
+
+import com.minhld.g2gtest.R;
 
 import java.util.List;
 

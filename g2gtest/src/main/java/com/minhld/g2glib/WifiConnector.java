@@ -16,7 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.text.format.Formatter;
 import android.widget.TextView;
 
-import com.minhld.multihop.supports.Utils;
+import com.minhld.supports.Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
