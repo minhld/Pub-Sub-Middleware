@@ -85,11 +85,16 @@ public class WifiConnector {
         }
     };
 
-    public void getWifiConnections(Activity activity) {
+    public void requestPermission(Activity activity) {
         ActivityCompat.requestPermissions(activity,
                 new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
                 0);
+    }
 
+    public void getWifiConnections() {
+//        ActivityCompat.requestPermissions(activity,
+//                new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
+//                0);
         mWifiManager.startScan();
     }
 
@@ -98,14 +103,15 @@ public class WifiConnector {
         WifiConfiguration wifiConfiguration = new WifiConfiguration();
         wifiConfiguration.SSID = "\"" + wifiNetwork.SSID + "\"";
         wifiConfiguration.preSharedKey = "\"" + password + "\"";
+        wifiConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
         int netId = mWifiManager.addNetwork(wifiConfiguration);
 
         List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();
         for( WifiConfiguration i : list ) {
             if(i.SSID != null && i.SSID.equals("\"" + wifiNetwork.SSID + "\"")) {
-                mWifiManager.disconnect();
+                // mWifiManager.disconnect();
                 mWifiManager.enableNetwork(i.networkId, true);
-                mWifiManager.reconnect();
+                // mWifiManager.reconnect();
                 break;
             }
         }

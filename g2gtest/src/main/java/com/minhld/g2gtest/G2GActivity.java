@@ -1,10 +1,14 @@
 package com.minhld.g2gtest;
 
+import android.Manifest;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -167,8 +171,13 @@ public class G2GActivity extends AppCompatActivity {
         searchWiFiBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // search for Wifi network list
-                orgWifiBroader.getWifiConnections(G2GActivity.this);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                        checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    orgWifiBroader.requestPermission(G2GActivity.this);
+                } else {
+                    // search for Wifi network list
+                    orgWifiBroader.getWifiConnections();
+                }
             }
         });
 
@@ -187,6 +196,11 @@ public class G2GActivity extends AppCompatActivity {
                 orgWifiBroader.writeString("sent a WiFi ACK :)");
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        orgWifiBroader.getWifiConnections();
     }
 
     @Override
