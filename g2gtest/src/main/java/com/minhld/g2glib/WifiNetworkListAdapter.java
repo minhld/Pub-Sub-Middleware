@@ -82,7 +82,7 @@ public class WifiNetworkListAdapter extends ArrayAdapter<ScanResult> {
             UITools.showInputDialog(WifiNetworkListAdapter.this.context, new UITools.InputDialogListener() {
                 @Override
                 public void inputDone(String resultStr) {
-                    wifiWiFiBroader.connectWifiNetwork(DeviceClickListener.this.result, resultStr);
+                    wifiWiFiBroader.connectWifiNetwork(DeviceClickListener.this.result.SSID);
                 }
             }, WifiConnector.PASSWORD);
 

@@ -31,7 +31,7 @@ import java.util.List;
 
 public class WifiConnector {
     public static final String SERVER_IP = "144.39.254.119";// "192.168.49.1";
-    public static final String PASSWORD = "NbNCLPiX"; // "EWat5Nhr";
+    public static final String PASSWORD = "qVK5TkO9"; // "NbNCLPiX"; // "EWat5Nhr";
 
     WifiManager mWifiManager;
     WiFiScanListener scanListener;
@@ -98,26 +98,78 @@ public class WifiConnector {
         mWifiManager.startScan();
     }
 
-    public void connectWifiNetwork(ScanResult wifiNetwork, String password) {
-        writeLog("attempt connecting to " + wifiNetwork.SSID);
-        WifiConfiguration wifiConfiguration = new WifiConfiguration();
-        wifiConfiguration.SSID = "\"" + wifiNetwork.SSID + "\"";
-        wifiConfiguration.preSharedKey = "\"" + password + "\"";
-        wifiConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-        int netId = mWifiManager.addNetwork(wifiConfiguration);
+    public boolean connectWifiNetwork(String SSID) {
+//        writeLog("attempt connecting to " + wifiNetwork.SSID);
+//        WifiConfiguration wifiConfiguration = new WifiConfiguration();
+//        wifiConfiguration.SSID = "\"" + wifiNetwork.SSID + "\"";
+//        wifiConfiguration.preSharedKey = "\"" + password + "\"";
+////        wifiConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+//        int netId = mWifiManager.addNetwork(wifiConfiguration);
+//
+//        List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();
+//        for( WifiConfiguration i : list ) {
+//            if(i.SSID != null && i.SSID.equals("\"" + wifiNetwork.SSID + "\"") && i.networkId == netId) {
+//                mWifiManager.disconnect();
+//                mWifiManager.reconnect();
+////                mWifiManager.saveConfiguration();
+//                mWifiManager.enableNetwork(i.networkId, true);
+//                break;
+//            }
+//        }
+//
+//        writeLog("wait for establishment...");
 
-        List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();
-        for( WifiConfiguration i : list ) {
-            if(i.SSID != null && i.SSID.equals("\"" + wifiNetwork.SSID + "\"")) {
-                // mWifiManager.disconnect();
-                mWifiManager.enableNetwork(i.networkId, true);
-                // mWifiManager.reconnect();
-                break;
+        WifiConfiguration configuration = createOpenWifiConfiguration(SSID);
+        int networkId = mWifiManager.addNetwork(configuration);
+        writeLog("networkId assigned while adding network is " + networkId);
+        return enableNetwork(SSID, networkId);
+    }
+
+    private WifiConfiguration createOpenWifiConfiguration(String SSID) {
+        WifiConfiguration configuration = new WifiConfiguration();
+        configuration.SSID = String.format("\"%s\"", SSID);
+        configuration.preSharedKey = "\"" + PASSWORD + "\"";
+        configuration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        assignHighestPriority(configuration);
+        return configuration;
+    }
+
+    //To tell OS to give preference to this network
+    private void assignHighestPriority(WifiConfiguration config) {
+        List<WifiConfiguration> configuredNetworks = mWifiManager.getConfiguredNetworks();
+        if (configuredNetworks != null) {
+            for (WifiConfiguration existingConfig : configuredNetworks) {
+                if (config.priority <= existingConfig.priority) {
+                    config.priority = existingConfig.priority + 1;
+                }
             }
         }
-
-        writeLog("wait for establishment...");
     }
+
+    private boolean enableNetwork(String SSID, int networkId) {
+        if (networkId == -1) {
+            networkId = getExistingNetworkId(SSID);
+
+            if (networkId == -1) {
+                writeLog("Couldn't add network with SSID: " + SSID);
+                return false;
+            }
+        }
+        return mWifiManager.enableNetwork(networkId, true);
+    }
+
+    private int getExistingNetworkId(String SSID) {
+        List<WifiConfiguration> configuredNetworks = mWifiManager.getConfiguredNetworks();
+        if (configuredNetworks != null) {
+            for (WifiConfiguration existingConfig : configuredNetworks) {
+                if (SSID != null && SSID.equals("\"" + existingConfig.SSID + "\"")) {
+                    return existingConfig.networkId;
+                }
+            }
+        }
+        return -1;
+    }
+
 
     /** Detect you are connected to a specific network. */
     private boolean checkConnectedToDesiredWifi(Context c) {
