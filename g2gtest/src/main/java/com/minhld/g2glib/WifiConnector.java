@@ -30,8 +30,8 @@ import java.util.List;
  */
 
 public class WifiConnector {
-    public static final String SERVER_IP = "144.39.254.119";// "192.168.49.1";
-    public static final String PASSWORD = "qVK5TkO9"; // "NbNCLPiX"; // "EWat5Nhr";
+    public static final String SERVER_IP = "144.39.162.153"; //"144.39.248.223"; //"144.39.215.135"; //"144.39.254.119";// "192.168.49.1";
+    public static final String PASSWORD = "DIWNZzzv"; // "qVK5TkO9"; // "NbNCLPiX"; // "EWat5Nhr";
 
     WifiManager mWifiManager;
     WiFiScanListener scanListener;
