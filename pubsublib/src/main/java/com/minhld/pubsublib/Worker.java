@@ -138,16 +138,16 @@ public abstract class Worker extends Thread {
 
             // // ====== image-processing example ======
             // // initiate data parser and job objects from the request package
-            // JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(this.context, this.workerId, request.jobBytes);
-            // Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
+            JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(this.context, this.workerId, request.jobBytes);
+            Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
 
             // // ====== word-count example ======
             // JobDataParser dataParser = new WordDataParserImpl();
             // Job job = new WordJobImpl();
 
             // // ====== internet-share example ======
-            JobDataParser dataParser = new NetDataParserImpl();
-            Job job = new NetJobImpl();
+            // JobDataParser dataParser = new NetDataParserImpl();
+            // Job job = new NetJobImpl();
 
             // // ====== internet-share example ======
             // JobDataParser dataParser = new EmptyDataParserImpl();
