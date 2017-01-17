@@ -5,6 +5,7 @@ import android.content.Context;
 import com.minhld.jobex.Job;
 import com.minhld.jobex.JobDataParser;
 import com.minhld.jobex.JobPackage;
+import com.minhld.jobimpls.BitmapJobImpl;
 import com.minhld.jobimpls.EmptyDataParserImpl;
 import com.minhld.jobimpls.EmptyJobImpl;
 import com.minhld.jobimpls.JobDataParserImpl;
@@ -139,7 +140,8 @@ public abstract class Worker extends Thread {
             // // ====== image-processing example ======
             // // initiate data parser and job objects from the request package
             JobDataParser dataParser = new JobDataParserImpl(); // JobHelper.getDataParser(this.context, this.workerId, request.jobBytes);
-            Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
+            // Job job = new JobImpl(); // JobHelper.getJob(this.context, this.workerId, request.jobBytes);
+            Job job = new BitmapJobImpl();
 
             // // ====== word-count example ======
             // JobDataParser dataParser = new WordDataParserImpl();
