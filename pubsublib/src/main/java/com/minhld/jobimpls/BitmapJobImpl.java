@@ -245,6 +245,8 @@ public class BitmapJobImpl implements Job {
 
         // last one
         writeTime(writer, 100);
+        writer.flush();
+        writer.close();
 
         return (bitmap);
     }
