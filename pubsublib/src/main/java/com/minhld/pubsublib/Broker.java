@@ -134,6 +134,7 @@ public class Broker extends Thread {
 
                 } else {
                     // WORKER has completed the task, returned the results
+                    startTime = System.currentTimeMillis();
 
                     // get FORTH FRAME, should be EMPTY - check the delimiter again
                     empty = backend.recv();
@@ -288,6 +289,9 @@ public class Broker extends Thread {
                         // remove all existences from current work - to prepare serving form the new work
                         AckServerListener.advancedWorkerList.clear();
                     }
+
+                    requestRLDurr = System.currentTimeMillis() - startRLRequestTime;
+                    System.out.println("finished sending: " + requestRLDurr + "ms");
                 }
             });
 
