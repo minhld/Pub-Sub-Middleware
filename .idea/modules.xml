@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PbSbMid.iml" filepath="$PROJECT_DIR$/PbSbMid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Pub-Sub-Middleware.iml" filepath="$PROJECT_DIR$/.idea/Pub-Sub-Middleware.iml" />
       <module fileurl="file://$PROJECT_DIR$/dextest/dextest.iml" filepath="$PROJECT_DIR$/dextest/dextest.iml" />
       <module fileurl="file://$PROJECT_DIR$/edgehandlingtest/edgehandlingtest.iml" filepath="$PROJECT_DIR$/edgehandlingtest/edgehandlingtest.iml" />
       <module fileurl="file://$PROJECT_DIR$/g2gtest/g2gtest.iml" filepath="$PROJECT_DIR$/g2gtest/g2gtest.iml" />
